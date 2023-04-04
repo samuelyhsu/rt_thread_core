@@ -9,16 +9,16 @@
  * 2014-04-03     Grissiom     port to VMM
  */
 
+#include "gic.h"
+#include "realview.h"
 #include <rthw.h>
 #include <rtthread.h>
-#include "realview.h"
-#include "gic.h"
 
 #ifdef RT_USING_VMM
 #include <vmm.h>
 #endif
 
-#define MAX_HANDLERS                NR_IRQS_PBA8
+#define MAX_HANDLERS NR_IRQS_PBA8
 
 extern volatile rt_uint8_t rt_interrupt_nest;
 
@@ -34,67 +34,59 @@ const unsigned int VECTOR_BASE = 0x00;
 extern void rt_cpu_vector_set_base(unsigned int addr);
 extern int system_vectors;
 
-static void rt_hw_vector_init(void)
-{
+static void rt_hw_vector_init(void) {
 #ifndef RT_USING_VMM
-    unsigned int *dest = (unsigned int *)VECTOR_BASE;
-    unsigned int *src =  (unsigned int *)&system_vectors;
+  unsigned int *dest = (unsigned int *)VECTOR_BASE;
+  unsigned int *src = (unsigned int *)&system_vectors;
 
-    rt_memcpy(dest, src, 16 * 4);
-    rt_cpu_vector_set_base(VECTOR_BASE);
+  rt_memcpy(dest, src, 16 * 4);
+  rt_cpu_vector_set_base(VECTOR_BASE);
 #endif
 }
 
 /**
  * This function will initialize hardware interrupt
  */
-void rt_hw_interrupt_init(void)
-{
-    rt_uint32_t gic_cpu_base;
-    rt_uint32_t gic_dist_base;
+void rt_hw_interrupt_init(void) {
+  rt_uint32_t gic_cpu_base;
+  rt_uint32_t gic_dist_base;
 
-    /* initialize vector table */
-    rt_hw_vector_init();
+  /* initialize vector table */
+  rt_hw_vector_init();
 
-    /* initialize exceptions table */
-    rt_memset(isr_table, 0x00, sizeof(isr_table));
+  /* initialize exceptions table */
+  rt_memset(isr_table, 0x00, sizeof(isr_table));
 
-    /* initialize ARM GIC */
+  /* initialize ARM GIC */
 #ifdef RT_USING_VMM
-    gic_dist_base = vmm_find_iomap("GIC_DIST");
-    gic_cpu_base = vmm_find_iomap("GIC_CPU");
+  gic_dist_base = vmm_find_iomap("GIC_DIST");
+  gic_cpu_base = vmm_find_iomap("GIC_CPU");
 #else
-    gic_dist_base = REALVIEW_GIC_DIST_BASE;
-    gic_cpu_base = REALVIEW_GIC_CPU_BASE;
+  gic_dist_base = REALVIEW_GIC_DIST_BASE;
+  gic_cpu_base = REALVIEW_GIC_CPU_BASE;
 #endif
-    arm_gic_dist_init(0, gic_dist_base, 0);
-    arm_gic_cpu_init(0, gic_cpu_base);
-    /*arm_gic_dump_type(0);*/
+  arm_gic_dist_init(0, gic_dist_base, 0);
+  arm_gic_cpu_init(0, gic_cpu_base);
+  /*arm_gic_dump_type(0);*/
 
-    /* init interrupt nest, and context in thread sp */
-    rt_interrupt_nest = 0;
-    rt_interrupt_from_thread = 0;
-    rt_interrupt_to_thread = 0;
-    rt_thread_switch_interrupt_flag = 0;
+  /* init interrupt nest, and context in thread sp */
+  rt_interrupt_nest = 0;
+  rt_interrupt_from_thread = 0;
+  rt_interrupt_to_thread = 0;
+  rt_thread_switch_interrupt_flag = 0;
 }
 
 /**
  * This function will mask a interrupt.
  * @param vector the interrupt number
  */
-void rt_hw_interrupt_mask(int vector)
-{
-    arm_gic_mask(0, vector);
-}
+void rt_hw_interrupt_mask(int vector) { arm_gic_mask(0, vector); }
 
 /**
  * This function will un-mask a interrupt.
  * @param vector the interrupt number
  */
-void rt_hw_interrupt_umask(int vector)
-{
-    arm_gic_umask(0, vector);
-}
+void rt_hw_interrupt_umask(int vector) { arm_gic_umask(0, vector); }
 
 /**
  * This function will install a interrupt service routine to a interrupt.
@@ -103,25 +95,22 @@ void rt_hw_interrupt_umask(int vector)
  * @param old_handler the old interrupt service routine
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, const char *name)
-{
-    rt_isr_handler_t old_handler = RT_NULL;
+                                         void *param, const char *name) {
+  rt_isr_handler_t old_handler = RT_NULL;
 
-    if (vector < MAX_HANDLERS)
-    {
-        old_handler = isr_table[vector].handler;
+  if (vector < MAX_HANDLERS) {
+    old_handler = isr_table[vector].handler;
 
-        if (handler != RT_NULL)
-        {
+    if (handler != RT_NULL) {
 #ifdef RT_USING_INTERRUPT_INFO
-            rt_strncpy(isr_table[vector].name, name, RT_NAME_MAX);
+      rt_strncpy(isr_table[vector].name, name, RT_NAME_MAX);
 #endif /* RT_USING_INTERRUPT_INFO */
-            isr_table[vector].handler = handler;
-            isr_table[vector].param = param;
-        }
+      isr_table[vector].handler = handler;
+      isr_table[vector].param = param;
     }
+  }
 
-    return old_handler;
+  return old_handler;
 }
 
 /**
@@ -129,12 +118,6 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
  *
  * Since we are running in single core, the target CPU are always CPU0.
  */
-void rt_hw_interrupt_trigger(int vector)
-{
-    arm_gic_trigger(0, 1, vector);
-}
+void rt_hw_interrupt_trigger(int vector) { arm_gic_trigger(0, 1, vector); }
 
-void rt_hw_interrupt_clear(int vector)
-{
-    arm_gic_clear_sgi(0, 1, vector);
-}
+void rt_hw_interrupt_clear(int vector) { arm_gic_clear_sgi(0, 1, vector); }

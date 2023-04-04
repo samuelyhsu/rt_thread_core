@@ -20,6 +20,7 @@ $(if $(strip $(RTT_ROOT)),,$(error RTT_ROOT not defined))
 include $(RTT_ROOT)/tools/rtthread.mk
 '''
 
+
 def TargetMakefile(env):
     project = ProjectInfo(env)
 
@@ -62,7 +63,7 @@ def TargetMakefile(env):
 
     make.write('\n')
 
-    Files   = project['FILES']
+    Files = project['FILES']
     Headers = project['HEADERS']
     CPPDEFINES = project['CPPDEFINES']
 
@@ -89,9 +90,11 @@ def TargetMakefile(env):
         path += '\t-I%s \\\n' % item
 
     make.write('CPPPATHS :=')
-    if path[0] == '\t': path = path[1:]
+    if path[0] == '\t':
+        path = path[1:]
     length = len(path)
-    if path[length - 2] == '\\': path = path[:length - 2]
+    if path[length - 2] == '\\':
+        path = path[:length - 2]
     make.write(path)
     make.write('\n')
     make.write('\n')

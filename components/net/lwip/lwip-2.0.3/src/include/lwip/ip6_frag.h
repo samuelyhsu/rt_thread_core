@@ -8,8 +8,8 @@
  * Copyright (c) 2010 Inico Technologies Ltd.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -21,14 +21,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -41,24 +41,25 @@
 #ifndef LWIP_HDR_IP6_FRAG_H
 #define LWIP_HDR_IP6_FRAG_H
 
+#include "lwip/ip6.h"
+#include "lwip/ip6_addr.h"
+#include "lwip/netif.h"
 #include "lwip/opt.h"
 #include "lwip/pbuf.h"
-#include "lwip/ip6_addr.h"
-#include "lwip/ip6.h"
-#include "lwip/netif.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-#if LWIP_IPV6 && LWIP_IPV6_REASS  /* don't build if not configured for use in lwipopts.h */
+#if LWIP_IPV6 &&                                                               \
+    LWIP_IPV6_REASS /* don't build if not configured for use in lwipopts.h */
 
 /** IP6_FRAG_COPYHEADER==1: for platforms where sizeof(void*) > 4, this needs to
  * be enabled (to not overwrite part of the data). When enabled, the IPv6 header
- * is copied instead of referencing it, which gives more room for struct ip6_reass_helper */
+ * is copied instead of referencing it, which gives more room for struct
+ * ip6_reass_helper */
 #ifndef IPV6_FRAG_COPYHEADER
-#define IPV6_FRAG_COPYHEADER   0
+#define IPV6_FRAG_COPYHEADER 0
 #endif
 
 /** The IPv6 reassembly timer interval in milliseconds. */
@@ -93,7 +94,8 @@ struct pbuf *ip6_reass(struct pbuf *p);
 
 #endif /* LWIP_IPV6 && LWIP_IPV6_REASS */
 
-#if LWIP_IPV6 && LWIP_IPV6_FRAG  /* don't build if not configured for use in lwipopts.h */
+#if LWIP_IPV6 &&                                                               \
+    LWIP_IPV6_FRAG /* don't build if not configured for use in lwipopts.h */
 
 #ifndef LWIP_PBUF_CUSTOM_REF_DEFINED
 #define LWIP_PBUF_CUSTOM_REF_DEFINED
@@ -111,7 +113,6 @@ struct pbuf_custom_ref {
 err_t ip6_frag(struct pbuf *p, struct netif *netif, const ip6_addr_t *dest);
 
 #endif /* LWIP_IPV6 && LWIP_IPV6_FRAG */
-
 
 #ifdef __cplusplus
 }

@@ -11,8 +11,8 @@
 #ifndef __INTERRUPT_H__
 #define __INTERRUPT_H__
 
-#include <rthw.h>
 #include <board.h>
+#include <rthw.h>
 
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
@@ -23,6 +23,6 @@ void rt_hw_interrupt_clear(int vector);
 void rt_hw_interrupt_ack(int vector);
 
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, const char *name);
+                                         void *param, const char *name);
 
 #endif

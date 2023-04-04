@@ -13,13 +13,13 @@
 
 #include <ipc/workqueue.h>
 
-struct rt_delayed_work
-{
-    struct rt_work work;
+struct rt_delayed_work {
+  struct rt_work work;
 };
 
 void rt_delayed_work_init(struct rt_delayed_work *work,
                           void (*work_func)(struct rt_work *work,
-                          void *work_data), void *work_data);
+                                            void *work_data),
+                          void *work_data);
 
 #endif

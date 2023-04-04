@@ -355,5 +355,3 @@ R0.14b (April 17, 2021)
   Fixed f_mkfs() can create wrong exFAT volume due to a timing dependent error. (appeared at R0.12)
   Fixed code page 855 cannot be set by f_setcp().
   Fixed some compiler warnings.
-
-

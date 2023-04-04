@@ -11,8 +11,8 @@
 #define __LWP_ARCH_COMM__
 
 #include <mm_aspace.h>
-#include <rtthread.h>
 #include <mmu.h>
+#include <rtthread.h>
 
 /**
  * APIs that must port to all architectures
@@ -28,14 +28,19 @@ void arch_ret_to_user();
 #ifdef ARCH_MM_MMU
 
 struct rt_lwp;
-void arch_elf_reloc(rt_aspace_t aspace, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, void *dynsym);
+void arch_elf_reloc(rt_aspace_t aspace, void *text_start, void *rel_dyn_start,
+                    size_t rel_dyn_size, void *got_start, size_t got_size,
+                    void *dynsym);
 #else
-void arch_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, void *dynsym);
+void arch_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size,
+                    void *got_start, size_t got_size, void *dynsym);
 #endif
 
 /* User entry. enter user program code for the first time */
-void arch_crt_start_umode(void *args, const void *text, void *ustack, void *user_stack);
-void arch_start_umode(void *args, const void *text, void *ustack, void *k_stack);
+void arch_crt_start_umode(void *args, const void *text, void *ustack,
+                          void *user_stack);
+void arch_start_umode(void *args, const void *text, void *ustack,
+                      void *k_stack);
 
 /* lwp create and setup */
 int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
@@ -51,7 +56,7 @@ int arch_expand_user_stack(void *addr);
 
 /* thread id register */
 void arch_set_thread_area(void *p);
-void* arch_get_tidr(void);
+void *arch_get_tidr(void);
 void arch_set_tidr(void *p);
 
 #endif /* __LWP_ARCH_COMM__ */

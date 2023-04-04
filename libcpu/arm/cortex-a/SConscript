@@ -4,8 +4,8 @@ from building import *
 
 Import('rtconfig')
 
-cwd     = GetCurrentDir()
-src     = Split('''
+cwd = GetCurrentDir()
+src = Split('''
 cache.c
 cpuport.c
 gtimer.c
@@ -39,6 +39,6 @@ if rtconfig.PLATFORM in ['iccarm']:
 if rtconfig.PLATFORM in ['iccarm']:
     src += Glob('*_iar.S')
 
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('CPU', src, depend=[''], CPPPATH=CPPPATH)
 
 Return('group')

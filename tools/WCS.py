@@ -6,13 +6,14 @@ from optparse import OptionParser
 
 # Constants
 rtl_ext_end = ".dfinish"
-rtl_ext = None # e.g. '.c.270r.dfinish'. The number '270' will change with gcc version and is auto-detected by the
-               # function find_rtl_ext
-dir = r'.' # Working directory
+rtl_ext = None  # e.g. '.c.270r.dfinish'. The number '270' will change with gcc version and is auto-detected by the
+# function find_rtl_ext
+dir = r'.'  # Working directory
 su_ext = '.su'
 obj_ext = '.o'
 manual_ext = '.msu'
-read_elf_path = "arm-none-eabi-readelf.exe" # You may need to enter the full path here
+# You may need to enter the full path here
+read_elf_path = "arm-none-eabi-readelf.exe"
 stdout_encoding = "utf-8"  # System dependant
 
 
@@ -43,7 +44,8 @@ def read_symbols(file):
 
         return s2
 
-    output = check_output([read_elf_path, "-s", "-W", file]).decode(stdout_encoding)
+    output = check_output(
+        [read_elf_path, "-s", "-W", file]).decode(stdout_encoding)
     lines = output.splitlines()[3:]
     return [to_symbol(line) for line in lines]
 
@@ -62,23 +64,30 @@ def read_obj(tu, call_graph):
             if s.binding == 'GLOBAL':
                 # Check for multiple declarations
                 if s.name in call_graph['globals'] or s.name in call_graph['locals']:
-                    raise Exception('Multiple declarations of {}'.format(s.name))
-                call_graph['globals'][s.name] = {'tu': tu, 'name': s.name, 'binding': s.binding}
+                    raise Exception(
+                        'Multiple declarations of {}'.format(s.name))
+                call_graph['globals'][s.name] = {
+                    'tu': tu, 'name': s.name, 'binding': s.binding}
             elif s.binding == 'LOCAL':
                 # Check for multiple declarations
                 if s.name in call_graph['locals'] and tu in call_graph['locals'][s.name]:
-                    raise Exception('Multiple declarations of {}'.format(s.name))
+                    raise Exception(
+                        'Multiple declarations of {}'.format(s.name))
 
                 if s.name not in call_graph['locals']:
                     call_graph['locals'][s.name] = {}
 
-                call_graph['locals'][s.name][tu] = {'tu': tu, 'name': s.name, 'binding': s.binding}
+                call_graph['locals'][s.name][tu] = {
+                    'tu': tu, 'name': s.name, 'binding': s.binding}
             elif s.binding == 'WEAK':
                 if s.name in call_graph['weak']:
-                    raise Exception('Multiple declarations of {}'.format(s.name))
-                call_graph['weak'][s.name] = {'tu': tu, 'name': s.name, 'binding': s.binding}
+                    raise Exception(
+                        'Multiple declarations of {}'.format(s.name))
+                call_graph['weak'][s.name] = {
+                    'tu': tu, 'name': s.name, 'binding': s.binding}
             else:
-                raise Exception('Error Unknown Binding "{}" for symbol: {}'.format(s.binding, s.name))
+                raise Exception(
+                    'Error Unknown Binding "{}" for symbol: {}'.format(s.binding, s.name))
 
 
 def find_fxn(tu, fxn, call_graph):
@@ -127,7 +136,8 @@ def read_rtl(tu, call_graph):
     """
 
     # Construct A Call Graph
-    function = re.compile(r'^;; Function (.*) \((\S+), funcdef_no=\d+(, [a-z_]+=\d+)*\)( \([a-z ]+\))?$')
+    function = re.compile(
+        r'^;; Function (.*) \((\S+), funcdef_no=\d+(, [a-z_]+=\d+)*\)( \([a-z ]+\))?$')
     static_call = re.compile(r'^.*\(call.*"(.*)".*$')
     other_call = re.compile(r'^.*call .*$')
 
@@ -138,7 +148,8 @@ def read_rtl(tu, call_graph):
             fxn_dict2 = find_fxn(tu, fxn_name, call_graph)
             if not fxn_dict2:
                 pprint.pprint(call_graph)
-                raise Exception("Error locating function {} in {}".format(fxn_name, tu))
+                raise Exception(
+                    "Error locating function {} in {}".format(fxn_name, tu))
 
             fxn_dict2['demangledName'] = m.group(1)
             fxn_dict2['calls'] = set()
@@ -219,6 +230,7 @@ def validate_all_data(call_graph):
     for l_dict in call_graph['locals'].values():
         for fxn_dict2 in l_dict.values():
             validate_dict(fxn_dict2)
+
 
 def resolve_all_calls(call_graph):
     def resolve_calls(fxn_dict2):
@@ -311,7 +323,8 @@ def print_all_fxns(call_graph):
         else:
             unresolved_str = ''
 
-        print(row_format.format(fxn_dict2['tu'], fxn_dict2['demangledName'], stack, unresolved_str))
+        print(row_format.format(
+            fxn_dict2['tu'], fxn_dict2['demangledName'], stack, unresolved_str))
 
     def get_order(val):
         if val == 'unbounded':
@@ -334,11 +347,13 @@ def print_all_fxns(call_graph):
     # Calculate table width
     tu_width = max(max([len(d['tu']) for d in d_list]), 16)
     name_width = max(max([len(d['name']) for d in d_list]), 13)
-    row_format = "{:<" + str(tu_width + 2) + "}  {:<" + str(name_width + 2) + "}  {:>14}  {:<17}"
+    row_format = "{:<" + str(tu_width + 2) + "}  {:<" + \
+        str(name_width + 2) + "}  {:>14}  {:<17}"
 
     # Print out the table
     print("")
-    print(row_format.format('Translation Unit', 'Function Name', 'Stack', 'Unresolved Dependencies'))
+    print(row_format.format('Translation Unit',
+          'Function Name', 'Stack', 'Unresolved Dependencies'))
     for d in d_list:
         print_fxn(row_format, d)
 
@@ -365,7 +380,7 @@ def find_files():
     all_files = []
     for root, directories, filenames in os.walk(dir):
         for filename in filenames:
-            all_files.append(os.path.join(root,filename))
+            all_files.append(os.path.join(root, filename))
 
     files = [f for f in all_files if os.path.isfile(f) and f.endswith(rtl_ext)]
     for f in files:
@@ -373,9 +388,11 @@ def find_files():
         short_base = base[0:base.rindex(".")]
         if short_base + su_ext in all_files and short_base + obj_ext in all_files:
             tu.append(base)
-            print('Reading: {}{}, {}{}, {}{}'.format(base, rtl_ext, short_base, su_ext, short_base, obj_ext))
+            print('Reading: {}{}, {}{}, {}{}'.format(
+                base, rtl_ext, short_base, su_ext, short_base, obj_ext))
 
-    files = [f for f in all_files if os.path.isfile(f) and f.endswith(manual_ext)]
+    files = [f for f in all_files if os.path.isfile(
+        f) and f.endswith(manual_ext)]
     for f in files:
         manual.append(f)
         print('Reading: {}'.format(f))
@@ -425,8 +442,6 @@ def main():
 
     # Print A Nice Message With Each Function and the WCS
     print_all_fxns(call_graph)
-
-
 
 
 def ThreadStackStaticAnalysis(env):

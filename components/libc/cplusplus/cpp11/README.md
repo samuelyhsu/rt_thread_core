@@ -41,7 +41,7 @@ Note that using C++ 11 in rt-thread requires modifying some of the files in the 
    ```shell
    toolchain/arm-none-eabi/include/sys/_pthreadtypes.h
    ```
-   
+
 5. Update `rtconfig.py` file. add compilation parameters:
 
    ```shell

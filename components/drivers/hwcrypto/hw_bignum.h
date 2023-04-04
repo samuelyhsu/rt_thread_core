@@ -20,46 +20,40 @@ extern "C" {
 struct hwcrypto_bignum;
 
 /* bignum obj */
-struct hw_bignum_mpi
-{
-    int sign;                   /**< integer sign. -1 or 1 */
-    rt_size_t total;            /**< total of limbs */
-    rt_uint8_t *p;              /**< pointer to limbs */
+struct hw_bignum_mpi {
+  int sign;        /**< integer sign. -1 or 1 */
+  rt_size_t total; /**< total of limbs */
+  rt_uint8_t *p;   /**< pointer to limbs */
 };
 
-struct hwcrypto_bignum_ops
-{
-    rt_err_t (*add)(struct hwcrypto_bignum *bignum_ctx,
-                    struct hw_bignum_mpi *x,
-                    const struct hw_bignum_mpi *a,
-                    const struct hw_bignum_mpi *b);             /**< x = a + b */
-    rt_err_t (*sub)(struct hwcrypto_bignum *bignum_ctx,
-                    struct hw_bignum_mpi *x,
-                    const struct hw_bignum_mpi *a,
-                    const struct hw_bignum_mpi *b);             /**< x = a - b */
-    rt_err_t (*mul)(struct hwcrypto_bignum *bignum_ctx,
-                    struct hw_bignum_mpi *x,
-                    const struct hw_bignum_mpi *a,
-                    const struct hw_bignum_mpi *b);             /**< x = a * b */
-    rt_err_t (*mulmod)(struct hwcrypto_bignum *bignum_ctx,
-                       struct hw_bignum_mpi *x,
-                       const struct hw_bignum_mpi *a,
-                       const struct hw_bignum_mpi *b,
-                       const struct hw_bignum_mpi *c);          /**< x = a * b (mod c) */
-    rt_err_t (*exptmod)(struct hwcrypto_bignum *bignum_ctx,
-                        struct hw_bignum_mpi *x,
-                        const struct hw_bignum_mpi *a,
-                        const struct hw_bignum_mpi *b,
-                        const struct hw_bignum_mpi *c);         /**< x = a ^ b (mod c) */
+struct hwcrypto_bignum_ops {
+  rt_err_t (*add)(struct hwcrypto_bignum *bignum_ctx, struct hw_bignum_mpi *x,
+                  const struct hw_bignum_mpi *a,
+                  const struct hw_bignum_mpi *b); /**< x = a + b */
+  rt_err_t (*sub)(struct hwcrypto_bignum *bignum_ctx, struct hw_bignum_mpi *x,
+                  const struct hw_bignum_mpi *a,
+                  const struct hw_bignum_mpi *b); /**< x = a - b */
+  rt_err_t (*mul)(struct hwcrypto_bignum *bignum_ctx, struct hw_bignum_mpi *x,
+                  const struct hw_bignum_mpi *a,
+                  const struct hw_bignum_mpi *b); /**< x = a * b */
+  rt_err_t (*mulmod)(struct hwcrypto_bignum *bignum_ctx,
+                     struct hw_bignum_mpi *x, const struct hw_bignum_mpi *a,
+                     const struct hw_bignum_mpi *b,
+                     const struct hw_bignum_mpi *c); /**< x = a * b (mod c) */
+  rt_err_t (*exptmod)(struct hwcrypto_bignum *bignum_ctx,
+                      struct hw_bignum_mpi *x, const struct hw_bignum_mpi *a,
+                      const struct hw_bignum_mpi *b,
+                      const struct hw_bignum_mpi *c); /**< x = a ^ b (mod c) */
 };
 
 /**
  * @brief           bignum context. Hardware driver usage
  */
-struct hwcrypto_bignum
-{
-    struct rt_hwcrypto_ctx parent;              /**< Inheritance from hardware crypto context */
-    const struct hwcrypto_bignum_ops *ops;      /**< !! Hardware initializes this value when creating context !! */
+struct hwcrypto_bignum {
+  struct rt_hwcrypto_ctx
+      parent; /**< Inheritance from hardware crypto context */
+  const struct hwcrypto_bignum_ops
+      *ops; /**< !! Hardware initializes this value when creating context !! */
 };
 
 /**
@@ -99,7 +93,8 @@ int rt_hwcrypto_bignum_get_len(const struct hw_bignum_mpi *n);
  *
  * @return          export bin length
  */
-int rt_hwcrypto_bignum_export_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int len);
+int rt_hwcrypto_bignum_export_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf,
+                                  int len);
 
 /**
  * @brief           Import n from unsigned binary data, big endian
@@ -110,7 +105,8 @@ int rt_hwcrypto_bignum_export_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int 
  *
  * @return          import length.
  */
-int rt_hwcrypto_bignum_import_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf, int len);
+int rt_hwcrypto_bignum_import_bin(struct hw_bignum_mpi *n, rt_uint8_t *buf,
+                                  int len);
 
 /**
  * @brief           x = a + b

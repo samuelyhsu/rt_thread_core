@@ -2,8 +2,8 @@
 
 from building import *
 
-cwd     = GetCurrentDir()
-src     = []
+cwd = GetCurrentDir()
+src = []
 CPPPATH = [cwd]
 
 if GetDepend('RT_USING_POSIX_POLL'):
@@ -12,6 +12,6 @@ if GetDepend('RT_USING_POSIX_POLL'):
 if GetDepend('RT_USING_POSIX_SELECT'):
     src += ['select.c']
 
-group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('POSIX', src, depend=[''], CPPPATH=CPPPATH)
 
 Return('group')

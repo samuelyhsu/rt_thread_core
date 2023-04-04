@@ -36,6 +36,7 @@ DEFAULT_RTT_PACKAGE_URL = 'https://github.com/RT-Thread/packages.git'
 
 # make rtconfig.h from .config
 
+
 def is_pkg_special_config(config_str):
     ''' judge if it's CONFIG_PKG_XX_PATH or CONFIG_PKG_XX_VER'''
 
@@ -43,6 +44,7 @@ def is_pkg_special_config(config_str):
         if config_str.startswith("PKG_") and (config_str.endswith('_PATH') or config_str.endswith('_VER')):
             return True
     return False
+
 
 def mk_rtconfig(filename):
     try:
@@ -93,7 +95,8 @@ def mk_rtconfig(filename):
                 if setting[1] == 'y':
                     rtconfig.write('#define %s\n' % setting[0])
                 else:
-                    rtconfig.write('#define %s %s\n' % (setting[0], re.findall(r"^.*?=(.*)$",line)[0]))
+                    rtconfig.write('#define %s %s\n' % (
+                        setting[0], re.findall(r"^.*?=(.*)$", line)[0]))
 
     if os.path.isfile('rtconfig_project.h'):
         rtconfig.write('#include "rtconfig_project.h"\n')
@@ -110,8 +113,10 @@ def get_file_md5(file):
         fp_md5 = MD5.hexdigest()
         return fp_md5
 
+
 def config():
     mk_rtconfig('.config')
+
 
 def get_env_dir():
     if os.environ.get('ENV_ROOT'):
@@ -119,15 +124,16 @@ def get_env_dir():
 
     if sys.platform == 'win32':
         home_dir = os.environ['USERPROFILE']
-        env_dir  = os.path.join(home_dir, '.env')
+        env_dir = os.path.join(home_dir, '.env')
     else:
         home_dir = os.environ['HOME']
-        env_dir  = os.path.join(home_dir, '.env')
+        env_dir = os.path.join(home_dir, '.env')
 
     if not os.path.exists(env_dir):
         return None
 
     return env_dir
+
 
 def help_info():
     print("**********************************************************************************\n"
@@ -145,6 +151,7 @@ def help_info():
           "* Download path:  http://git-scm.com/download/mac\n"
           "**********************************************************************************\n")
 
+
 def touch_env():
     if sys.platform != 'win32':
         home_dir = os.environ['HOME']
@@ -153,7 +160,7 @@ def touch_env():
 
     package_url = os.getenv('RTT_PACKAGE_URL') or DEFAULT_RTT_PACKAGE_URL
 
-    env_dir  = os.path.join(home_dir, '.env')
+    env_dir = os.path.join(home_dir, '.env')
     if not os.path.exists(env_dir):
         os.mkdir(env_dir)
         os.mkdir(os.path.join(env_dir, 'local_pkgs'))
@@ -164,7 +171,8 @@ def touch_env():
 
     if not os.path.exists(os.path.join(env_dir, 'packages', 'packages')):
         try:
-            ret = os.system('git clone %s %s' % (package_url, os.path.join(env_dir, 'packages', 'packages')))
+            ret = os.system('git clone %s %s' % (
+                package_url, os.path.join(env_dir, 'packages', 'packages')))
             if ret != 0:
                 shutil.rmtree(os.path.join(env_dir, 'packages', 'packages'))
                 print("********************************************************************************\n"
@@ -178,7 +186,8 @@ def touch_env():
                       "********************************************************************************\n")
                 help_info()
             else:
-                kconfig = open(os.path.join(env_dir, 'packages', 'Kconfig'), 'w')
+                kconfig = open(os.path.join(
+                    env_dir, 'packages', 'Kconfig'), 'w')
                 kconfig.write('source "$PKGS_DIR/packages/Kconfig"')
                 kconfig.close()
         except:
@@ -193,7 +202,8 @@ def touch_env():
 
     if not os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
         try:
-            ret = os.system('git clone https://github.com/RT-Thread/env.git %s' % os.path.join(env_dir, 'tools', 'scripts'))
+            ret = os.system('git clone https://github.com/RT-Thread/env.git %s' %
+                            os.path.join(env_dir, 'tools', 'scripts'))
             if ret != 0:
                 shutil.rmtree(os.path.join(env_dir, 'tools', 'scripts'))
                 print("********************************************************************************\n"
@@ -221,9 +231,12 @@ def touch_env():
         env_sh.write('export PATH=~/.env/tools/scripts:$PATH')
     else:
         if os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
-            os.environ["PATH"] = os.path.join(env_dir, 'tools', 'scripts') + ';' + os.environ["PATH"]
+            os.environ["PATH"] = os.path.join(
+                env_dir, 'tools', 'scripts') + ';' + os.environ["PATH"]
 
 # Exclude utestcases
+
+
 def exclude_utestcases(RTT_ROOT):
     if os.path.isfile(os.path.join(RTT_ROOT, 'examples/utest/testcases/Kconfig')):
         return
@@ -239,6 +252,8 @@ def exclude_utestcases(RTT_ROOT):
                 f.write(line)
 
 # menuconfig for Linux
+
+
 def menuconfig(RTT_ROOT):
 
     # Exclude utestcases
@@ -255,7 +270,8 @@ def menuconfig(RTT_ROOT):
     fn = '.config'
     fn_old = '.config.old'
 
-    kconfig_cmd = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends', 'kconfig-mconf')
+    kconfig_cmd = os.path.join(
+        RTT_ROOT, 'tools', 'kconfig-frontends', 'kconfig-mconf')
     os.system(kconfig_cmd + ' Kconfig')
 
     if os.path.isfile(fn):
@@ -272,6 +288,8 @@ def menuconfig(RTT_ROOT):
         mk_rtconfig(fn)
 
 # guiconfig for windows and linux
+
+
 def guiconfig(RTT_ROOT):
     import pyguiconfig
 

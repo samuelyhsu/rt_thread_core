@@ -7,4 +7,3 @@ This folder contains:
 | poll        | Nonblocking I/O           |
 | stdio       | Standard Input/Output I/O |
 | termios     | Terminal I/O              |
-

@@ -3,26 +3,42 @@
 
 /* Common header file for lwIP unit tests using the check framework */
 
-#include <config.h>
 #include <check.h>
+#include <config.h>
 #include <stdlib.h>
 
-#define FAIL_RET() do { fail(); return; } while(0)
+#define FAIL_RET()                                                             \
+  do {                                                                         \
+    fail();                                                                    \
+    return;                                                                    \
+  } while (0)
 #define EXPECT(x) fail_unless(x)
-#define EXPECT_RET(x) do { fail_unless(x); if(!(x)) { return; }} while(0)
-#define EXPECT_RETX(x, y) do { fail_unless(x); if(!(x)) { return y; }} while(0)
+#define EXPECT_RET(x)                                                          \
+  do {                                                                         \
+    fail_unless(x);                                                            \
+    if (!(x)) {                                                                \
+      return;                                                                  \
+    }                                                                          \
+  } while (0)
+#define EXPECT_RETX(x, y)                                                      \
+  do {                                                                         \
+    fail_unless(x);                                                            \
+    if (!(x)) {                                                                \
+      return y;                                                                \
+    }                                                                          \
+  } while (0)
 #define EXPECT_RETNULL(x) EXPECT_RETX(x, NULL)
 
 /** typedef for a function returning a test suite */
-typedef Suite* (suite_getter_fn)(void);
+typedef Suite *(suite_getter_fn)(void);
 
 /** Create a test suite */
-static Suite* create_suite(const char* name, TFun *tests, size_t num_tests, SFun setup, SFun teardown)
-{
+static Suite *create_suite(const char *name, TFun *tests, size_t num_tests,
+                           SFun setup, SFun teardown) {
   size_t i;
   Suite *s = suite_create(name);
 
-  for(i = 0; i < num_tests; i++) {
+  for (i = 0; i < num_tests; i++) {
     /* Core test case */
     TCase *tc_core = tcase_create("Core");
     if ((setup != NULL) || (teardown != NULL)) {

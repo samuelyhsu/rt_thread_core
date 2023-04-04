@@ -29,10 +29,9 @@
  * where both start and end are inclusive.
  */
 
-struct _mm_range
-{
-    void *start;
-    void *end;
+struct _mm_range {
+  void *start;
+  void *end;
 };
 
 /**

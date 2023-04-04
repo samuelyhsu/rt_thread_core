@@ -60,8 +60,8 @@ src = src + ipv4_src
 
 # The set of source files associated with this SConscript file.
 path = [GetCurrentDir() + '/src/include',
-    GetCurrentDir() + '/src/include/ipv4',
-    GetCurrentDir() + '/src/include/netif']
+        GetCurrentDir() + '/src/include/ipv4',
+        GetCurrentDir() + '/src/include/netif']
 
 if not GetDepend('RT_USING_SAL'):
     path += [GetCurrentDir() + '/src/include/posix']
@@ -80,6 +80,7 @@ if GetDepend(['RT_USING_LWIP_IPV6']):
 if GetDepend(['RT_LWIP_USING_PING']):
     src += Glob('src/apps/ping/ping.c')
 
-group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP203'], CPPPATH = path)
+group = DefineGroup('lwIP', src, depend=[
+                    'RT_USING_LWIP', 'RT_USING_LWIP203'], CPPPATH=path)
 
 Return('group')

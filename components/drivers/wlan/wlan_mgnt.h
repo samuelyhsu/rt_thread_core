@@ -18,27 +18,27 @@ extern "C" {
 #endif
 
 #ifndef RT_WLAN_SCAN_WAIT_MS
-#define RT_WLAN_SCAN_WAIT_MS       (10 * 1000)
+#define RT_WLAN_SCAN_WAIT_MS (10 * 1000)
 #endif
 
 #ifndef RT_WLAN_SCAN_CACHE_NUM
-#define RT_WLAN_SCAN_CACHE_NUM     (50)
+#define RT_WLAN_SCAN_CACHE_NUM (50)
 #endif
 
 #ifndef RT_WLAN_CONNECT_WAIT_MS
-#define RT_WLAN_CONNECT_WAIT_MS    (10 * 1000)
+#define RT_WLAN_CONNECT_WAIT_MS (10 * 1000)
 #endif
 
 #ifndef RT_WLAN_START_AP_WAIT_MS
-#define RT_WLAN_START_AP_WAIT_MS    (10 * 1000)
+#define RT_WLAN_START_AP_WAIT_MS (10 * 1000)
 #endif
 
 #ifndef RT_WLAN_EBOX_NUM
-#define RT_WLAN_EBOX_NUM           (10)
+#define RT_WLAN_EBOX_NUM (10)
 #endif
 
 #ifndef RT_WLAN_SCAN_RETRY_CNT
-#define RT_WLAN_SCAN_RETRY_CNT      (3)
+#define RT_WLAN_SCAN_RETRY_CNT (3)
 #endif
 
 #ifndef AUTO_CONNECTION_PERIOD_MS
@@ -46,38 +46,37 @@ extern "C" {
 #endif
 
 /*state fot station*/
-#define RT_WLAN_STATE_CONNECT     (1UL << 0)
-#define RT_WLAN_STATE_CONNECTING  (1UL << 1)
-#define RT_WLAN_STATE_READY       (1UL << 2)
-#define RT_WLAN_STATE_POWERSAVE   (1UL << 3)
+#define RT_WLAN_STATE_CONNECT (1UL << 0)
+#define RT_WLAN_STATE_CONNECTING (1UL << 1)
+#define RT_WLAN_STATE_READY (1UL << 2)
+#define RT_WLAN_STATE_POWERSAVE (1UL << 3)
 
 /*flags fot station*/
-#define RT_WLAN_STATE_AUTOEN      (1UL << 0)
+#define RT_WLAN_STATE_AUTOEN (1UL << 0)
 
 /*state fot ap*/
-#define RT_WLAN_STATE_ACTIVE      (1UL << 0)
+#define RT_WLAN_STATE_ACTIVE (1UL << 0)
 
-typedef enum
-{
-    RT_WLAN_EVT_READY = 0,              /* connect and prot is ok, You can send data*/
-    RT_WLAN_EVT_SCAN_DONE,              /* Scan a info */
-    RT_WLAN_EVT_SCAN_REPORT,            /* Scan end */
-    RT_WLAN_EVT_STA_CONNECTED,          /* connect success */
-    RT_WLAN_EVT_STA_CONNECTED_FAIL,     /* connection failed */
-    RT_WLAN_EVT_STA_DISCONNECTED,       /* disconnect */
-    RT_WLAN_EVT_AP_START,               /* AP start */
-    RT_WLAN_EVT_AP_STOP,                /* AP stop */
-    RT_WLAN_EVT_AP_ASSOCIATED,          /* sta associated */
-    RT_WLAN_EVT_AP_DISASSOCIATED,       /* sta disassociated */
-    RT_WLAN_EVT_MAX
+typedef enum {
+  RT_WLAN_EVT_READY = 0,          /* connect and prot is ok, You can send data*/
+  RT_WLAN_EVT_SCAN_DONE,          /* Scan a info */
+  RT_WLAN_EVT_SCAN_REPORT,        /* Scan end */
+  RT_WLAN_EVT_STA_CONNECTED,      /* connect success */
+  RT_WLAN_EVT_STA_CONNECTED_FAIL, /* connection failed */
+  RT_WLAN_EVT_STA_DISCONNECTED,   /* disconnect */
+  RT_WLAN_EVT_AP_START,           /* AP start */
+  RT_WLAN_EVT_AP_STOP,            /* AP stop */
+  RT_WLAN_EVT_AP_ASSOCIATED,      /* sta associated */
+  RT_WLAN_EVT_AP_DISASSOCIATED,   /* sta disassociated */
+  RT_WLAN_EVT_MAX
 } rt_wlan_event_t;
 
-typedef void (*rt_wlan_event_handler)(int event, struct rt_wlan_buff *buff, void *parameter);
+typedef void (*rt_wlan_event_handler)(int event, struct rt_wlan_buff *buff,
+                                      void *parameter);
 
-struct rt_wlan_scan_result
-{
-    rt_int32_t num;
-    struct rt_wlan_info *info;
+struct rt_wlan_scan_result {
+  rt_int32_t num;
+  struct rt_wlan_info *info;
 };
 
 /*
@@ -121,7 +120,6 @@ rt_err_t rt_wlan_scan(void);
 struct rt_wlan_scan_result *rt_wlan_scan_sync(void);
 rt_err_t rt_wlan_scan_with_info(struct rt_wlan_info *info);
 
-
 /*
  * wifi auto connect interface
  */
@@ -137,7 +135,9 @@ int rt_wlan_get_powersave(void);
 /*
  * wifi event management interface
  */
-rt_err_t rt_wlan_register_event_handler(rt_wlan_event_t event, rt_wlan_event_handler handler, void *parameter);
+rt_err_t rt_wlan_register_event_handler(rt_wlan_event_t event,
+                                        rt_wlan_event_handler handler,
+                                        void *parameter);
 rt_err_t rt_wlan_unregister_event_handler(rt_wlan_event_t event);
 
 /*

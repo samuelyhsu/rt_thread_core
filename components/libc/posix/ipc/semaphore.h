@@ -14,18 +14,17 @@
 #include <rtdef.h>
 #include <sys/time.h>
 
-struct posix_sem
-{
-    /* reference count and unlinked */
-    rt_uint16_t refcount;
-    rt_uint8_t unlinked;
-    rt_uint8_t unamed;
+struct posix_sem {
+  /* reference count and unlinked */
+  rt_uint16_t refcount;
+  rt_uint8_t unlinked;
+  rt_uint8_t unamed;
 
-    /* RT-Thread semaphore */
-    rt_sem_t sem;
+  /* RT-Thread semaphore */
+  rt_sem_t sem;
 
-    /* next posix semaphore */
-    struct posix_sem* next;
+  /* next posix semaphore */
+  struct posix_sem *next;
 };
 typedef struct posix_sem sem_t;
 

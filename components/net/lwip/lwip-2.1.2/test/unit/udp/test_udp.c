@@ -1,8 +1,8 @@
 #include "test_udp.h"
 
-#include "lwip/udp.h"
-#include "lwip/stats.h"
 #include "lwip/inet_chksum.h"
+#include "lwip/stats.h"
+#include "lwip/udp.h"
 
 #if !LWIP_STATS || !UDP_STATS || !MEMP_STATS
 #error "This tests needs UDP- and MEMP-statistics enabled"
@@ -20,13 +20,11 @@ static ip4_addr_t test_gw2, test_ipaddr2, test_netmask2;
 static int output_ctr, linkoutput_ctr;
 
 /* Helper functions */
-static void
-udp_remove_all(void)
-{
+static void udp_remove_all(void) {
   struct udp_pcb *pcb = udp_pcbs;
   struct udp_pcb *pcb2;
 
-  while(pcb != NULL) {
+  while (pcb != NULL) {
     pcb2 = pcb;
     pcb = pcb->next;
     udp_remove(pcb2);
@@ -34,9 +32,8 @@ udp_remove_all(void)
   fail_unless(MEMP_STATS_GET(used, MEMP_UDP_PCB) == 0);
 }
 
-static err_t
-default_netif_output(struct netif *netif, struct pbuf *p, const ip4_addr_t *ipaddr)
-{
+static err_t default_netif_output(struct netif *netif, struct pbuf *p,
+                                  const ip4_addr_t *ipaddr) {
   fail_unless((netif == &test_netif1) || (netif == &test_netif2));
   fail_unless(p != NULL);
   fail_unless(ipaddr != NULL);
@@ -44,18 +41,14 @@ default_netif_output(struct netif *netif, struct pbuf *p, const ip4_addr_t *ipad
   return ERR_OK;
 }
 
-static err_t
-default_netif_linkoutput(struct netif *netif, struct pbuf *p)
-{
+static err_t default_netif_linkoutput(struct netif *netif, struct pbuf *p) {
   fail_unless((netif == &test_netif1) || (netif == &test_netif2));
   fail_unless(p != NULL);
   linkoutput_ctr++;
   return ERR_OK;
 }
 
-static err_t
-default_netif_init(struct netif *netif)
-{
+static err_t default_netif_init(struct netif *netif) {
   fail_unless(netif != NULL);
   netif->output = default_netif_output;
   netif->linkoutput = default_netif_linkoutput;
@@ -65,9 +58,7 @@ default_netif_init(struct netif *netif)
   return ERR_OK;
 }
 
-static void
-default_netif_add(void)
-{
+static void default_netif_add(void) {
   struct netif *n;
 
 #if LWIP_HAVE_LOOPIF
@@ -78,18 +69,18 @@ default_netif_add(void)
 #endif
   fail_unless(netif_default == NULL);
 
-  IP4_ADDR(&test_ipaddr1, 192,168,0,1);
-  IP4_ADDR(&test_netmask1, 255,255,255,0);
-  IP4_ADDR(&test_gw1, 192,168,0,254);
-  n = netif_add(&test_netif1, &test_ipaddr1, &test_netmask1,
-                &test_gw1, NULL, default_netif_init, NULL);
+  IP4_ADDR(&test_ipaddr1, 192, 168, 0, 1);
+  IP4_ADDR(&test_netmask1, 255, 255, 255, 0);
+  IP4_ADDR(&test_gw1, 192, 168, 0, 254);
+  n = netif_add(&test_netif1, &test_ipaddr1, &test_netmask1, &test_gw1, NULL,
+                default_netif_init, NULL);
   fail_unless(n == &test_netif1);
 
-  IP4_ADDR(&test_ipaddr2, 192,168,1,1);
-  IP4_ADDR(&test_netmask2, 255,255,255,0);
-  IP4_ADDR(&test_gw2, 192,168,1,254);
-  n = netif_add(&test_netif2, &test_ipaddr2, &test_netmask2,
-                &test_gw2, NULL, default_netif_init, NULL);
+  IP4_ADDR(&test_ipaddr2, 192, 168, 1, 1);
+  IP4_ADDR(&test_netmask2, 255, 255, 255, 0);
+  IP4_ADDR(&test_gw2, 192, 168, 1, 254);
+  n = netif_add(&test_netif2, &test_ipaddr2, &test_netmask2, &test_gw2, NULL,
+                default_netif_init, NULL);
   fail_unless(n == &test_netif2);
 
   netif_set_default(&test_netif1);
@@ -97,9 +88,7 @@ default_netif_add(void)
   netif_set_up(&test_netif2);
 }
 
-static void
-default_netif_remove(void)
-{
+static void default_netif_remove(void) {
   fail_unless(netif_default == &test_netif1);
   netif_remove(&test_netif1);
   netif_remove(&test_netif2);
@@ -113,28 +102,22 @@ default_netif_remove(void)
 }
 /* Setups/teardown functions */
 
-static void
-udp_setup(void)
-{
+static void udp_setup(void) {
   udp_remove_all();
   default_netif_add();
   lwip_check_ensure_no_alloc(SKIP_POOL(MEMP_SYS_TIMEOUT));
 }
 
-static void
-udp_teardown(void)
-{
+static void udp_teardown(void) {
   udp_remove_all();
   default_netif_remove();
   lwip_check_ensure_no_alloc(SKIP_POOL(MEMP_SYS_TIMEOUT));
 }
 
-
 /* Test functions */
 
-START_TEST(test_udp_new_remove)
-{
-  struct udp_pcb* pcb;
+START_TEST(test_udp_new_remove) {
+  struct udp_pcb *pcb;
   LWIP_UNUSED_ARG(_i);
 
   fail_unless(MEMP_STATS_GET(used, MEMP_UDP_PCB) == 0);
@@ -150,8 +133,7 @@ START_TEST(test_udp_new_remove)
 END_TEST
 
 static void test_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
-    const ip_addr_t *addr, u16_t port)
-{
+                      const ip_addr_t *addr, u16_t port) {
   struct test_udp_rxdata *ctr = (struct test_udp_rxdata *)arg;
 
   LWIP_UNUSED_ARG(addr);
@@ -168,15 +150,15 @@ static void test_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
   }
 }
 
-static struct pbuf *
-test_udp_create_test_packet(u16_t length, u16_t port, u32_t dst_addr)
-{
+static struct pbuf *test_udp_create_test_packet(u16_t length, u16_t port,
+                                                u32_t dst_addr) {
   err_t err;
   u8_t ret;
   struct udp_hdr *uh;
   struct ip_hdr *ih;
   struct pbuf *p;
-  const u8_t test_data[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf};
+  const u8_t test_data[16] = {0, 1, 2,   3,   4,   5,   6,   7,
+                              8, 9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf};
 
   p = pbuf_alloc(PBUF_TRANSPORT, length, PBUF_POOL);
   fail_unless(p != NULL);
@@ -209,8 +191,7 @@ test_udp_create_test_packet(u16_t length, u16_t port, u32_t dst_addr)
 }
 
 /* bind 2 pcbs to specific netif IP and test which one gets broadcasts */
-START_TEST(test_udp_broadcast_rx_with_2_netifs)
-{
+START_TEST(test_udp_broadcast_rx_with_2_netifs) {
   err_t err;
   struct udp_pcb *pcb1, *pcb2;
   const u16_t port = 12345;
@@ -282,7 +263,8 @@ START_TEST(test_udp_broadcast_rx_with_2_netifs)
   ctr2.rx_cnt = ctr2.rx_bytes = 0;
 
   /* broadcast to netif1-broadcast, input to netif2 */
-  p = test_udp_create_test_packet(16, port, test_ipaddr1.addr | ~test_netmask1.addr);
+  p = test_udp_create_test_packet(16, port,
+                                  test_ipaddr1.addr | ~test_netmask1.addr);
   EXPECT_RET(p != NULL);
   err = ip4_input(p, &test_netif2);
   fail_unless(err == ERR_OK);
@@ -295,7 +277,8 @@ START_TEST(test_udp_broadcast_rx_with_2_netifs)
   ctr1.rx_cnt = ctr1.rx_bytes = 0;
 
   /* broadcast to netif2-broadcast, input to netif1 */
-  p = test_udp_create_test_packet(16, port, test_ipaddr2.addr | ~test_netmask2.addr);
+  p = test_udp_create_test_packet(16, port,
+                                  test_ipaddr2.addr | ~test_netmask2.addr);
   EXPECT_RET(p != NULL);
   err = ip4_input(p, &test_netif1);
   fail_unless(err == ERR_OK);
@@ -336,12 +319,9 @@ START_TEST(test_udp_broadcast_rx_with_2_netifs)
 END_TEST
 
 /** Create the suite including all tests for this module */
-Suite *
-udp_suite(void)
-{
-  testfunc tests[] = {
-    TESTFUNC(test_udp_new_remove),
-    TESTFUNC(test_udp_broadcast_rx_with_2_netifs)
-  };
-  return create_suite("UDP", tests, sizeof(tests)/sizeof(testfunc), udp_setup, udp_teardown);
+Suite *udp_suite(void) {
+  testfunc tests[] = {TESTFUNC(test_udp_new_remove),
+                      TESTFUNC(test_udp_broadcast_rx_with_2_netifs)};
+  return create_suite("UDP", tests, sizeof(tests) / sizeof(testfunc), udp_setup,
+                      udp_teardown);
 }

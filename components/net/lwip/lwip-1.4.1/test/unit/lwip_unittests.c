@@ -1,34 +1,27 @@
 #include "lwip_check.h"
 
-#include "udp/test_udp.h"
-#include "tcp/test_tcp.h"
-#include "tcp/test_tcp_oos.h"
 #include "core/test_mem.h"
 #include "etharp/test_etharp.h"
+#include "tcp/test_tcp.h"
+#include "tcp/test_tcp_oos.h"
+#include "udp/test_udp.h"
 
 #include "lwip/init.h"
 
-
-int main()
-{
+int main() {
   int number_failed;
   SRunner *sr;
   size_t i;
-  suite_getter_fn* suites[] = {
-    udp_suite,
-    tcp_suite,
-    tcp_oos_suite,
-    mem_suite,
-    etharp_suite
-  };
-  size_t num = sizeof(suites)/sizeof(void*);
+  suite_getter_fn *suites[] = {udp_suite, tcp_suite, tcp_oos_suite, mem_suite,
+                               etharp_suite};
+  size_t num = sizeof(suites) / sizeof(void *);
   LWIP_ASSERT("No suites defined", num > 0);
 
   lwip_init();
 
   sr = srunner_create((suites[0])());
-  for(i = 1; i < num; i++) {
-    srunner_add_suite(sr, ((suite_getter_fn*)suites[i])());
+  for (i = 1; i < num; i++) {
+    srunner_add_suite(sr, ((suite_getter_fn *)suites[i])());
   }
 
 #ifdef LWIP_UNITTESTS_NOFORK

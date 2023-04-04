@@ -11,7 +11,7 @@ import rtconfig
 from utils import _make_path_relative
 
 
-def GenerateCFiles(env,project):
+def GenerateCFiles(env, project):
     """
     Generate CMakeLists.txt files
     """
@@ -26,11 +26,15 @@ def GenerateCFiles(env,project):
     AR = os.path.join(rtconfig.EXEC_PATH, rtconfig.AR).replace('\\', "/")
     LINK = os.path.join(rtconfig.EXEC_PATH, rtconfig.LINK).replace('\\', "/")
     if rtconfig.PLATFORM in ['gcc']:
-        SIZE = os.path.join(rtconfig.EXEC_PATH, rtconfig.SIZE).replace('\\', "/")
-        OBJDUMP = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJDUMP).replace('\\', "/")
-        OBJCOPY = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJCPY).replace('\\', "/")
+        SIZE = os.path.join(rtconfig.EXEC_PATH,
+                            rtconfig.SIZE).replace('\\', "/")
+        OBJDUMP = os.path.join(
+            rtconfig.EXEC_PATH, rtconfig.OBJDUMP).replace('\\', "/")
+        OBJCOPY = os.path.join(
+            rtconfig.EXEC_PATH, rtconfig.OBJCPY).replace('\\', "/")
     elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-        FROMELF = os.path.join(rtconfig.EXEC_PATH, 'fromelf').replace('\\', "/")
+        FROMELF = os.path.join(
+            rtconfig.EXEC_PATH, 'fromelf').replace('\\', "/")
 
     CFLAGS = rtconfig.CFLAGS.replace('\\', "/").replace('\"', "\\\"")
     if 'CXXFLAGS' in dir(rtconfig):
@@ -63,26 +67,26 @@ def GenerateCFiles(env,project):
         cm_file.write("CMAKE_MINIMUM_REQUIRED(VERSION 3.10)\n\n")
 
         cm_file.write("SET(CMAKE_SYSTEM_NAME Generic)\n")
-        cm_file.write("SET(CMAKE_SYSTEM_PROCESSOR " + rtconfig.CPU +")\n")
+        cm_file.write("SET(CMAKE_SYSTEM_PROCESSOR " + rtconfig.CPU + ")\n")
         cm_file.write("#SET(CMAKE_VERBOSE_MAKEFILE ON)\n\n")
         cm_file.write("SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n\n")
 
-        cm_file.write("SET(CMAKE_C_COMPILER \""+ CC + "\")\n")
-        cm_file.write("SET(CMAKE_ASM_COMPILER \""+ AS + "\")\n")
-        cm_file.write("SET(CMAKE_C_FLAGS \""+ CFLAGS + "\")\n")
-        cm_file.write("SET(CMAKE_ASM_FLAGS \""+ AFLAGS + "\")\n")
+        cm_file.write("SET(CMAKE_C_COMPILER \"" + CC + "\")\n")
+        cm_file.write("SET(CMAKE_ASM_COMPILER \"" + AS + "\")\n")
+        cm_file.write("SET(CMAKE_C_FLAGS \"" + CFLAGS + "\")\n")
+        cm_file.write("SET(CMAKE_ASM_FLAGS \"" + AFLAGS + "\")\n")
         cm_file.write("SET(CMAKE_C_COMPILER_WORKS TRUE)\n\n")
 
         if CXX != '':
-            cm_file.write("SET(CMAKE_CXX_COMPILER \""+ CXX + "\")\n")
-            cm_file.write("SET(CMAKE_CXX_FLAGS \""+ CXXFLAGS + "\")\n")
+            cm_file.write("SET(CMAKE_CXX_COMPILER \"" + CXX + "\")\n")
+            cm_file.write("SET(CMAKE_CXX_FLAGS \"" + CXXFLAGS + "\")\n")
             cm_file.write("SET(CMAKE_CXX_COMPILER_WORKS TRUE)\n\n")
 
         if rtconfig.PLATFORM in ['gcc']:
-            cm_file.write("SET(CMAKE_OBJCOPY \""+ OBJCOPY + "\")\n")
-            cm_file.write("SET(CMAKE_SIZE \""+ SIZE + "\")\n\n")
+            cm_file.write("SET(CMAKE_OBJCOPY \"" + OBJCOPY + "\")\n")
+            cm_file.write("SET(CMAKE_SIZE \"" + SIZE + "\")\n\n")
         elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-            cm_file.write("SET(CMAKE_FROMELF \""+ FROMELF + "\")\n\n")
+            cm_file.write("SET(CMAKE_FROMELF \"" + FROMELF + "\")\n\n")
 
         LINKER_FLAGS = ''
         LINKER_LIBS = ''
@@ -98,7 +102,8 @@ def GenerateCFiles(env,project):
                 if 'LIBS' in group.keys():
                     for f in group['LIBS']:
                         LINKER_LIBS += ' ' + f.replace("\\", "/") + '.lib'
-        cm_file.write("SET(CMAKE_EXE_LINKER_FLAGS \""+ re.sub(LINKER_FLAGS + '(\s*)', LINKER_FLAGS + ' ${CMAKE_SOURCE_DIR}/', LFLAGS) + LINKER_LIBS + "\")\n\n")
+        cm_file.write("SET(CMAKE_EXE_LINKER_FLAGS \"" + re.sub(LINKER_FLAGS + '(\s*)',
+                      LINKER_FLAGS + ' ${CMAKE_SOURCE_DIR}/', LFLAGS) + LINKER_LIBS + "\")\n\n")
 
         if CXX != '':
             cm_file.write("SET(CMAKE_CXX_STANDARD 14)\n")
@@ -110,7 +115,7 @@ def GenerateCFiles(env,project):
         for i in info['CPPPATH']:
             # use relative path
             path = _make_path_relative(os.getcwd(), i)
-            cm_file.write( "\t" + path.replace("\\", "/") + "\n")
+            cm_file.write("\t" + path.replace("\\", "/") + "\n")
         cm_file.write(")\n\n")
 
         cm_file.write("ADD_DEFINITIONS(\n")
@@ -122,8 +127,9 @@ def GenerateCFiles(env,project):
         for group in project:
             for f in group['src']:
                 # use relative path
-                path = _make_path_relative(os.getcwd(), os.path.normpath(f.rfile().abspath))
-                cm_file.write( "\t" + path.replace("\\", "/") + "\n" )
+                path = _make_path_relative(
+                    os.getcwd(), os.path.normpath(f.rfile().abspath))
+                cm_file.write("\t" + path.replace("\\", "/") + "\n")
         cm_file.write(")\n\n")
 
         if rtconfig.PLATFORM in ['gcc']:
@@ -131,29 +137,35 @@ def GenerateCFiles(env,project):
             for group in project:
                 if 'LIBPATH' in group.keys():
                     for f in group['LIBPATH']:
-                        cm_file.write( "\t"+ f.replace("\\", "/") + "\n" )
+                        cm_file.write("\t" + f.replace("\\", "/") + "\n")
             cm_file.write(")\n\n")
 
             cm_file.write("LINK_LIBRARIES(\n")
             for group in project:
                 if 'LIBS' in group.keys():
                     for f in group['LIBS']:
-                        cm_file.write( "\t"+ "{}\n".format(f.replace("\\", "/")))
+                        cm_file.write(
+                            "\t" + "{}\n".format(f.replace("\\", "/")))
             cm_file.write(")\n\n")
 
-            cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${PROJECT_SOURCES})\n")
-            cm_file.write("ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME}.elf POST_BUILD \nCOMMAND ${CMAKE_OBJCOPY} -O binary ${CMAKE_PROJECT_NAME}.elf ${CMAKE_PROJECT_NAME}.bin COMMAND ${CMAKE_SIZE} ${CMAKE_PROJECT_NAME}.elf)")
+            cm_file.write(
+                "ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${PROJECT_SOURCES})\n")
+            cm_file.write(
+                "ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME}.elf POST_BUILD \nCOMMAND ${CMAKE_OBJCOPY} -O binary ${CMAKE_PROJECT_NAME}.elf ${CMAKE_PROJECT_NAME}.bin COMMAND ${CMAKE_SIZE} ${CMAKE_PROJECT_NAME}.elf)")
         elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-            cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME} ${PROJECT_SOURCES})\n")
-            cm_file.write("ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD \nCOMMAND ${CMAKE_FROMELF} --bin ${CMAKE_PROJECT_NAME}.elf --output ${CMAKE_PROJECT_NAME}.bin COMMAND ${CMAKE_FROMELF} -z ${CMAKE_PROJECT_NAME}.elf)")
+            cm_file.write(
+                "ADD_EXECUTABLE(${CMAKE_PROJECT_NAME} ${PROJECT_SOURCES})\n")
+            cm_file.write(
+                "ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD \nCOMMAND ${CMAKE_FROMELF} --bin ${CMAKE_PROJECT_NAME}.elf --output ${CMAKE_PROJECT_NAME}.bin COMMAND ${CMAKE_FROMELF} -z ${CMAKE_PROJECT_NAME}.elf)")
 
         cm_file.close()
 
     return
 
-def CMakeProject(env,project):
+
+def CMakeProject(env, project):
     print('Update setting files for CMakeLists.txt...')
-    GenerateCFiles(env,project)
+    GenerateCFiles(env, project)
     print('Done!')
 
     return

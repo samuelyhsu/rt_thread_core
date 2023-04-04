@@ -3,13 +3,13 @@
  * Network buffer management
  *
  */
- 
+
 /*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved. 
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
- * are permitted provided that the following conditions are met:
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -17,21 +17,21 @@
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission. 
+ *    derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
- * OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
- * 
+ *
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
@@ -40,8 +40,8 @@
 
 #if LWIP_NETCONN /* don't build if not configured for use in lwipopts.h */
 
-#include "lwip/netbuf.h"
 #include "lwip/memp.h"
+#include "lwip/netbuf.h"
 
 #include <string.h>
 
@@ -52,9 +52,7 @@
  * @return a pointer to a new netbuf
  *         NULL on lack of memory
  */
-struct
-netbuf *netbuf_new(void)
-{
+struct netbuf *netbuf_new(void) {
   struct netbuf *buf;
 
   buf = (struct netbuf *)memp_malloc(MEMP_NETBUF);
@@ -83,9 +81,7 @@ netbuf *netbuf_new(void)
  *
  * @param buf pointer to a netbuf allocated by netbuf_new()
  */
-void
-netbuf_delete(struct netbuf *buf)
-{
+void netbuf_delete(struct netbuf *buf) {
   if (buf != NULL) {
     if (buf->p != NULL) {
       pbuf_free(buf->p);
@@ -103,9 +99,7 @@ netbuf_delete(struct netbuf *buf)
  * @return pointer to the allocated memory
  *         NULL if no memory could be allocated
  */
-void *
-netbuf_alloc(struct netbuf *buf, u16_t size)
-{
+void *netbuf_alloc(struct netbuf *buf, u16_t size) {
   LWIP_ERROR("netbuf_alloc: invalid buf", (buf != NULL), return NULL;);
 
   /* Deallocate any previously allocated memory. */
@@ -114,10 +108,9 @@ netbuf_alloc(struct netbuf *buf, u16_t size)
   }
   buf->p = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
   if (buf->p == NULL) {
-     return NULL;
+    return NULL;
   }
-  LWIP_ASSERT("check that first pbuf can hold size",
-             (buf->p->len >= size));
+  LWIP_ASSERT("check that first pbuf can hold size", (buf->p->len >= size));
   buf->ptr = buf->p;
   return buf->p->payload;
 }
@@ -127,9 +120,7 @@ netbuf_alloc(struct netbuf *buf, u16_t size)
  *
  * @param buf pointer to the netbuf which contains the packet buffer to free
  */
-void
-netbuf_free(struct netbuf *buf)
-{
+void netbuf_free(struct netbuf *buf) {
   LWIP_ERROR("netbuf_free: invalid buf", (buf != NULL), return;);
   if (buf->p != NULL) {
     pbuf_free(buf->p);
@@ -146,9 +137,7 @@ netbuf_free(struct netbuf *buf)
  * @return ERR_OK if data is referenced
  *         ERR_MEM if data couldn't be referenced due to lack of memory
  */
-err_t
-netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size)
-{
+err_t netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size) {
   LWIP_ERROR("netbuf_ref: invalid buf", (buf != NULL), return ERR_ARG;);
   if (buf->p != NULL) {
     pbuf_free(buf->p);
@@ -158,7 +147,7 @@ netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size)
     buf->ptr = NULL;
     return ERR_MEM;
   }
-  buf->p->payload = (void*)dataptr;
+  buf->p->payload = (void *)dataptr;
   buf->p->len = buf->p->tot_len = size;
   buf->ptr = buf->p;
   return ERR_OK;
@@ -168,11 +157,10 @@ netbuf_ref(struct netbuf *buf, const void *dataptr, u16_t size)
  * Chain one netbuf to another (@see pbuf_chain)
  *
  * @param head the first netbuf
- * @param tail netbuf to chain after head, freed by this function, may not be reference after returning
+ * @param tail netbuf to chain after head, freed by this function, may not be
+ * reference after returning
  */
-void
-netbuf_chain(struct netbuf *head, struct netbuf *tail)
-{
+void netbuf_chain(struct netbuf *head, struct netbuf *tail) {
   LWIP_ERROR("netbuf_ref: invalid head", (head != NULL), return;);
   LWIP_ERROR("netbuf_chain: invalid tail", (tail != NULL), return;);
   pbuf_cat(head->p, tail->p);
@@ -189,11 +177,10 @@ netbuf_chain(struct netbuf *head, struct netbuf *tail)
  * @return ERR_OK if the information was retreived,
  *         ERR_BUF on error.
  */
-err_t
-netbuf_data(struct netbuf *buf, void **dataptr, u16_t *len)
-{
+err_t netbuf_data(struct netbuf *buf, void **dataptr, u16_t *len) {
   LWIP_ERROR("netbuf_data: invalid buf", (buf != NULL), return ERR_ARG;);
-  LWIP_ERROR("netbuf_data: invalid dataptr", (dataptr != NULL), return ERR_ARG;);
+  LWIP_ERROR("netbuf_data: invalid dataptr", (dataptr != NULL),
+             return ERR_ARG;);
   LWIP_ERROR("netbuf_data: invalid len", (len != NULL), return ERR_ARG;);
 
   if (buf->ptr == NULL) {
@@ -214,9 +201,7 @@ netbuf_data(struct netbuf *buf, void **dataptr, u16_t *len)
  *         1  if moved to the next part but now there is no next part
  *         0  if moved to the next part and there are still more parts
  */
-s8_t
-netbuf_next(struct netbuf *buf)
-{
+s8_t netbuf_next(struct netbuf *buf) {
   LWIP_ERROR("netbuf_free: invalid buf", (buf != NULL), return -1;);
   if (buf->ptr->next == NULL) {
     return -1;
@@ -235,9 +220,7 @@ netbuf_next(struct netbuf *buf)
  *
  * @param buf the netbuf to modify
  */
-void
-netbuf_first(struct netbuf *buf)
-{
+void netbuf_first(struct netbuf *buf) {
   LWIP_ERROR("netbuf_free: invalid buf", (buf != NULL), return;);
   buf->ptr = buf->p;
 }

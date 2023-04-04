@@ -2,15 +2,16 @@
  * @file
  * Abstract Syntax Notation One (ISO 8824, 8825) encoding
  *
- * @todo not optimised (yet), favor correctness over speed, favor speed over size
+ * @todo not optimised (yet), favor correctness over speed, favor speed over
+ * size
  */
 
 /*
  * Copyright (c) 2006 Axon Digital Design B.V., The Netherlands.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -22,14 +23,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * Author: Christiaan Simons <christiaan.simons@axon.tv>
  *         Martin Hentschel <info@cl-soft.de>
@@ -41,9 +42,9 @@
 
 #include "snmp_asn1.h"
 
-#define PBUF_OP_EXEC(code) \
-  if ((code) != ERR_OK) { \
-    return ERR_BUF; \
+#define PBUF_OP_EXEC(code)                                                     \
+  if ((code) != ERR_OK) {                                                      \
+    return ERR_BUF;                                                            \
   }
 
 /**
@@ -53,9 +54,8 @@
  * @param tlv TLV to encode
  * @return ERR_OK if successful, ERR_ARG if we can't (or won't) encode
  */
-err_t
-snmp_ans1_enc_tlv(struct snmp_pbuf_stream* pbuf_stream, struct snmp_asn1_tlv* tlv)
-{
+err_t snmp_ans1_enc_tlv(struct snmp_pbuf_stream *pbuf_stream,
+                        struct snmp_asn1_tlv *tlv) {
   u8_t data;
   u8_t length_bytes_required;
 
@@ -65,7 +65,8 @@ snmp_ans1_enc_tlv(struct snmp_pbuf_stream* pbuf_stream, struct snmp_asn1_tlv* tl
     return ERR_ARG;
   }
   if (tlv->type_len != 0) {
-    /* any other value as auto is not accepted for type (we always use one byte because extended syntax is prohibited) */
+    /* any other value as auto is not accepted for type (we always use one byte
+     * because extended syntax is prohibited) */
     return ERR_ARG;
   }
 
@@ -77,7 +78,7 @@ snmp_ans1_enc_tlv(struct snmp_pbuf_stream* pbuf_stream, struct snmp_asn1_tlv* tl
     length_bytes_required = 1;
   } else if (tlv->value_len <= 255) {
     length_bytes_required = 2;
-  } else  {
+  } else {
     length_bytes_required = 3;
   }
 
@@ -96,7 +97,8 @@ snmp_ans1_enc_tlv(struct snmp_pbuf_stream* pbuf_stream, struct snmp_asn1_tlv* tl
   if (length_bytes_required > 1) {
     /* multi byte representation required */
     length_bytes_required--;
-    data = 0x80 | length_bytes_required; /* extended length definition, 1 length byte follows */
+    data = 0x80 | length_bytes_required; /* extended length definition, 1 length
+                                            byte follows */
 
     PBUF_OP_EXEC(snmp_pbuf_stream_write(pbuf_stream, data));
 
@@ -129,9 +131,8 @@ snmp_ans1_enc_tlv(struct snmp_pbuf_stream* pbuf_stream, struct snmp_asn1_tlv* tl
  * @param raw points raw data
  * @return ERR_OK if successful, ERR_ARG if we can't (or won't) encode
  */
-err_t
-snmp_asn1_enc_raw(struct snmp_pbuf_stream* pbuf_stream, const u8_t *raw, u16_t raw_len)
-{
+err_t snmp_asn1_enc_raw(struct snmp_pbuf_stream *pbuf_stream, const u8_t *raw,
+                        u16_t raw_len) {
   PBUF_OP_EXEC(snmp_pbuf_stream_writebuf(pbuf_stream, raw, raw_len));
 
   return ERR_OK;
@@ -147,9 +148,8 @@ snmp_asn1_enc_raw(struct snmp_pbuf_stream* pbuf_stream, const u8_t *raw, u16_t r
  *
  * @see snmp_asn1_enc_u32t_cnt()
  */
-err_t
-snmp_asn1_enc_u32t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, u32_t value)
-{
+err_t snmp_asn1_enc_u32t(struct snmp_pbuf_stream *pbuf_stream,
+                         u16_t octets_needed, u32_t value) {
   if (octets_needed > 5) {
     return ERR_ARG;
   }
@@ -161,7 +161,8 @@ snmp_asn1_enc_u32t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, u3
 
   while (octets_needed > 1) {
     octets_needed--;
-    PBUF_OP_EXEC(snmp_pbuf_stream_write(pbuf_stream, (u8_t)(value >> (octets_needed << 3))));
+    PBUF_OP_EXEC(snmp_pbuf_stream_write(pbuf_stream,
+                                        (u8_t)(value >> (octets_needed << 3))));
   }
 
   /* (only) one least significant octet */
@@ -180,9 +181,8 @@ snmp_asn1_enc_u32t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, u3
  *
  * @see snmp_asn1_enc_u64t_cnt()
  */
-err_t
-snmp_asn1_enc_u64t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, const u32_t* value)
-{
+err_t snmp_asn1_enc_u64t(struct snmp_pbuf_stream *pbuf_stream,
+                         u16_t octets_needed, const u32_t *value) {
   if (octets_needed > 9) {
     return ERR_ARG;
   }
@@ -194,7 +194,8 @@ snmp_asn1_enc_u64t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, co
 
   while (octets_needed > 4) {
     octets_needed--;
-    PBUF_OP_EXEC(snmp_pbuf_stream_write(pbuf_stream, (u8_t)(*value >> ((octets_needed-4) << 3))));
+    PBUF_OP_EXEC(snmp_pbuf_stream_write(
+        pbuf_stream, (u8_t)(*value >> ((octets_needed - 4) << 3))));
   }
 
   /* skip to low u32 */
@@ -202,7 +203,8 @@ snmp_asn1_enc_u64t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, co
 
   while (octets_needed > 1) {
     octets_needed--;
-    PBUF_OP_EXEC(snmp_pbuf_stream_write(pbuf_stream, (u8_t)(*value >> (octets_needed << 3))));
+    PBUF_OP_EXEC(snmp_pbuf_stream_write(
+        pbuf_stream, (u8_t)(*value >> (octets_needed << 3))));
   }
 
   /* always write at least one octet (also in case of value == 0) */
@@ -221,13 +223,13 @@ snmp_asn1_enc_u64t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, co
  *
  * @see snmp_asn1_enc_s32t_cnt()
  */
-err_t
-snmp_asn1_enc_s32t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, s32_t value)
-{
+err_t snmp_asn1_enc_s32t(struct snmp_pbuf_stream *pbuf_stream,
+                         u16_t octets_needed, s32_t value) {
   while (octets_needed > 1) {
     octets_needed--;
 
-    PBUF_OP_EXEC(snmp_pbuf_stream_write(pbuf_stream, (u8_t)(value >> (octets_needed << 3))));
+    PBUF_OP_EXEC(snmp_pbuf_stream_write(pbuf_stream,
+                                        (u8_t)(value >> (octets_needed << 3))));
   }
 
   /* (only) one least significant octet */
@@ -244,9 +246,8 @@ snmp_asn1_enc_s32t(struct snmp_pbuf_stream* pbuf_stream, u16_t octets_needed, s3
  * @param oid_len object identifier array length
  * @return ERR_OK if successful, ERR_ARG if we can't (or won't) encode
  */
-err_t
-snmp_asn1_enc_oid(struct snmp_pbuf_stream* pbuf_stream, const u32_t *oid, u16_t oid_len)
-{
+err_t snmp_asn1_enc_oid(struct snmp_pbuf_stream *pbuf_stream, const u32_t *oid,
+                        u16_t oid_len) {
   if (oid_len > 1) {
     /* write compressed first two sub id's */
     u32_t compressed_byte = ((oid[0] * 40) + oid[1]);
@@ -254,7 +255,8 @@ snmp_asn1_enc_oid(struct snmp_pbuf_stream* pbuf_stream, const u32_t *oid, u16_t 
     oid_len -= 2;
     oid += 2;
   } else {
-    /* @bug:  allow empty varbinds for symmetry (we must decode them for getnext), allow partial compression?? */
+    /* @bug:  allow empty varbinds for symmetry (we must decode them for
+     * getnext), allow partial compression?? */
     /* ident_len <= 1, at least we need zeroDotZero (0.0) (ident_len == 2) */
     return ERR_ARG;
   }
@@ -291,9 +293,7 @@ snmp_asn1_enc_oid(struct snmp_pbuf_stream* pbuf_stream, const u32_t *oid, u16_t 
  * @param length parameter length
  * @param octets_needed points to the return value
  */
-void
-snmp_asn1_enc_length_cnt(u16_t length, u8_t *octets_needed)
-{
+void snmp_asn1_enc_length_cnt(u16_t length, u8_t *octets_needed) {
   if (length < 0x80U) {
     *octets_needed = 1;
   } else if (length < 0x100U) {
@@ -313,9 +313,7 @@ snmp_asn1_enc_length_cnt(u16_t length, u8_t *octets_needed)
  * as 0x00,0xFF,0xFF. Note the leading sign octet. A positive value
  * of 0xFFFFFFFF is preceded with 0x00 and the length is 5 octets!!
  */
-void
-snmp_asn1_enc_u32t_cnt(u32_t value, u16_t *octets_needed)
-{
+void snmp_asn1_enc_u32t_cnt(u32_t value, u16_t *octets_needed) {
   if (value < 0x80UL) {
     *octets_needed = 1;
   } else if (value < 0x8000UL) {
@@ -339,9 +337,7 @@ snmp_asn1_enc_u32t_cnt(u32_t value, u16_t *octets_needed)
  * as 0x00,0xFF,0xFF. Note the leading sign octet. A positive value
  * of 0xFFFFFFFF is preceded with 0x00 and the length is 5 octets!!
  */
-void
-snmp_asn1_enc_u64t_cnt(const u32_t *value, u16_t *octets_needed)
-{
+void snmp_asn1_enc_u64t_cnt(const u32_t *value, u16_t *octets_needed) {
   /* check if high u32 is 0 */
   if (*value == 0x00) {
     /* only low u32 is important */
@@ -362,9 +358,7 @@ snmp_asn1_enc_u64t_cnt(const u32_t *value, u16_t *octets_needed)
  *
  * @note ASN coded integers are _always_ signed.
  */
-void
-snmp_asn1_enc_s32t_cnt(s32_t value, u16_t *octets_needed)
-{
+void snmp_asn1_enc_s32t_cnt(s32_t value, u16_t *octets_needed) {
   if (value < 0) {
     value = ~value;
   }
@@ -386,9 +380,8 @@ snmp_asn1_enc_s32t_cnt(s32_t value, u16_t *octets_needed)
  * @param oid_len object identifier array length
  * @param octets_needed points to the return value
  */
-void
-snmp_asn1_enc_oid_cnt(const u32_t *oid, u16_t oid_len, u16_t *octets_needed)
-{
+void snmp_asn1_enc_oid_cnt(const u32_t *oid, u16_t oid_len,
+                           u16_t *octets_needed) {
   u32_t sub_id;
 
   *octets_needed = 0;
@@ -419,9 +412,8 @@ snmp_asn1_enc_oid_cnt(const u32_t *oid, u16_t oid_len, u16_t *octets_needed)
  * @param tlv returns decoded TLV
  * @return ERR_OK if successful, ERR_VAL if we can't decode
  */
-err_t
-snmp_asn1_dec_tlv(struct snmp_pbuf_stream* pbuf_stream, struct snmp_asn1_tlv* tlv)
-{
+err_t snmp_asn1_dec_tlv(struct snmp_pbuf_stream *pbuf_stream,
+                        struct snmp_asn1_tlv *tlv) {
   u8_t data;
 
   /* decode type first */
@@ -439,14 +431,17 @@ snmp_asn1_dec_tlv(struct snmp_pbuf_stream* pbuf_stream, struct snmp_asn1_tlv* tl
 
   if (data < 0x80) { /* short form */
     tlv->length_len = 1;
-    tlv->value_len  = data;
+    tlv->value_len = data;
   } else if (data > 0x80) { /* long form */
     u8_t length_bytes = data - 0x80;
-    tlv->length_len = length_bytes + 1; /* this byte + defined number of length bytes following */
+    tlv->length_len =
+        length_bytes +
+        1; /* this byte + defined number of length bytes following */
     tlv->value_len = 0;
 
     while (length_bytes > 0) {
-      /* we only support up to u16.maxvalue-1 (2 bytes) but have to accept leading zero bytes */
+      /* we only support up to u16.maxvalue-1 (2 bytes) but have to accept
+       * leading zero bytes */
       if (tlv->value_len > 0xFF) {
         return ERR_VAL;
       }
@@ -481,9 +476,8 @@ snmp_asn1_dec_tlv(struct snmp_pbuf_stream* pbuf_stream, struct snmp_asn1_tlv* tl
  * as 0x00,0xFF,0xFF. Note the leading sign octet. A positive value
  * of 0xFFFFFFFF is preceded with 0x00 and the length is 5 octets!!
  */
-err_t
-snmp_asn1_dec_u32t(struct snmp_pbuf_stream *pbuf_stream, u16_t len, u32_t *value)
-{
+err_t snmp_asn1_dec_u32t(struct snmp_pbuf_stream *pbuf_stream, u16_t len,
+                         u32_t *value) {
   u8_t data;
 
   if ((len > 0) && (len <= 5)) {
@@ -521,9 +515,8 @@ snmp_asn1_dec_u32t(struct snmp_pbuf_stream *pbuf_stream, u16_t len, u32_t *value
  * as 0x00,0xFF,0xFF. Note the leading sign octet. A positive value
  * of 0xFFFFFFFF is preceded with 0x00 and the length is 5 octets!!
  */
-err_t
-snmp_asn1_dec_u64t(struct snmp_pbuf_stream *pbuf_stream, u16_t len, u32_t *value)
-{
+err_t snmp_asn1_dec_u64t(struct snmp_pbuf_stream *pbuf_stream, u16_t len,
+                         u32_t *value) {
   u8_t data;
 
   if (len <= 4) {
@@ -573,14 +566,13 @@ snmp_asn1_dec_u64t(struct snmp_pbuf_stream *pbuf_stream, u16_t len, u32_t *value
  *
  * @note ASN coded integers are _always_ signed!
  */
-err_t
-snmp_asn1_dec_s32t(struct snmp_pbuf_stream *pbuf_stream, u16_t len, s32_t *value)
-{
+err_t snmp_asn1_dec_s32t(struct snmp_pbuf_stream *pbuf_stream, u16_t len,
+                         s32_t *value) {
 #if BYTE_ORDER == LITTLE_ENDIAN
-  u8_t *lsb_ptr = (u8_t*)value;
+  u8_t *lsb_ptr = (u8_t *)value;
 #endif
 #if BYTE_ORDER == BIG_ENDIAN
-  u8_t *lsb_ptr = (u8_t*)value + sizeof(s32_t) - 1;
+  u8_t *lsb_ptr = (u8_t *)value + sizeof(s32_t) - 1;
 #endif
   u8_t sign;
   u8_t data;
@@ -637,9 +629,8 @@ snmp_asn1_dec_s32t(struct snmp_pbuf_stream *pbuf_stream, u16_t len, s32_t *value
  * @param oid_max_len size of oid buffer
  * @return ERR_OK if successful, ERR_ARG if we can't (or won't) decode
  */
-err_t
-snmp_asn1_dec_oid(struct snmp_pbuf_stream *pbuf_stream, u16_t len, u32_t* oid, u8_t* oid_len, u8_t oid_max_len)
-{
+err_t snmp_asn1_dec_oid(struct snmp_pbuf_stream *pbuf_stream, u16_t len,
+                        u32_t *oid, u8_t *oid_len, u8_t oid_max_len) {
   u32_t *oid_ptr;
   u8_t data;
 
@@ -678,7 +669,8 @@ snmp_asn1_dec_oid(struct snmp_pbuf_stream *pbuf_stream, u16_t len, u32_t* oid, u
     }
     *oid_len = 2;
   } else {
-    /* accepting zero length identifiers e.g. for getnext operation. uncommon but valid */
+    /* accepting zero length identifiers e.g. for getnext operation. uncommon
+     * but valid */
     return ERR_OK;
   }
 
@@ -728,9 +720,8 @@ snmp_asn1_dec_oid(struct snmp_pbuf_stream *pbuf_stream, u16_t len, u32_t* oid, u
  * @param buf_max_len buffer size
  * @return ERR_OK if successful, ERR_ARG if we can't (or won't) decode
  */
-err_t
-snmp_asn1_dec_raw(struct snmp_pbuf_stream *pbuf_stream, u16_t len, u8_t *buf, u16_t* buf_len, u16_t buf_max_len)
-{
+err_t snmp_asn1_dec_raw(struct snmp_pbuf_stream *pbuf_stream, u16_t len,
+                        u8_t *buf, u16_t *buf_len, u16_t buf_max_len) {
   if (len > buf_max_len) {
     /* not enough dst space */
     return ERR_MEM;

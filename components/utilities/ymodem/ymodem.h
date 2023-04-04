@@ -18,26 +18,25 @@
 #include <string.h>
 
 /* The word "RYM" is stand for "Real-YModem". */
-enum rym_code
-{
-    RYM_CODE_NONE = 0x00,
-    RYM_CODE_SOH  = 0x01,
-    RYM_CODE_STX  = 0x02,
-    RYM_CODE_EOT  = 0x04,
-    RYM_CODE_ACK  = 0x06,
-    RYM_CODE_NAK  = 0x15,
-    RYM_CODE_CAN  = 0x18,
-    RYM_CODE_C    = 0x43,
+enum rym_code {
+  RYM_CODE_NONE = 0x00,
+  RYM_CODE_SOH = 0x01,
+  RYM_CODE_STX = 0x02,
+  RYM_CODE_EOT = 0x04,
+  RYM_CODE_ACK = 0x06,
+  RYM_CODE_NAK = 0x15,
+  RYM_CODE_CAN = 0x18,
+  RYM_CODE_C = 0x43,
 
-    /* RYM error code */
-    RYM_ERR_TMO   = 0x70, /* timeout on handshake */
-    RYM_ERR_CODE  = 0x71, /* wrong code, wrong SOH, STX etc */
-    RYM_ERR_SEQ   = 0x72, /* wrong sequence number */
-    RYM_ERR_CRC   = 0x73, /* wrong CRC checksum */
-    RYM_ERR_DSZ   = 0x74, /* not enough data received */
-    RYM_ERR_CAN   = 0x75, /* the transmission is aborted by user */
-    RYM_ERR_ACK   = 0x76, /* wrong answer, wrong ACK or C */
-    RYM_ERR_FILE  = 0x77, /* transmit file invalid */
+  /* RYM error code */
+  RYM_ERR_TMO = 0x70,  /* timeout on handshake */
+  RYM_ERR_CODE = 0x71, /* wrong code, wrong SOH, STX etc */
+  RYM_ERR_SEQ = 0x72,  /* wrong sequence number */
+  RYM_ERR_CRC = 0x73,  /* wrong CRC checksum */
+  RYM_ERR_DSZ = 0x74,  /* not enough data received */
+  RYM_ERR_CAN = 0x75,  /* the transmission is aborted by user */
+  RYM_ERR_ACK = 0x76,  /* wrong answer, wrong ACK or C */
+  RYM_ERR_FILE = 0x77, /* transmit file invalid */
 };
 
 /* how many ticks wait for chars between packet. */
@@ -55,29 +54,28 @@ enum rym_code
 
 /* how many CAN be sent when user active end the session. */
 #ifndef RYM_END_SESSION_SEND_CAN_NUM
-#define RYM_END_SESSION_SEND_CAN_NUM  0x07
+#define RYM_END_SESSION_SEND_CAN_NUM 0x07
 #endif
 
 /* how many retries were made when the error occurred */
 #ifndef RYM_MAX_ERRORS
-#define RYM_MAX_ERRORS    ((rt_size_t)5)
+#define RYM_MAX_ERRORS ((rt_size_t)5)
 #endif
 
-enum rym_stage
-{
-    RYM_STAGE_NONE = 0,
-    /* set when C is send */
-    RYM_STAGE_ESTABLISHING,
-    /* set when we've got the packet 0 and sent ACK and second C */
-    RYM_STAGE_ESTABLISHED,
-    /* set when the sender respond to our second C and recviever got a real
-     * data packet. */
-    RYM_STAGE_TRANSMITTING,
-    /* set when the sender send a EOT */
-    RYM_STAGE_FINISHING,
-    /* set when transmission is really finished, i.e., after the NAK, C, final
-     * NULL packet stuff. */
-    RYM_STAGE_FINISHED,
+enum rym_stage {
+  RYM_STAGE_NONE = 0,
+  /* set when C is send */
+  RYM_STAGE_ESTABLISHING,
+  /* set when we've got the packet 0 and sent ACK and second C */
+  RYM_STAGE_ESTABLISHED,
+  /* set when the sender respond to our second C and recviever got a real
+   * data packet. */
+  RYM_STAGE_TRANSMITTING,
+  /* set when the sender send a EOT */
+  RYM_STAGE_FINISHING,
+  /* set when transmission is really finished, i.e., after the NAK, C, final
+   * NULL packet stuff. */
+  RYM_STAGE_FINISHED,
 };
 
 struct rym_ctx;
@@ -89,27 +87,27 @@ struct rym_ctx;
  * transfer and the buf will be discarded. Any other return values will cause
  * the transfer continue.
  */
-typedef enum rym_code(*rym_callback)(struct rym_ctx *ctx, rt_uint8_t *buf, rt_size_t len);
+typedef enum rym_code (*rym_callback)(struct rym_ctx *ctx, rt_uint8_t *buf,
+                                      rt_size_t len);
 
 /* Currently RYM only support one transfer session(ctx) for simplicity.
  *
  * In case we could support multiple sessions in The future, the first argument
  * of APIs are (struct rym_ctx*).
  */
-struct rym_ctx
-{
-    rym_callback on_data;
-    rym_callback on_begin;
-    rym_callback on_end;
-    /* When error happened, user need to check this to get when the error has
-     * happened. */
-    enum rym_stage stage;
-    /* user could get the error content through this */
-    rt_uint8_t *buf;
+struct rym_ctx {
+  rym_callback on_data;
+  rym_callback on_begin;
+  rym_callback on_end;
+  /* When error happened, user need to check this to get when the error has
+   * happened. */
+  enum rym_stage stage;
+  /* user could get the error content through this */
+  rt_uint8_t *buf;
 
-    struct rt_semaphore sem;
+  struct rt_semaphore sem;
 
-    rt_device_t dev;
+  rt_device_t dev;
 };
 
 /* recv a file on device dev with ymodem session ctx.
@@ -137,8 +135,9 @@ struct rym_ctx
  * @param handshake_timeout the timeout when hand shaking. The unit is in
  * second.
  */
-rt_err_t rym_recv_on_device(struct rym_ctx *ctx, rt_device_t dev, rt_uint16_t oflag,
-                            rym_callback on_begin, rym_callback on_data, rym_callback on_end,
+rt_err_t rym_recv_on_device(struct rym_ctx *ctx, rt_device_t dev,
+                            rt_uint16_t oflag, rym_callback on_begin,
+                            rym_callback on_data, rym_callback on_end,
                             int handshake_timeout);
 
 /* send a file on device dev with ymodem session ctx.
@@ -160,8 +159,9 @@ rt_err_t rym_recv_on_device(struct rym_ctx *ctx, rt_device_t dev, rt_uint16_t of
  * @param handshake_timeout the timeout when hand shaking. The unit is in
  * second.
  */
-rt_err_t rym_send_on_device(struct rym_ctx *ctx, rt_device_t dev, rt_uint16_t oflag,
-                            rym_callback on_begin, rym_callback on_data, rym_callback on_end,
+rt_err_t rym_send_on_device(struct rym_ctx *ctx, rt_device_t dev,
+                            rt_uint16_t oflag, rym_callback on_begin,
+                            rym_callback on_data, rym_callback on_end,
                             int handshake_timeout);
 
 #endif

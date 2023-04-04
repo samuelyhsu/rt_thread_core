@@ -1,8 +1,8 @@
 from building import *
 Import('rtconfig')
 
-src   = []
-cwd   = GetCurrentDir()
+src = []
+cwd = GetCurrentDir()
 group = []
 CPPPATH = [cwd + '/include']
 CPPDEFINES = []
@@ -10,11 +10,13 @@ CPPDEFINES = []
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
     CPPDEFINES += ['__CLK_TCK=RT_TICK_PER_SECOND']
 elif rtconfig.PLATFORM in ['iccarm']:
-    CPPDEFINES += ['CLOCKS_PER_SEC=RT_TICK_PER_SECOND'] # forcly revert to 1 by IAR
+    # forcly revert to 1 by IAR
+    CPPDEFINES += ['CLOCKS_PER_SEC=RT_TICK_PER_SECOND']
 
 src += Glob('*.c')
 
-group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Compiler', src, depend=[
+                    ''], CPPPATH=CPPPATH, CPPDEFINES=CPPDEFINES)
 
 list = os.listdir(cwd)
 for item in list:

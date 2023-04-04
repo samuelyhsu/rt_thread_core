@@ -21,16 +21,15 @@
 #endif
 
 #ifndef ENOIOCTLCMD
-#define ENOIOCTLCMD     (515) /* No ioctl command */
+#define ENOIOCTLCMD (515) /* No ioctl command */
 #endif
 
 #define current lwp_self()
 #define __DISABLED_CHAR '\0'
 
-struct tty_node
-{
-    struct rt_lwp *lwp;
-    struct tty_node *next;
+struct tty_node {
+  struct rt_lwp *lwp;
+  struct tty_node *next;
 };
 
 void tty_initstack(struct tty_node *node);
@@ -40,10 +39,10 @@ struct rt_lwp *tty_pop(struct tty_node **head, struct rt_lwp *target_lwp);
  * When a break, frame error, or parity error happens, these codes are
  * stuffed into the flags buffer.
  */
-#define TTY_NORMAL  0
-#define TTY_BREAK   1
-#define TTY_FRAME   2
-#define TTY_PARITY  3
+#define TTY_NORMAL 0
+#define TTY_BREAK 1
+#define TTY_FRAME 2
+#define TTY_PARITY 3
 #define TTY_OVERRUN 4
 
 #define INTR_CHAR(tty) ((tty)->init_termios.c_cc[VINTR])
@@ -64,69 +63,69 @@ struct rt_lwp *tty_pop(struct tty_node **head, struct rt_lwp *target_lwp);
 #define LNEXT_CHAR(tty) ((tty)->init_termios.c_cc[VLNEXT])
 #define EOL2_CHAR(tty) ((tty)->init_termios.c_cc[VEOL2])
 
-#define _I_FLAG(tty,f)  ((tty)->init_termios.c_iflag & (f))
-#define _O_FLAG(tty,f)  ((tty)->init_termios.c_oflag & (f))
-#define _C_FLAG(tty,f)  ((tty)->init_termios.c_cflag & (f))
-#define _L_FLAG(tty,f)  ((tty)->init_termios.c_lflag & (f))
+#define _I_FLAG(tty, f) ((tty)->init_termios.c_iflag & (f))
+#define _O_FLAG(tty, f) ((tty)->init_termios.c_oflag & (f))
+#define _C_FLAG(tty, f) ((tty)->init_termios.c_cflag & (f))
+#define _L_FLAG(tty, f) ((tty)->init_termios.c_lflag & (f))
 
-#define I_IGNBRK(tty)   _I_FLAG((tty),IGNBRK)
-#define I_BRKINT(tty)   _I_FLAG((tty),BRKINT)
-#define I_IGNPAR(tty)   _I_FLAG((tty),IGNPAR)
-#define I_PARMRK(tty)   _I_FLAG((tty),PARMRK)
-#define I_INPCK(tty)    _I_FLAG((tty),INPCK)
-#define I_ISTRIP(tty)   _I_FLAG((tty),ISTRIP)
-#define I_INLCR(tty)    _I_FLAG((tty),INLCR)
-#define I_IGNCR(tty)    _I_FLAG((tty),IGNCR)
-#define I_ICRNL(tty)    _I_FLAG((tty),ICRNL)
-#define I_IUCLC(tty)    _I_FLAG((tty),IUCLC)
-#define I_IXON(tty)     _I_FLAG((tty),IXON)
-#define I_IXANY(tty)    _I_FLAG((tty),IXANY)
-#define I_IXOFF(tty)    _I_FLAG((tty),IXOFF)
-#define I_IMAXBEL(tty)  _I_FLAG((tty),IMAXBEL)
-#define I_IUTF8(tty)    _I_FLAG((tty), IUTF8)
+#define I_IGNBRK(tty) _I_FLAG((tty), IGNBRK)
+#define I_BRKINT(tty) _I_FLAG((tty), BRKINT)
+#define I_IGNPAR(tty) _I_FLAG((tty), IGNPAR)
+#define I_PARMRK(tty) _I_FLAG((tty), PARMRK)
+#define I_INPCK(tty) _I_FLAG((tty), INPCK)
+#define I_ISTRIP(tty) _I_FLAG((tty), ISTRIP)
+#define I_INLCR(tty) _I_FLAG((tty), INLCR)
+#define I_IGNCR(tty) _I_FLAG((tty), IGNCR)
+#define I_ICRNL(tty) _I_FLAG((tty), ICRNL)
+#define I_IUCLC(tty) _I_FLAG((tty), IUCLC)
+#define I_IXON(tty) _I_FLAG((tty), IXON)
+#define I_IXANY(tty) _I_FLAG((tty), IXANY)
+#define I_IXOFF(tty) _I_FLAG((tty), IXOFF)
+#define I_IMAXBEL(tty) _I_FLAG((tty), IMAXBEL)
+#define I_IUTF8(tty) _I_FLAG((tty), IUTF8)
 
-#define O_OPOST(tty)    _O_FLAG((tty),OPOST)
-#define O_OLCUC(tty)    _O_FLAG((tty),OLCUC)
-#define O_ONLCR(tty)    _O_FLAG((tty),ONLCR)
-#define O_OCRNL(tty)    _O_FLAG((tty),OCRNL)
-#define O_ONOCR(tty)    _O_FLAG((tty),ONOCR)
-#define O_ONLRET(tty)   _O_FLAG((tty),ONLRET)
-#define O_OFILL(tty)    _O_FLAG((tty),OFILL)
-#define O_OFDEL(tty)    _O_FLAG((tty),OFDEL)
-#define O_NLDLY(tty)    _O_FLAG((tty),NLDLY)
-#define O_CRDLY(tty)    _O_FLAG((tty),CRDLY)
-#define O_TABDLY(tty)   _O_FLAG((tty),TABDLY)
-#define O_BSDLY(tty)    _O_FLAG((tty),BSDLY)
-#define O_VTDLY(tty)    _O_FLAG((tty),VTDLY)
-#define O_FFDLY(tty)    _O_FLAG((tty),FFDLY)
+#define O_OPOST(tty) _O_FLAG((tty), OPOST)
+#define O_OLCUC(tty) _O_FLAG((tty), OLCUC)
+#define O_ONLCR(tty) _O_FLAG((tty), ONLCR)
+#define O_OCRNL(tty) _O_FLAG((tty), OCRNL)
+#define O_ONOCR(tty) _O_FLAG((tty), ONOCR)
+#define O_ONLRET(tty) _O_FLAG((tty), ONLRET)
+#define O_OFILL(tty) _O_FLAG((tty), OFILL)
+#define O_OFDEL(tty) _O_FLAG((tty), OFDEL)
+#define O_NLDLY(tty) _O_FLAG((tty), NLDLY)
+#define O_CRDLY(tty) _O_FLAG((tty), CRDLY)
+#define O_TABDLY(tty) _O_FLAG((tty), TABDLY)
+#define O_BSDLY(tty) _O_FLAG((tty), BSDLY)
+#define O_VTDLY(tty) _O_FLAG((tty), VTDLY)
+#define O_FFDLY(tty) _O_FLAG((tty), FFDLY)
 
-#define C_BAUD(tty)     _C_FLAG((tty),CBAUD)
-#define C_CSIZE(tty)    _C_FLAG((tty),CSIZE)
-#define C_CSTOPB(tty)   _C_FLAG((tty),CSTOPB)
-#define C_CREAD(tty)    _C_FLAG((tty),CREAD)
-#define C_PARENB(tty)   _C_FLAG((tty),PARENB)
-#define C_PARODD(tty)   _C_FLAG((tty),PARODD)
-#define C_HUPCL(tty)    _C_FLAG((tty),HUPCL)
-#define C_CLOCAL(tty)   _C_FLAG((tty),CLOCAL)
-#define C_CIBAUD(tty)   _C_FLAG((tty),CIBAUD)
-#define C_CRTSCTS(tty)  _C_FLAG((tty),CRTSCTS)
+#define C_BAUD(tty) _C_FLAG((tty), CBAUD)
+#define C_CSIZE(tty) _C_FLAG((tty), CSIZE)
+#define C_CSTOPB(tty) _C_FLAG((tty), CSTOPB)
+#define C_CREAD(tty) _C_FLAG((tty), CREAD)
+#define C_PARENB(tty) _C_FLAG((tty), PARENB)
+#define C_PARODD(tty) _C_FLAG((tty), PARODD)
+#define C_HUPCL(tty) _C_FLAG((tty), HUPCL)
+#define C_CLOCAL(tty) _C_FLAG((tty), CLOCAL)
+#define C_CIBAUD(tty) _C_FLAG((tty), CIBAUD)
+#define C_CRTSCTS(tty) _C_FLAG((tty), CRTSCTS)
 
-#define L_ISIG(tty)     _L_FLAG((tty),ISIG)
-#define L_ICANON(tty)   _L_FLAG((tty),ICANON)
-#define L_XCASE(tty)    _L_FLAG((tty),XCASE)
-#define L_ECHO(tty)     _L_FLAG((tty),ECHO)
-#define L_ECHOE(tty)    _L_FLAG((tty),ECHOE)
-#define L_ECHOK(tty)    _L_FLAG((tty),ECHOK)
-#define L_ECHONL(tty)   _L_FLAG((tty),ECHONL)
-#define L_NOFLSH(tty)   _L_FLAG((tty),NOFLSH)
-#define L_TOSTOP(tty)   _L_FLAG((tty),TOSTOP)
-#define L_ECHOCTL(tty)  _L_FLAG((tty),ECHOCTL)
-#define L_ECHOPRT(tty)  _L_FLAG((tty),ECHOPRT)
-#define L_ECHOKE(tty)   _L_FLAG((tty),ECHOKE)
-#define L_FLUSHO(tty)   _L_FLAG((tty),FLUSHO)
-#define L_PENDIN(tty)   _L_FLAG((tty),PENDIN)
-#define L_IEXTEN(tty)   _L_FLAG((tty),IEXTEN)
-#define L_EXTPROC(tty)  _L_FLAG((tty), EXTPROC)
+#define L_ISIG(tty) _L_FLAG((tty), ISIG)
+#define L_ICANON(tty) _L_FLAG((tty), ICANON)
+#define L_XCASE(tty) _L_FLAG((tty), XCASE)
+#define L_ECHO(tty) _L_FLAG((tty), ECHO)
+#define L_ECHOE(tty) _L_FLAG((tty), ECHOE)
+#define L_ECHOK(tty) _L_FLAG((tty), ECHOK)
+#define L_ECHONL(tty) _L_FLAG((tty), ECHONL)
+#define L_NOFLSH(tty) _L_FLAG((tty), NOFLSH)
+#define L_TOSTOP(tty) _L_FLAG((tty), TOSTOP)
+#define L_ECHOCTL(tty) _L_FLAG((tty), ECHOCTL)
+#define L_ECHOPRT(tty) _L_FLAG((tty), ECHOPRT)
+#define L_ECHOKE(tty) _L_FLAG((tty), ECHOKE)
+#define L_FLUSHO(tty) _L_FLAG((tty), FLUSHO)
+#define L_PENDIN(tty) _L_FLAG((tty), PENDIN)
+#define L_IEXTEN(tty) _L_FLAG((tty), IEXTEN)
+#define L_EXTPROC(tty) _L_FLAG((tty), EXTPROC)
 
 /*
  * Where all of the state associated with a tty is kept while the tty
@@ -139,52 +138,50 @@ struct rt_lwp *tty_pop(struct tty_node **head, struct rt_lwp *target_lwp);
  * size each time the window is created or resized anyway.
  *                      - TYT, 9/14/92
  */
-struct tty_struct
-{
-    struct rt_device parent;
-    int type;
-    int subtype;
-    int init_flag;
-    int index;  //for pty
-    int pts_lock;   //for pty
+struct tty_struct {
+  struct rt_device parent;
+  int type;
+  int subtype;
+  int init_flag;
+  int index;    // for pty
+  int pts_lock; // for pty
 
-    struct tty_struct *other_struct; //for pty
+  struct tty_struct *other_struct; // for pty
 
-    struct termios init_termios;
-    struct winsize winsize;
-    struct rt_mutex lock;
-    pid_t pgrp;
-    pid_t session;
-    struct rt_lwp *foreground;
-    struct tty_node *head;
+  struct termios init_termios;
+  struct winsize winsize;
+  struct rt_mutex lock;
+  pid_t pgrp;
+  pid_t session;
+  struct rt_lwp *foreground;
+  struct tty_node *head;
 
-    struct tty_ldisc *ldisc;
-    void *disc_data;
-    struct rt_device *driver;
+  struct tty_ldisc *ldisc;
+  void *disc_data;
+  struct rt_device *driver;
 
-    struct rt_wqueue wait_queue;
+  struct rt_wqueue wait_queue;
 
 #define RT_TTY_BUF 1024
-    rt_list_t tty_drivers;
+  rt_list_t tty_drivers;
 };
 
-enum
-{
-    TTY_INIT_FLAG_NONE = 0,
-    TTY_INIT_FLAG_ALLOCED,
-    TTY_INIT_FLAG_REGED,
-    TTY_INIT_FLAG_INITED,
+enum {
+  TTY_INIT_FLAG_NONE = 0,
+  TTY_INIT_FLAG_ALLOCED,
+  TTY_INIT_FLAG_REGED,
+  TTY_INIT_FLAG_INITED,
 };
 
-#define TTY_DRIVER_TYPE_SYSTEM      0x0001
-#define TTY_DRIVER_TYPE_CONSOLE     0x0002
-#define TTY_DRIVER_TYPE_SERIAL      0x0003
-#define TTY_DRIVER_TYPE_PTY     0x0004
-#define TTY_DRIVER_TYPE_SCC     0x0005  /* scc driver */
-#define TTY_DRIVER_TYPE_SYSCONS     0x0006
+#define TTY_DRIVER_TYPE_SYSTEM 0x0001
+#define TTY_DRIVER_TYPE_CONSOLE 0x0002
+#define TTY_DRIVER_TYPE_SERIAL 0x0003
+#define TTY_DRIVER_TYPE_PTY 0x0004
+#define TTY_DRIVER_TYPE_SCC 0x0005 /* scc driver */
+#define TTY_DRIVER_TYPE_SYSCONS 0x0006
 
 /* tty magic number */
-#define TTY_MAGIC       0x5401
+#define TTY_MAGIC 0x5401
 
 /*
  * These bits are used in the flags field of the tty structure.
@@ -230,70 +227,74 @@ enum
 #define TTY_PTY_LOCK 16
 #define TTY_NO_WRITE_SPLIT 17
 
-#define NR_LDISCS       30
+#define NR_LDISCS 30
 
 /* line disciplines */
-#define N_TTY       0
-#define N_SLIP      1
-#define N_MOUSE     2
-#define N_PPP       3
-#define N_STRIP     4
-#define N_AX25      5
-#define N_X25       6   /* X.25 async */
-#define N_6PACK     7
-#define N_MASC      8   /* Reserved for Mobitex module <kaz@cafe.net> */
-#define N_R3964     9   /* Reserved for Simatic R3964 module */
-#define N_PROFIBUS_FDL  10  /* Reserved for Profibus */
-#define N_IRDA      11  /* Linux IrDa - http://irda.sourceforge.net/ */
-#define N_SMSBLOCK  12  /* SMS block mode - for talking to GSM data */
-                /* cards about SMS messages */
-#define N_HDLC      13  /* synchronous HDLC */
-#define N_SYNC_PPP  14  /* synchronous PPP */
-#define N_HCI       15  /* Bluetooth HCI UART */
-#define N_GIGASET_M101  16  /* Siemens Gigaset M101 serial DECT adapter */
-#define N_SLCAN     17  /* Serial / USB serial CAN Adaptors */
-#define N_PPS       18  /* Pulse per Second */
-#define N_V253      19  /* Codec control over voice modem */
-#define N_CAIF      20      /* CAIF protocol for talking to modems */
-#define N_GSM0710   21  /* GSM 0710 Mux */
-#define N_TI_WL     22  /* for TI's WL BT, FM, GPS combo chips */
-#define N_TRACESINK 23  /* Trace data routing for MIPI P1149.7 */
-#define N_TRACEROUTER   24  /* Trace data routing for MIPI P1149.7 */
-#define N_NCI       25  /* NFC NCI UART */
+#define N_TTY 0
+#define N_SLIP 1
+#define N_MOUSE 2
+#define N_PPP 3
+#define N_STRIP 4
+#define N_AX25 5
+#define N_X25 6 /* X.25 async */
+#define N_6PACK 7
+#define N_MASC 8          /* Reserved for Mobitex module <kaz@cafe.net> */
+#define N_R3964 9         /* Reserved for Simatic R3964 module */
+#define N_PROFIBUS_FDL 10 /* Reserved for Profibus */
+#define N_IRDA 11         /* Linux IrDa - http://irda.sourceforge.net/ */
+#define N_SMSBLOCK 12     /* SMS block mode - for talking to GSM data */
+                          /* cards about SMS messages */
+#define N_HDLC 13         /* synchronous HDLC */
+#define N_SYNC_PPP 14     /* synchronous PPP */
+#define N_HCI 15          /* Bluetooth HCI UART */
+#define N_GIGASET_M101 16 /* Siemens Gigaset M101 serial DECT adapter */
+#define N_SLCAN 17        /* Serial / USB serial CAN Adaptors */
+#define N_PPS 18          /* Pulse per Second */
+#define N_V253 19         /* Codec control over voice modem */
+#define N_CAIF 20         /* CAIF protocol for talking to modems */
+#define N_GSM0710 21      /* GSM 0710 Mux */
+#define N_TI_WL 22        /* for TI's WL BT, FM, GPS combo chips */
+#define N_TRACESINK 23    /* Trace data routing for MIPI P1149.7 */
+#define N_TRACEROUTER 24  /* Trace data routing for MIPI P1149.7 */
+#define N_NCI 25          /* NFC NCI UART */
 
 /* Used for packet mode */
-#define TIOCPKT_DATA         0
-#define TIOCPKT_FLUSHREAD    1
-#define TIOCPKT_FLUSHWRITE   2
-#define TIOCPKT_STOP         4
-#define TIOCPKT_START        8
-#define TIOCPKT_NOSTOP      16
-#define TIOCPKT_DOSTOP      32
+#define TIOCPKT_DATA 0
+#define TIOCPKT_FLUSHREAD 1
+#define TIOCPKT_FLUSHWRITE 2
+#define TIOCPKT_STOP 4
+#define TIOCPKT_START 8
+#define TIOCPKT_NOSTOP 16
+#define TIOCPKT_DOSTOP 32
 
 /* tty driver types */
-#define TTY_DRIVER_TYPE_SYSTEM      0x0001
-#define TTY_DRIVER_TYPE_CONSOLE     0x0002
-#define TTY_DRIVER_TYPE_SERIAL      0x0003
-#define TTY_DRIVER_TYPE_PTY     0x0004
-#define TTY_DRIVER_TYPE_SCC     0x0005  /* scc driver */
-#define TTY_DRIVER_TYPE_SYSCONS     0x0006
+#define TTY_DRIVER_TYPE_SYSTEM 0x0001
+#define TTY_DRIVER_TYPE_CONSOLE 0x0002
+#define TTY_DRIVER_TYPE_SERIAL 0x0003
+#define TTY_DRIVER_TYPE_PTY 0x0004
+#define TTY_DRIVER_TYPE_SCC 0x0005 /* scc driver */
+#define TTY_DRIVER_TYPE_SYSCONS 0x0006
 
 /* pty subtypes */
-#define PTY_TYPE_MASTER         0x0001
-#define PTY_TYPE_SLAVE          0x0002
+#define PTY_TYPE_MASTER 0x0001
+#define PTY_TYPE_SLAVE 0x0002
 
 /* serial subtype definitions */
-#define SERIAL_TYPE_NORMAL  1
+#define SERIAL_TYPE_NORMAL 1
 
-#define max(a, b) ({\
-        typeof(a) _a = a;\
-        typeof(b) _b = b;\
-        _a > _b ? _a : _b; })
+#define max(a, b)                                                              \
+  ({                                                                           \
+    typeof(a) _a = a;                                                          \
+    typeof(b) _b = b;                                                          \
+    _a > _b ? _a : _b;                                                         \
+  })
 
-#define min(a, b) ({\
-        typeof(a) _a = a;\
-        typeof(b) _b = b;\
-        _a < _b ? _a : _b; })
+#define min(a, b)                                                              \
+  ({                                                                           \
+    typeof(a) _a = a;                                                          \
+    typeof(b) _b = b;                                                          \
+    _a < _b ? _a : _b;                                                         \
+  })
 
 void tty_set_fops(struct dfs_file_ops *fops);
 void console_set_fops(struct dfs_file_ops *fops);
@@ -302,181 +303,161 @@ void mutex_unlock(rt_mutex_t mutex);
 int __tty_check_change(struct tty_struct *tty, int sig);
 int tty_check_change(struct tty_struct *tty);
 
-rt_inline struct rt_wqueue *wait_queue_get(struct rt_lwp *lwp, struct tty_struct *tty)
-{
-    if (lwp == RT_NULL)
-    {
-        return &tty->wait_queue;
-    }
-    return &lwp->wait_queue;
+rt_inline struct rt_wqueue *wait_queue_get(struct rt_lwp *lwp,
+                                           struct tty_struct *tty) {
+  if (lwp == RT_NULL) {
+    return &tty->wait_queue;
+  }
+  return &lwp->wait_queue;
 }
 
-rt_inline struct rt_wqueue *wait_queue_current_get(struct rt_lwp *lwp, struct tty_struct *tty)
-{
-    return wait_queue_get(lwp, tty);
+rt_inline struct rt_wqueue *wait_queue_current_get(struct rt_lwp *lwp,
+                                                   struct tty_struct *tty) {
+  return wait_queue_get(lwp, tty);
 }
 
-rt_inline void tty_wakeup_check(struct tty_struct *tty)
-{
-    struct rt_wqueue *wq = NULL;
+rt_inline void tty_wakeup_check(struct tty_struct *tty) {
+  struct rt_wqueue *wq = NULL;
 
-    wq = wait_queue_current_get(tty->foreground, tty);
-    rt_wqueue_wakeup(wq, (void*)POLLIN);
+  wq = wait_queue_current_get(tty->foreground, tty);
+  rt_wqueue_wakeup(wq, (void *)POLLIN);
 }
 
-rt_inline int set_bit(int nr,int *addr)
-{
-    int mask, retval, level;
+rt_inline int set_bit(int nr, int *addr) {
+  int mask, retval, level;
 
-    addr += nr >> 5;
-    mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
-    retval = (mask & *addr) != 0;
-    *addr |= mask;
-    rt_hw_interrupt_enable(level);
-    return retval;
+  addr += nr >> 5;
+  mask = 1 << (nr & 0x1f);
+  level = rt_hw_interrupt_disable();
+  retval = (mask & *addr) != 0;
+  *addr |= mask;
+  rt_hw_interrupt_enable(level);
+  return retval;
 }
 
-rt_inline int clear_bit(int nr, int *addr)
-{
-    int mask, retval, level;
+rt_inline int clear_bit(int nr, int *addr) {
+  int mask, retval, level;
 
-    addr += nr >> 5;
-    mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
-    retval = (mask & *addr) != 0;
-    *addr &= ~mask;
-    rt_hw_interrupt_enable(level);
-    return retval;
+  addr += nr >> 5;
+  mask = 1 << (nr & 0x1f);
+  level = rt_hw_interrupt_disable();
+  retval = (mask & *addr) != 0;
+  *addr &= ~mask;
+  rt_hw_interrupt_enable(level);
+  return retval;
 }
 
-rt_inline int test_bit(int nr, int *addr)
-{
-    int mask;
+rt_inline int test_bit(int nr, int *addr) {
+  int mask;
 
-    addr += nr >> 5;
-    mask = 1 << (nr & 0x1f);
-    return ((mask & *addr) != 0);
+  addr += nr >> 5;
+  mask = 1 << (nr & 0x1f);
+  return ((mask & *addr) != 0);
 }
 
-rt_inline int test_and_clear_bit(int nr, volatile void *addr)
-{
-    int mask, retval, level;
-    volatile unsigned int *a = addr;
+rt_inline int test_and_clear_bit(int nr, volatile void *addr) {
+  int mask, retval, level;
+  volatile unsigned int *a = addr;
 
-    a += nr >> 5;
-    mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
-    retval = (mask & *a) != 0;
-    *a &= ~mask;
-    rt_hw_interrupt_enable(level);
+  a += nr >> 5;
+  mask = 1 << (nr & 0x1f);
+  level = rt_hw_interrupt_disable();
+  retval = (mask & *a) != 0;
+  *a &= ~mask;
+  rt_hw_interrupt_enable(level);
 
-    return retval;
+  return retval;
 }
 
-rt_inline unsigned long __ffs(unsigned long word)
-{
-    int num = 0;
+rt_inline unsigned long __ffs(unsigned long word) {
+  int num = 0;
 
 #if BITS_PER_LONG == 64
-    if ((word & 0xffffffff) == 0)
-    {
-        num += 32;
-        word >>= 32;
-    }
+  if ((word & 0xffffffff) == 0) {
+    num += 32;
+    word >>= 32;
+  }
 #endif
-    if ((word & 0xffff) == 0)
-    {
-        num += 16;
-        word >>= 16;
-    }
-    if ((word & 0xff) == 0)
-    {
-        num += 8;
-        word >>= 8;
-    }
-    if ((word & 0xf) == 0)
-    {
-        num += 4;
-        word >>= 4;
-    }
-    if ((word & 0x3) == 0)
-    {
-        num += 2;
-        word >>= 2;
-    }
-    if ((word & 0x1) == 0)
-    {
-        num += 1;
-    }
+  if ((word & 0xffff) == 0) {
+    num += 16;
+    word >>= 16;
+  }
+  if ((word & 0xff) == 0) {
+    num += 8;
+    word >>= 8;
+  }
+  if ((word & 0xf) == 0) {
+    num += 4;
+    word >>= 4;
+  }
+  if ((word & 0x3) == 0) {
+    num += 2;
+    word >>= 2;
+  }
+  if ((word & 0x1) == 0) {
+    num += 1;
+  }
 
-    return num;
+  return num;
 }
-#define BITS_PER_LONG       32
-#define BITOP_WORD(nr)      ((nr) / BITS_PER_LONG)
+#define BITS_PER_LONG 32
+#define BITOP_WORD(nr) ((nr) / BITS_PER_LONG)
 
 /*
  * Find the next set bit in a memory region.
  */
-rt_inline unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
-                unsigned long offset)
-{
-    const unsigned long *p = addr + BITOP_WORD(offset);
-    unsigned long result = offset & ~(BITS_PER_LONG-1);
-    unsigned long tmp;
+rt_inline unsigned long find_next_bit(const unsigned long *addr,
+                                      unsigned long size,
+                                      unsigned long offset) {
+  const unsigned long *p = addr + BITOP_WORD(offset);
+  unsigned long result = offset & ~(BITS_PER_LONG - 1);
+  unsigned long tmp;
 
-    if (offset >= size)
-    {
-        return size;
+  if (offset >= size) {
+    return size;
+  }
+
+  size -= result;
+  offset %= BITS_PER_LONG;
+  if (offset) {
+    tmp = *(p++);
+    tmp &= (~0UL << offset);
+    if (size < BITS_PER_LONG) {
+      goto found_first;
     }
 
-    size -= result;
-    offset %= BITS_PER_LONG;
-    if (offset)
-    {
-        tmp = *(p++);
-        tmp &= (~0UL << offset);
-        if (size < BITS_PER_LONG)
-        {
-            goto found_first;
-        }
-
-        if (tmp)
-        {
-            goto found_middle;
-        }
-
-        size -= BITS_PER_LONG;
-        result += BITS_PER_LONG;
+    if (tmp) {
+      goto found_middle;
     }
 
-    while (size & ~(BITS_PER_LONG-1))
-    {
-        if ((tmp = *(p++)))
-        {
-            goto found_middle;
-        }
+    size -= BITS_PER_LONG;
+    result += BITS_PER_LONG;
+  }
 
-        result += BITS_PER_LONG;
-        size -= BITS_PER_LONG;
+  while (size & ~(BITS_PER_LONG - 1)) {
+    if ((tmp = *(p++))) {
+      goto found_middle;
     }
 
-    if (!size)
-    {
-        return result;
-    }
+    result += BITS_PER_LONG;
+    size -= BITS_PER_LONG;
+  }
 
-    tmp = *p;
+  if (!size) {
+    return result;
+  }
+
+  tmp = *p;
 
 found_first:
-    tmp &= (~0UL >> (BITS_PER_LONG - size));
-    if (tmp == 0UL)     /* Are any bits set? */
-    {
-        return result + size;   /* Nope. */
-    }
+  tmp &= (~0UL >> (BITS_PER_LONG - size));
+  if (tmp == 0UL) /* Are any bits set? */
+  {
+    return result + size; /* Nope. */
+  }
 
 found_middle:
-    return result + __ffs(tmp);
+  return result + __ffs(tmp);
 }
 
 /*create by tty_ioctl.c*/

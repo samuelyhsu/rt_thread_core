@@ -36,21 +36,26 @@ import utils
 
 fs_encoding = sys.getfilesystemencoding()
 
-#reference
+# reference
 # http://woodpecker.org.cn/diveintopython3/xml.html
 # https://pycoders-weekly-chinese.readthedocs.org/en/latest/issue6/processing-xml-in-python-with-element-tree.html
 # http://www.cnblogs.com/ifantastic/archive/2013/04/12/3017110.html
 
-filter_project = etree.Element('Project', attrib={'ToolsVersion':'4.0'})
+filter_project = etree.Element('Project', attrib={'ToolsVersion': '4.0'})
+
+
 def get_uuid():
     id = uuid.uuid1()  # UUID('3e5526c0-2841-11e3-a376-20cf3048bcb3')
     if sys.version > '3':
-        idstr = id.urn[9:] #'urn:uuid:3e5526c0-2841-11e3-a376-20cf3048bcb3'[9:]
+        # 'urn:uuid:3e5526c0-2841-11e3-a376-20cf3048bcb3'[9:]
+        idstr = id.urn[9:]
     else:
         # python3 is no decode function
-        idstr = id.get_urn()[9:] #'urn:uuid:3e5526c0-2841-11e3-a376-20cf3048bcb3'[9:]
+        # 'urn:uuid:3e5526c0-2841-11e3-a376-20cf3048bcb3'[9:]
+        idstr = id.get_urn()[9:]
 
     return '{'+idstr+'}'
+
 
 def VS2012_AddGroup(parent, group_name, files, project_path):
     for f in files:
@@ -70,7 +75,8 @@ def VS2012_AddGroup(parent, group_name, files, project_path):
             ClCompile.set('Include', path.decode(fs_encoding))
 
         Filter = SubElement(ClCompile, 'Filter')
-        Filter.text='Source Files\\'+group_name
+        Filter.text = 'Source Files\\'+group_name
+
 
 def VS2012_CreateFilter(script, project_path):
     c_ItemGroup = SubElement(filter_project, 'ItemGroup')
@@ -96,16 +102,18 @@ def VS2012_CreateFilter(script, project_path):
         UniqueIdentifier = SubElement(Filter, 'UniqueIdentifier')
         UniqueIdentifier.text = get_uuid()
 
-#program: object from scons
+# program: object from scons
 # parent: xml node
 # file_type: C or H
 # files: c/h list
 # project_path
+
+
 def VS_add_ItemGroup(parent, file_type, files, project_path):
     from building import Rtt_Root
     RTT_ROOT = os.path.normpath(Rtt_Root)
 
-    file_dict = {'C':"ClCompile", 'H':'ClInclude'}
+    file_dict = {'C': "ClCompile", 'H': 'ClInclude'}
     item_tag = file_dict[file_type]
 
     ItemGroup = SubElement(parent, 'ItemGroup')
@@ -115,15 +123,15 @@ def VS_add_ItemGroup(parent, file_type, files, project_path):
         path = os.path.dirname(fn.abspath)
 
         objpath = path.lower()
-        if len(project_path) >= len(RTT_ROOT) :
-            if objpath.startswith(project_path.lower()) :
+        if len(project_path) >= len(RTT_ROOT):
+            if objpath.startswith(project_path.lower()):
                 objpath = ''.join('bsp'+objpath[len(project_path):])
-            else :
+            else:
                 objpath = ''.join('kernel'+objpath[len(RTT_ROOT):])
-        else :
-            if objpath.startswith(RTT_ROOT.lower()) :
+        else:
+            if objpath.startswith(RTT_ROOT.lower()):
                 objpath = ''.join('kernel'+objpath[len(RTT_ROOT):])
-            else :
+            else:
                 objpath = ''.join('bsp'+objpath[len(project_path):])
         path = _make_path_relative(project_path, path)
         path = os.path.join(path, name)
@@ -136,9 +144,10 @@ def VS_add_ItemGroup(parent, file_type, files, project_path):
             # python3 is no decode function
             File.set('Include', path.decode(fs_encoding))
 
-        if file_type == 'C' :
+        if file_type == 'C':
             ObjName = SubElement(File, 'ObjectFileName')
             ObjName.text = ''.join('$(IntDir)'+objpath+'\\')
+
 
 def VS_add_HeadFiles(program, elem, project_path):
     utils.source_ext = []
@@ -170,7 +179,8 @@ def VS_add_HeadFiles(program, elem, project_path):
             ClInclude.set('Include', path.decode(fs_encoding))
 
         Filter = SubElement(ClInclude, 'Filter')
-        Filter.text='Header Files'
+        Filter.text = 'Header Files'
+
 
 def VS2012Project(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
@@ -200,7 +210,7 @@ def VS2012Project(target, script, program):
         paths = set()
         for path in cpp_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc) #.replace('\\', '/')
+            paths.add(inc)  # .replace('\\', '/')
 
         paths = [i for i in paths]
         paths.sort()
@@ -239,7 +249,7 @@ def VS2012Project(target, script, program):
     # write lib include path
     if 'LIBPATH' in building.Env:
         lib_path = building.Env['LIBPATH']
-        paths  = set()
+        paths = set()
         for path in lib_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
             paths.add(inc)
@@ -259,7 +269,7 @@ def VS2012Project(target, script, program):
         # python3 is no decode function
         vcxproj_string = etree.tostring(root, encoding='utf-8')
 
-    root_node=r'<Project DefaultTargets="Build" ToolsVersion="4.0">'
+    root_node = r'<Project DefaultTargets="Build" ToolsVersion="4.0">'
     out.write(r'<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
     out.write(vcxproj_string[len(root_node):])
     out.close()
@@ -274,8 +284,8 @@ def VS2012Project(target, script, program):
 
     out = open('project.vcxproj.filters', 'w')
     out.write('<?xml version="1.0" encoding="UTF-8"?>\r\n')
-    root_node=r'<Project ToolsVersion="4.0">'
-    out.write(r'<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+    root_node = r'<Project ToolsVersion="4.0">'
+    out.write(
+        r'<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
     out.write(filter_string[len(root_node):])
     out.close()
-

@@ -11,19 +11,20 @@
 #ifndef CPUTIME_H__
 #define CPUTIME_H__
 
-#include <stdint.h>
 #include "cputimer.h"
+#include <stdint.h>
 
-struct rt_clock_cputime_ops
-{
-    double (*cputime_getres)(void);
-    uint64_t (*cputime_gettime)(void);
-    int (*cputime_settimeout)(uint64_t tick, void (*timeout)(void *param), void *param);
+struct rt_clock_cputime_ops {
+  double (*cputime_getres)(void);
+  uint64_t (*cputime_gettime)(void);
+  int (*cputime_settimeout)(uint64_t tick, void (*timeout)(void *param),
+                            void *param);
 };
 
 double clock_cpu_getres(void);
 uint64_t clock_cpu_gettime(void);
-int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *param);
+int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param),
+                         void *param);
 int clock_cpu_issettimeout(void);
 
 uint64_t clock_cpu_microsecond(uint64_t cpu_tick);

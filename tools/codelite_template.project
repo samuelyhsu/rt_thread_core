@@ -34,7 +34,7 @@ load</PostConnectCommands>
       <PostBuild>
         <Command Enabled="yes">arm-none-eabi-objcopy -O ihex $(IntermediateDirectory)/$(ProjectName).elf $(IntermediateDirectory)/$(ProjectName).hex</Command>
         <Command Enabled="yes">arm-none-eabi-objcopy -I ihex -O binary $(IntermediateDirectory)/$(ProjectName).hex $(IntermediateDirectory)/$(ProjectName).bin</Command>
-		<Command Enabled="yes">arm-none-eabi-size $(IntermediateDirectory)/$(ProjectName).elf</Command>
+        <Command Enabled="yes">arm-none-eabi-size $(IntermediateDirectory)/$(ProjectName).elf</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

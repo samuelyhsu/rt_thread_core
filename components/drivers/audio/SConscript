@@ -1,9 +1,10 @@
 from building import *
 
-cwd     = GetCurrentDir()
-src     = Glob('*.c')
+cwd = GetCurrentDir()
+src = Glob('*.c')
 CPPPATH = [cwd]
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_AUDIO'], CPPPATH = CPPPATH)
+group = DefineGroup('DeviceDrivers', src, depend=[
+                    'RT_USING_AUDIO'], CPPPATH=CPPPATH)
 
 Return('group')

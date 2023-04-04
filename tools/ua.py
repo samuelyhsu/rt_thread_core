@@ -26,6 +26,7 @@ import os
 import sys
 from utils import _make_path_relative
 
+
 def PrefixPath(prefix, path):
     path = os.path.abspath(path)
     prefix = os.path.abspath(prefix)
@@ -38,6 +39,7 @@ def PrefixPath(prefix, path):
         return True
 
     return False
+
 
 def PrepareUA(project, RTT_ROOT, BSP_ROOT):
     with open('rtua.py', 'w') as ua:
@@ -69,10 +71,12 @@ def PrepareUA(project, RTT_ROOT, BSP_ROOT):
             CPPPATH = []
             for path in paths:
                 if PrefixPath(RTT_ROOT, path):
-                    CPPPATH += ['RTT_ROOT + "/%s",' % _make_path_relative(RTT_ROOT, path).replace('\\', '/')]
+                    CPPPATH += ['RTT_ROOT + "/%s",' %
+                                _make_path_relative(RTT_ROOT, path).replace('\\', '/')]
 
                 elif PrefixPath(BSP_ROOT, path):
-                    CPPPATH += ['BSP_ROOT + "/%s",' % _make_path_relative(BSP_ROOT, path).replace('\\', '/')]
+                    CPPPATH += ['BSP_ROOT + "/%s",' %
+                                _make_path_relative(BSP_ROOT, path).replace('\\', '/')]
                 else:
                     CPPPATH += ['"%s",' % path.replace('\\', '/')]
 

@@ -11,13 +11,13 @@
 #ifndef __CRYPTO_H__
 #define __CRYPTO_H__
 
-#include <rtthread.h>
-#include <hwcrypto.h>
-#include <hw_symmetric.h>
-#include <hw_rng.h>
-#include <hw_hash.h>
+#include <hw_bignum.h>
 #include <hw_crc.h>
 #include <hw_gcm.h>
-#include <hw_bignum.h>
+#include <hw_hash.h>
+#include <hw_rng.h>
+#include <hw_symmetric.h>
+#include <hwcrypto.h>
+#include <rtthread.h>
 
 #endif

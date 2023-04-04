@@ -25,33 +25,32 @@
  * @return stack address
  */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
-                             rt_uint8_t *stack_addr, void *texit)
-{
-    rt_uint32_t *stk;
+                             rt_uint8_t *stack_addr, void *texit) {
+  rt_uint32_t *stk;
 
-    stack_addr += sizeof(rt_uint32_t);
-    stack_addr  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
-    stk      = (rt_uint32_t *)stack_addr;
-    *(--stk) = (rt_uint32_t)tentry;         /* entry point */
-    *(--stk) = (rt_uint32_t)texit;          /* lr */
-    *(--stk) = 0xdeadbeef;                  /* r12 */
-    *(--stk) = 0xdeadbeef;                  /* r11 */
-    *(--stk) = 0xdeadbeef;                  /* r10 */
-    *(--stk) = 0xdeadbeef;                  /* r9 */
-    *(--stk) = 0xdeadbeef;                  /* r8 */
-    *(--stk) = 0xdeadbeef;                  /* r7 */
-    *(--stk) = 0xdeadbeef;                  /* r6 */
-    *(--stk) = 0xdeadbeef;                  /* r5 */
-    *(--stk) = 0xdeadbeef;                  /* r4 */
-    *(--stk) = 0xdeadbeef;                  /* r3 */
-    *(--stk) = 0xdeadbeef;                  /* r2 */
-    *(--stk) = 0xdeadbeef;                  /* r1 */
-    *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
-    *(--stk) = Mode_SVC;                    /* cpsr */
-    *(--stk) = Mode_SVC;                    /* spsr */
+  stack_addr += sizeof(rt_uint32_t);
+  stack_addr = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
+  stk = (rt_uint32_t *)stack_addr;
+  *(--stk) = (rt_uint32_t)tentry;    /* entry point */
+  *(--stk) = (rt_uint32_t)texit;     /* lr */
+  *(--stk) = 0xdeadbeef;             /* r12 */
+  *(--stk) = 0xdeadbeef;             /* r11 */
+  *(--stk) = 0xdeadbeef;             /* r10 */
+  *(--stk) = 0xdeadbeef;             /* r9 */
+  *(--stk) = 0xdeadbeef;             /* r8 */
+  *(--stk) = 0xdeadbeef;             /* r7 */
+  *(--stk) = 0xdeadbeef;             /* r6 */
+  *(--stk) = 0xdeadbeef;             /* r5 */
+  *(--stk) = 0xdeadbeef;             /* r4 */
+  *(--stk) = 0xdeadbeef;             /* r3 */
+  *(--stk) = 0xdeadbeef;             /* r2 */
+  *(--stk) = 0xdeadbeef;             /* r1 */
+  *(--stk) = (rt_uint32_t)parameter; /* r0 : argument */
+  *(--stk) = Mode_SVC;               /* cpsr */
+  *(--stk) = Mode_SVC;               /* spsr */
 
-    /* return task's current stack address */
-    return (rt_uint8_t *)stk;
+  /* return task's current stack address */
+  return (rt_uint8_t *)stk;
 }
 
 /*@}*/

@@ -8,11 +8,8 @@
  * 2010-11-17     yi.qiu      first version
  */
 
-#include <rtthread.h>
 #include <rtm.h>
+#include <rtthread.h>
 
-const char *dlerror(void)
-{
-    return "TODO";
-}
+const char *dlerror(void) { return "TODO"; }
 RTM_EXPORT(dlerror)

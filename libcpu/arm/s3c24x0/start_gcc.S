@@ -383,4 +383,3 @@ stack_setup:
     mov     pc,lr                   /* The LR register may be not valid for the mode changes.*/
 
 /*/*}*/
-

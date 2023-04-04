@@ -27,4 +27,3 @@ void arm_gic_clear_sgi(rt_uint32_t index, int target_cpu, int irq);
 void arm_gic_dump_type(rt_uint32_t index);
 
 #endif
-

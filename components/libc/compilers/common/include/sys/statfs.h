@@ -16,11 +16,10 @@
 extern "C" {
 #endif
 
-struct statfs
-{
-    size_t f_bsize;   /* block size */
-    size_t f_blocks;  /* total data blocks in file system */
-    size_t f_bfree;   /* free blocks in file system */
+struct statfs {
+  size_t f_bsize;  /* block size */
+  size_t f_blocks; /* total data blocks in file system */
+  size_t f_bfree;  /* free blocks in file system */
 };
 
 int statfs(const char *path, struct statfs *buf);

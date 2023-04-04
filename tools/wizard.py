@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-#coding=utf-8
+# coding=utf-8
 
 #
 # File      : wizard.py
@@ -65,9 +65,11 @@ for d in list:
 Return('objs')
 '''
 
+
 def usage():
     print('wizard --component name')
     print('wizard --bridge')
+
 
 def gen_component(name):
     print('generate SConscript for ' + name)
@@ -76,11 +78,13 @@ def gen_component(name):
     f.write(text)
     f.close()
 
+
 def gen_bridge():
     print('generate SConscript for bridge')
     f = open('SConscript', 'w')
     f.write(SConscript_bridge)
     f.close()
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:

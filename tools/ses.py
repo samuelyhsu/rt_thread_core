@@ -9,6 +9,7 @@ from utils import _make_path_relative
 from utils import xml_indent
 from utils import ProjectInfo
 
+
 def SDKAddGroup(parent, name, files, project_path):
     # don't add an empty group
     if len(files) == 0:
@@ -29,7 +30,8 @@ def SDKAddGroup(parent, name, files, project_path):
 
     return group
 
-def SESProject(env) :
+
+def SESProject(env):
     target = 'project.emProject'
     tree = etree.parse('template.emProject')
     # print(etree.dump(tree.getroot()))
@@ -56,7 +58,8 @@ def SESProject(env) :
     for group in script:
         # print(group)
 
-        group_tree = SDKAddGroup(project_node, group['name'], group['src'], project_path)
+        group_tree = SDKAddGroup(
+            project_node, group['name'], group['src'], project_path)
 
         # get each group's cc flags
         if 'CFLAGS' in group and group['CFLAGS']:
@@ -73,7 +76,8 @@ def SESProject(env) :
                 LINKFLAGS += group['LINKFLAGS']
 
     # write include path, definitions and link flags
-    path = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in project['CPPPATH']])
+    path = ';'.join([_make_path_relative(project_path, os.path.normpath(i))
+                    for i in project['CPPPATH']])
     path = path.replace('\\', '/')
     defines = ';'.join(set(project['CPPDEFINES']))
 

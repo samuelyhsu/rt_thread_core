@@ -11,6 +11,4 @@
 #ifndef __SYS_MSG_H__
 #define __SYS_MSG_H__
 
-
-
 #endif

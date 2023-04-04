@@ -12,25 +12,17 @@
 
 /* Setups/teardown functions */
 
-static void
-mem_setup(void)
-{
-}
+static void mem_setup(void) {}
 
-static void
-mem_teardown(void)
-{
-}
-
+static void mem_teardown(void) {}
 
 /* Test functions */
 
 /** Call mem_malloc, mem_free and mem_trim and check stats */
-START_TEST(test_mem_one)
-{
-#define SIZE1   16
+START_TEST(test_mem_one) {
+#define SIZE1 16
 #define SIZE1_2 12
-#define SIZE2   16
+#define SIZE2 16
   void *p1, *p2;
   mem_size_t s1, s2;
   LWIP_UNUSED_ARG(_i);
@@ -61,13 +53,9 @@ START_TEST(test_mem_one)
 }
 END_TEST
 
-
 /** Create the suite including all tests for this module */
-Suite *
-mem_suite(void)
-{
-  TFun tests[] = {
-    test_mem_one
-  };
-  return create_suite("MEM", tests, sizeof(tests)/sizeof(TFun), mem_setup, mem_teardown);
+Suite *mem_suite(void) {
+  TFun tests[] = {test_mem_one};
+  return create_suite("MEM", tests, sizeof(tests) / sizeof(TFun), mem_setup,
+                      mem_teardown);
 }

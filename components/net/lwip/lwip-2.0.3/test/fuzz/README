@@ -31,4 +31,3 @@ file to simplify viewing in wireshark.
 The lwipopts.h file needs to have checksum checking off, otherwise almost every
 packet will be discarded because of that. The other options can be tuned to
 expose different parts of the code.
-

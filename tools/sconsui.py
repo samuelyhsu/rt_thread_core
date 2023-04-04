@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-#coding=utf-8
+# coding=utf-8
 
 #
 # File      : sconsui.py
@@ -25,15 +25,21 @@
 # 2015-01-20     Bernard      Add copyright information
 #
 
+import platform
+import threading
+import os
+import tkMessageBox
+import tkFileDialog
+import ScrolledText
 import sys
 
 py2 = py30 = py31 = False
 version = sys.hexversion
-if version >= 0x020600F0 and version < 0x03000000 :
+if version >= 0x020600F0 and version < 0x03000000:
     py2 = True    # Python 2.6 or 2.7
     from Tkinter import *
     import ttk
-elif version >= 0x03000000 and version < 0x03010000 :
+elif version >= 0x03000000 and version < 0x03010000:
     py30 = True
     from tkinter import *
     import ttk
@@ -42,23 +48,17 @@ elif version >= 0x03010000:
     from tkinter import *
     import tkinter.ttk as ttk
 else:
-    print ("""
+    print("""
     You do not have a version of python supporting ttk widgets..
     You need a version >= 2.6 to execute PAGE modules.
     """)
     sys.exit()
 
-import ScrolledText
-import tkFileDialog
-import tkMessageBox
-
-import os
-import threading
-import platform
 
 builder = None
 executor = None
 lock = None
+
 
 class CmdExecutor(threading.Thread):
     def __init__(self, cmd, output):
@@ -97,6 +97,7 @@ class CmdExecutor(threading.Thread):
             builder.output.insert(END, 'Done')
             builder.is_makeing_project = False
 
+
 def ExecCmd(cmd):
     global executor
     if executor:
@@ -106,19 +107,22 @@ def ExecCmd(cmd):
     executor = CmdExecutor(cmd, builder)
     executor.start()
 
+
 class DirSelectBox(ttk.Frame):
     def __init__(self, master=None, **kw):
         ttk.Frame.__init__(self, master, **kw)
         self.dir_var = StringVar()
-        self.entry = ttk.Entry(self, textvariable = self.dir_var)
-        self.entry.pack(fill=BOTH, expand=1,side=LEFT)
-        self.entry.configure(width = 50)
+        self.entry = ttk.Entry(self, textvariable=self.dir_var)
+        self.entry.pack(fill=BOTH, expand=1, side=LEFT)
+        self.entry.configure(width=50)
 
-        self.browser_button = ttk.Button(self, text="Browser", command=self.browser)
+        self.browser_button = ttk.Button(
+            self, text="Browser", command=self.browser)
         self.browser_button.pack(side=RIGHT)
 
     def browser(self):
-        dir = tkFileDialog.askdirectory(parent=self, title='Open directory', initialdir=self.dir_var.get())
+        dir = tkFileDialog.askdirectory(
+            parent=self, title='Open directory', initialdir=self.dir_var.get())
         if dir != '':
             self.dir_var.set(dir)
 
@@ -129,17 +133,19 @@ class DirSelectBox(ttk.Frame):
     def get_path(self):
         return self.dir_var.get()
 
+
 COMPILER = [
-        ("GNU GCC", "GCC"),
-        ("Keil ARMCC", "ARMCC"),
-        ("IAR Compiler", "IAR"),
-    ]
+    ("GNU GCC", "GCC"),
+    ("Keil ARMCC", "ARMCC"),
+    ("IAR Compiler", "IAR"),
+]
 
 IDE = [
     ('Keil MDK4', 'mdk4'),
     ('Keil MDK', 'mdk'),
     ('IAR Compiler', 'iar')
 ]
+
 
 class SconsUI():
     def __init__(self, master=None):
@@ -160,21 +166,21 @@ class SconsUI():
 
         # make project page
         page_project = ttk.Frame(notebook)
-        notebook.add(page_project, padding = 3)
-        notebook.tab(1, text = 'Project', underline = '-1')
+        notebook.add(page_project, padding=3)
+        notebook.tab(1, text='Project', underline='-1')
         self.setup_project_ui(page_project)
         self.project_page = page_project
 
         # setting page
         page_setting = ttk.Frame(notebook)
-        notebook.add(page_setting, padding = 3)
-        notebook.tab(2, text = 'Setting', underline = '-1')
+        notebook.add(page_setting, padding=3)
+        notebook.tab(2, text='Setting', underline='-1')
         self.setup_setting_ui(page_setting)
         self.setting_page = page_setting
 
         padding = ttk.Frame(master)
         padding.pack(fill=X)
-        quit = ttk.Button(padding, text='Quit', command = self.quit)
+        quit = ttk.Button(padding, text='Quit', command=self.quit)
         quit.pack(side=RIGHT)
 
         # set notebook to self
@@ -291,7 +297,7 @@ class SconsUI():
 
         setting.close()
         tkMessageBox.showinfo("RT-Thread SCons UI",
-                    "Save setting sucessfully")
+                              "Save setting sucessfully")
 
     def setup_building_ui(self, frame):
         padding = ttk.Frame(frame)
@@ -301,8 +307,9 @@ class SconsUI():
         button.pack(side=RIGHT)
         button = ttk.Button(padding, text='Build', command=self.do_build)
         button.pack(side=RIGHT)
-        label = ttk.Label(padding, relief = 'flat', text = 'Click Build or Clean to build or clean system -->')
-        label.pack(side=RIGHT, ipady = 5)
+        label = ttk.Label(padding, relief='flat',
+                          text='Click Build or Clean to build or clean system -->')
+        label.pack(side=RIGHT, ipady=5)
 
         self.progressbar = ttk.Progressbar(frame)
         self.progressbar.pack(fill=X)
@@ -314,63 +321,69 @@ class SconsUI():
         self.output.pack(fill=X)
 
     def setup_project_ui(self, frame):
-        label = ttk.Label(frame, relief = 'flat', text = 'Choose Integrated Development Environment:')
-        label.pack(fill=X, pady = 5)
+        label = ttk.Label(frame, relief='flat',
+                          text='Choose Integrated Development Environment:')
+        label.pack(fill=X, pady=5)
 
         separator = ttk.Separator(frame)
         separator.pack(fill=X)
 
         self.ide = StringVar()
-        self.ide.set("mdk4") # initialize
+        self.ide.set("mdk4")  # initialize
 
-        for text,mode in IDE:
-            radiobutton = ttk.Radiobutton(frame, text=text, variable = self.ide, value = mode)
+        for text, mode in IDE:
+            radiobutton = ttk.Radiobutton(
+                frame, text=text, variable=self.ide, value=mode)
             radiobutton.pack(fill=X, padx=10)
 
         bottom = ttk.Frame(frame)
         bottom.pack(side=BOTTOM, fill=X)
-        button = ttk.Button(bottom, text="Make Project", command = self.do_make_project)
-        button.pack(side=RIGHT, padx = 10, pady = 10)
+        button = ttk.Button(bottom, text="Make Project",
+                            command=self.do_make_project)
+        button.pack(side=RIGHT, padx=10, pady=10)
 
     def setup_setting_ui(self, frame):
         row = 0
-        label = ttk.Label (frame, relief = 'flat', text='RT-Thread Root Folder:')
-        label.grid(row=row, column=0,ipadx=5, ipady=5, padx = 5)
+        label = ttk.Label(frame, relief='flat', text='RT-Thread Root Folder:')
+        label.grid(row=row, column=0, ipadx=5, ipady=5, padx=5)
 
         self.RTTRoot = DirSelectBox(frame)
         self.RTTRoot.grid(row=row, column=1, sticky=E+W)
         row = row + 1
 
-        label = ttk.Label (frame, relief = 'flat', text='Board Support Folder:')
-        label.grid(row=row, column=0,ipadx=5, ipady=5, padx = 5)
+        label = ttk.Label(frame, relief='flat', text='Board Support Folder:')
+        label.grid(row=row, column=0, ipadx=5, ipady=5, padx=5)
 
         self.BSPRoot = DirSelectBox(frame)
         self.BSPRoot.grid(row=row, column=1, sticky=E+W)
         row = row + 1
 
-        label = ttk.Label (frame, relief='flat', text='Toolchain:')
-        label.grid(row=row, column=0,ipadx=5, ipady=5, sticky=E+W)
+        label = ttk.Label(frame, relief='flat', text='Toolchain:')
+        label.grid(row=row, column=0, ipadx=5, ipady=5, sticky=E+W)
         row = row + 1
 
         separator = ttk.Separator(frame)
-        separator.grid(row = row, column = 0, columnspan = 2, sticky = E+W)
+        separator.grid(row=row, column=0, columnspan=2, sticky=E+W)
         row = row + 1
 
         self.compilers = StringVar()
-        self.compilers.set("GCC") # initialize
+        self.compilers.set("GCC")  # initialize
 
         self.CompilersPath = {}
 
-        for text,compiler in COMPILER:
-            radiobutton = ttk.Radiobutton(frame, text=text, variable = self.compilers, value = compiler)
-            radiobutton.grid(row=row, column = 0, sticky = W, ipadx = 5, ipady = 5, padx = 20)
+        for text, compiler in COMPILER:
+            radiobutton = ttk.Radiobutton(
+                frame, text=text, variable=self.compilers, value=compiler)
+            radiobutton.grid(row=row, column=0, sticky=W,
+                             ipadx=5, ipady=5, padx=20)
 
             self.CompilersPath[compiler] = DirSelectBox(frame)
             self.CompilersPath[compiler].grid(row=row, column=1, sticky=E+W)
             row = row + 1
 
-        button = ttk.Button(frame, text='Save Setting', command = self.save_setting)
-        button.grid(row = row, column = 1, sticky = E)
+        button = ttk.Button(frame, text='Save Setting',
+                            command=self.save_setting)
+        button.grid(row=row, column=1, sticky=E)
         row = row + 1
 
     def prepare_build(self):
@@ -407,7 +420,7 @@ class SconsUI():
 
         if not result:
             tkMessageBox.showinfo("RT-Thread SCons UI",
-                                    "Folder is empty, please choose correct directory.")
+                                  "Folder is empty, please choose correct directory.")
 
         return result
 
@@ -461,16 +474,18 @@ class SconsUI():
     def quit(self):
         exit(0)
 
+
 def StartSConsUI(path=None):
     global val, root, builder, lock
     root = Tk()
     root.title('RT-Thread SCons UI')
-    #root.geometrygeometry('590x510+50+50')
+    # root.geometrygeometry('590x510+50+50')
     lock = threading.RLock()
     builder = SconsUI(root)
     if path:
         builder.BSPRoot.set_path(path)
     root.mainloop()
+
 
 if __name__ == '__main__':
     StartSConsUI()

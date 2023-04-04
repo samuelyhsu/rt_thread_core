@@ -1,6 +1,7 @@
 import os
 
-def genconfig() :
+
+def genconfig():
     from SCons.Script import SCons
 
     PreProcessor = SCons.cpp.PreProcessor()
@@ -9,7 +10,7 @@ def genconfig() :
         f = open('rtconfig.h', 'r')
         contents = f.read()
         f.close()
-    except :
+    except:
         print("Open rtconfig.h file failed.")
 
     PreProcessor.process_contents(contents)

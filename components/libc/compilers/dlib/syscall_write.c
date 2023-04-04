@@ -8,12 +8,13 @@
  * 2015-01-28     Bernard      first version
  */
 
-#include <rtthread.h>
 #include <LowLevelIOInterface.h>
-#include <unistd.h>
 #include <compiler_private.h>
-#define DBG_TAG    "dlib.syscall.write"
-#define DBG_LVL    DBG_INFO
+#include <rtthread.h>
+#include <unistd.h>
+
+#define DBG_TAG "dlib.syscall.write"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 /*
@@ -32,40 +33,33 @@
 
 #pragma module_name = "?__write"
 
-size_t __write(int handle, const unsigned char *buf, size_t len)
-{
+size_t __write(int handle, const unsigned char *buf, size_t len) {
 #ifdef DFS_USING_POSIX
-    int size;
+  int size;
 #endif /* DFS_USING_POSIX */
 
-    if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR))
-    {
+  if ((handle == _LLIO_STDOUT) || (handle == _LLIO_STDERR)) {
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
-        rt_device_t console_device;
+    rt_device_t console_device;
 
-        console_device = rt_console_get_device();
-        if (console_device)
-        {
-            rt_device_write(console_device, 0, buf, len);
-        }
+    console_device = rt_console_get_device();
+    if (console_device) {
+      rt_device_write(console_device, 0, buf, len);
+    }
 
-        return len; /* return the length of the data written */
+    return len; /* return the length of the data written */
 #else
-        return _LLIO_ERROR;
+    return _LLIO_ERROR;
 #endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
-    }
-    else if (handle == _LLIO_STDIN)
-    {
-        return _LLIO_ERROR;
-    }
-    else
-    {
+  } else if (handle == _LLIO_STDIN) {
+    return _LLIO_ERROR;
+  } else {
 #ifdef DFS_USING_POSIX
-        size = write(handle, buf, len);
-        return size; /* return the length of the data written */
+    size = write(handle, buf, len);
+    return size; /* return the length of the data written */
 #else
-        LOG_W(_WARNING_WITHOUT_FS);
-        return _LLIO_ERROR;
+    LOG_W(_WARNING_WITHOUT_FS);
+    return _LLIO_ERROR;
 #endif /* DFS_USING_POSIX */
-    }
+  }
 }

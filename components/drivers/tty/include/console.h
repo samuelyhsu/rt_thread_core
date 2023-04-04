@@ -9,8 +9,8 @@
  */
 #ifndef __CONSOLE_
 #define __CONSOLE_
-#include <rtthread.h>
 #include "tty.h"
+#include <rtthread.h>
 
 struct tty_struct *console_tty_get(void);
 struct rt_device *console_get_iodev(void);

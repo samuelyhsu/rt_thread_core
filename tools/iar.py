@@ -48,6 +48,7 @@ iar_workspace = '''<?xml version="1.0" encoding="iso-8859-1"?>
 
 '''
 
+
 def IARAddGroup(parent, name, files, project_path):
     group = SubElement(parent, 'group')
     group_name = SubElement(group, 'name')
@@ -65,9 +66,11 @@ def IARAddGroup(parent, name, files, project_path):
         file_name = SubElement(file, 'name')
 
         if os.path.isabs(path):
-            file_name.text = path # path.decode(fs_encoding)
+            file_name.text = path  # path.decode(fs_encoding)
         else:
-            file_name.text = '$PROJ_DIR$\\' + path # ('$PROJ_DIR$\\' + path).decode(fs_encoding)
+            # ('$PROJ_DIR$\\' + path).decode(fs_encoding)
+            file_name.text = '$PROJ_DIR$\\' + path
+
 
 def IARWorkspace(target):
     # make an workspace
@@ -76,6 +79,7 @@ def IARWorkspace(target):
     xml = iar_workspace % target
     out.write(xml)
     out.close()
+
 
 def IARProject(target, script):
     project_path = os.path.dirname(os.path.abspath(target))
@@ -97,7 +101,8 @@ def IARProject(target, script):
         for path_item in group['LIBPATH']:
             for prefix_item in lib_prefix:
                 for suffix_item in lib_suffix:
-                    lib_full_path = os.path.join(path_item, prefix_item + item + suffix_item)
+                    lib_full_path = os.path.join(
+                        path_item, prefix_item + item + suffix_item)
                     if os.path.isfile(lib_full_path):
                         return lib_full_path
         else:
@@ -133,7 +138,7 @@ def IARProject(target, script):
     paths = set()
     for path in CPPPATH:
         inc = _make_path_relative(project_path, os.path.normpath(path))
-        paths.add(inc) #.replace('\\', '/')
+        paths.add(inc)  # .replace('\\', '/')
 
     # setting options
     options = tree.findall('configuration/settings/data/option')
@@ -169,6 +174,7 @@ def IARProject(target, script):
 
     IARWorkspace(target)
 
+
 def IARPath():
     import rtconfig
 
@@ -186,6 +192,7 @@ def IARPath():
 
     return path
 
+
 def IARVersion():
     import subprocess
     import re
@@ -197,10 +204,11 @@ def IARVersion():
     else:
         return "0.0"
 
-    child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    child = subprocess.Popen(
+        [cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = child.communicate()
     if not isinstance(stdout, str):
-        stdout = str(stdout, 'utf8') # Patch for Python 3
+        stdout = str(stdout, 'utf8')  # Patch for Python 3
     # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
     iar_version = re.search('[\d\.]+', stdout).group(0)
     return iar_version

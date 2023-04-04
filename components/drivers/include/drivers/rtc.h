@@ -21,43 +21,44 @@
 extern "C" {
 #endif
 
-#define RT_DEVICE_CTRL_RTC_GET_TIME     (RT_DEVICE_CTRL_BASE(RTC) + 0x01)              /**< get second time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     (RT_DEVICE_CTRL_BASE(RTC) + 0x02)              /**< set second time */
-#define RT_DEVICE_CTRL_RTC_GET_TIMEVAL  (RT_DEVICE_CTRL_BASE(RTC) + 0x03)              /**< get timeval for gettimeofday */
-#define RT_DEVICE_CTRL_RTC_SET_TIMEVAL  (RT_DEVICE_CTRL_BASE(RTC) + 0x04)              /**< set timeval for gettimeofday */
-#define RT_DEVICE_CTRL_RTC_GET_ALARM    (RT_DEVICE_CTRL_BASE(RTC) + 0x05)              /**< get alarm */
-#define RT_DEVICE_CTRL_RTC_SET_ALARM    (RT_DEVICE_CTRL_BASE(RTC) + 0x06)              /**< set alarm */
+#define RT_DEVICE_CTRL_RTC_GET_TIME                                            \
+  (RT_DEVICE_CTRL_BASE(RTC) + 0x01) /**< get second time */
+#define RT_DEVICE_CTRL_RTC_SET_TIME                                            \
+  (RT_DEVICE_CTRL_BASE(RTC) + 0x02) /**< set second time */
+#define RT_DEVICE_CTRL_RTC_GET_TIMEVAL                                         \
+  (RT_DEVICE_CTRL_BASE(RTC) + 0x03) /**< get timeval for gettimeofday */
+#define RT_DEVICE_CTRL_RTC_SET_TIMEVAL                                         \
+  (RT_DEVICE_CTRL_BASE(RTC) + 0x04) /**< set timeval for gettimeofday */
+#define RT_DEVICE_CTRL_RTC_GET_ALARM                                           \
+  (RT_DEVICE_CTRL_BASE(RTC) + 0x05) /**< get alarm */
+#define RT_DEVICE_CTRL_RTC_SET_ALARM                                           \
+  (RT_DEVICE_CTRL_BASE(RTC) + 0x06) /**< set alarm */
 
 /* used for alarm function */
-struct rt_rtc_wkalarm
-{
-    rt_bool_t  enable;               /* 0 = alarm disabled, 1 = alarm enabled */
-    rt_int32_t tm_sec;               /* alarm at tm_sec */
-    rt_int32_t tm_min;               /* alarm at tm_min */
-    rt_int32_t tm_hour;              /* alarm at tm_hour */
+struct rt_rtc_wkalarm {
+  rt_bool_t enable;   /* 0 = alarm disabled, 1 = alarm enabled */
+  rt_int32_t tm_sec;  /* alarm at tm_sec */
+  rt_int32_t tm_min;  /* alarm at tm_min */
+  rt_int32_t tm_hour; /* alarm at tm_hour */
 };
 
-struct rt_rtc_ops
-{
-    rt_err_t (*init)(void);
-    rt_err_t (*get_secs)(time_t *sec);
-    rt_err_t (*set_secs)(time_t *sec);
-    rt_err_t (*get_alarm)(struct rt_rtc_wkalarm *alarm);
-    rt_err_t (*set_alarm)(struct rt_rtc_wkalarm *alarm);
-    rt_err_t (*get_timeval)(struct timeval *tv);
-    rt_err_t (*set_timeval)(struct timeval *tv);
+struct rt_rtc_ops {
+  rt_err_t (*init)(void);
+  rt_err_t (*get_secs)(time_t *sec);
+  rt_err_t (*set_secs)(time_t *sec);
+  rt_err_t (*get_alarm)(struct rt_rtc_wkalarm *alarm);
+  rt_err_t (*set_alarm)(struct rt_rtc_wkalarm *alarm);
+  rt_err_t (*get_timeval)(struct timeval *tv);
+  rt_err_t (*set_timeval)(struct timeval *tv);
 };
 
-typedef struct rt_rtc_device
-{
-    struct rt_device parent;
-    const struct rt_rtc_ops *ops;
+typedef struct rt_rtc_device {
+  struct rt_device parent;
+  const struct rt_rtc_ops *ops;
 } rt_rtc_dev_t;
 
-rt_err_t rt_hw_rtc_register(rt_rtc_dev_t  *rtc,
-                            const char    *name,
-                            rt_uint32_t    flag,
-                            void          *data);
+rt_err_t rt_hw_rtc_register(rt_rtc_dev_t *rtc, const char *name,
+                            rt_uint32_t flag, void *data);
 
 rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day);
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second);

@@ -1,32 +1,32 @@
 #include "lwip_check.h"
 
-#include "ip4/test_ip4.h"
-#include "ip6/test_ip6.h"
-#include "udp/test_udp.h"
-#include "tcp/test_tcp.h"
-#include "tcp/test_tcp_oos.h"
+#include "api/test_sockets.h"
 #include "core/test_def.h"
 #include "core/test_mem.h"
 #include "core/test_netif.h"
 #include "core/test_pbuf.h"
 #include "core/test_timers.h"
-#include "etharp/test_etharp.h"
 #include "dhcp/test_dhcp.h"
+#include "etharp/test_etharp.h"
+#include "ip4/test_ip4.h"
+#include "ip6/test_ip6.h"
 #include "mdns/test_mdns.h"
 #include "mqtt/test_mqtt.h"
-#include "api/test_sockets.h"
+#include "tcp/test_tcp.h"
+#include "tcp/test_tcp_oos.h"
+#include "udp/test_udp.h"
 
 #include "lwip/init.h"
 #if !NO_SYS
 #include "lwip/tcpip.h"
 #endif
 
-Suite* create_suite(const char* name, testfunc *tests, size_t num_tests, SFun setup, SFun teardown)
-{
+Suite *create_suite(const char *name, testfunc *tests, size_t num_tests,
+                    SFun setup, SFun teardown) {
   size_t i;
   Suite *s = suite_create(name);
 
-  for(i = 0; i < num_tests; i++) {
+  for (i = 0; i < num_tests; i++) {
     TCase *tc_core = tcase_create(name);
     if ((setup != NULL) || (teardown != NULL)) {
       tcase_add_checked_fixture(tc_core, setup, teardown);
@@ -37,8 +37,7 @@ Suite* create_suite(const char* name, testfunc *tests, size_t num_tests, SFun se
   return s;
 }
 
-void lwip_check_ensure_no_alloc(unsigned int skip)
-{
+void lwip_check_ensure_no_alloc(unsigned int skip) {
   int i;
   unsigned int mask;
 
@@ -61,24 +60,11 @@ int main(void)
   int number_failed;
   SRunner *sr;
   size_t i;
-  suite_getter_fn* suites[] = {
-    ip4_suite,
-    ip6_suite,
-    udp_suite,
-    tcp_suite,
-    tcp_oos_suite,
-    def_suite,
-    mem_suite,
-    netif_suite,
-    pbuf_suite,
-    timers_suite,
-    etharp_suite,
-    dhcp_suite,
-    mdns_suite,
-    mqtt_suite,
-    sockets_suite
-  };
-  size_t num = sizeof(suites)/sizeof(void*);
+  suite_getter_fn *suites[] = {
+      ip4_suite,    ip6_suite,  udp_suite,   tcp_suite,  tcp_oos_suite,
+      def_suite,    mem_suite,  netif_suite, pbuf_suite, timers_suite,
+      etharp_suite, dhcp_suite, mdns_suite,  mqtt_suite, sockets_suite};
+  size_t num = sizeof(suites) / sizeof(void *);
   LWIP_ASSERT("No suites defined", num > 0);
 
 #if NO_SYS
@@ -89,8 +75,8 @@ int main(void)
 
   sr = srunner_create((suites[0])());
   srunner_set_xml(sr, "lwip_unittests.xml");
-  for(i = 1; i < num; i++) {
-    srunner_add_suite(sr, ((suite_getter_fn*)suites[i])());
+  for (i = 1; i < num; i++) {
+    srunner_add_suite(sr, ((suite_getter_fn *)suites[i])());
   }
 
 #ifdef LWIP_UNITTESTS_NOFORK

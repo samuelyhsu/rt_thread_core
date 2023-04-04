@@ -1,5 +1,5 @@
-Import('RTT_ROOT')
 from building import *
+Import('RTT_ROOT')
 
 cwd = GetCurrentDir()
 src = Split("""
@@ -13,6 +13,7 @@ if GetDepend('RT_USING_I2C_BITOPS'):
 # The set of source files associated with this SConscript file.
 path = [cwd + '/../include']
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_I2C'], CPPPATH = path)
+group = DefineGroup('DeviceDrivers', src, depend=[
+                    'RT_USING_I2C'], CPPPATH=path)
 
 Return('group')

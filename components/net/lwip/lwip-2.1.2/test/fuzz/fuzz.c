@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2001-2003 Swedish Institute of Computer Science.
- * All rights reserved. 
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
- * are permitted provided that the following conditions are met:
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -11,46 +11,47 @@
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission. 
+ *    derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
- * OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
- * 
+ *
  * Author: Erik Ekman <erik@kryo.se>
  *
  */
 
+#include "lwip/dns.h"
 #include "lwip/init.h"
 #include "lwip/netif.h"
-#include "lwip/dns.h"
 #include "netif/etharp.h"
+
 #if LWIP_IPV6
 #include "lwip/ethip6.h"
 #include "lwip/nd6.h"
 #endif
 
 #include "lwip/apps/httpd.h"
-#include "lwip/apps/snmp.h"
 #include "lwip/apps/lwiperf.h"
 #include "lwip/apps/mdns.h"
+#include "lwip/apps/snmp.h"
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 /* This define enables multi packet processing.
- * For this, the input is interpreted as 2 byte length + data + 2 byte length + data...
- * #define LWIP_FUZZ_MULTI_PACKET
-*/
+ * For this, the input is interpreted as 2 byte length + data + 2 byte length +
+ * data... #define LWIP_FUZZ_MULTI_PACKET
+ */
 #ifdef LWIP_FUZZ_MULTI_PACKET
 u8_t pktbuf[20000];
 #else
@@ -58,15 +59,13 @@ u8_t pktbuf[2000];
 #endif
 
 /* no-op send function */
-static err_t lwip_tx_func(struct netif *netif, struct pbuf *p)
-{
+static err_t lwip_tx_func(struct netif *netif, struct pbuf *p) {
   LWIP_UNUSED_ARG(netif);
   LWIP_UNUSED_ARG(p);
   return ERR_OK;
 }
 
-static err_t testif_init(struct netif *netif)
-{
+static err_t testif_init(struct netif *netif) {
   netif->name[0] = 'f';
   netif->name[1] = 'z';
   netif->output = etharp_output;
@@ -92,15 +91,14 @@ static err_t testif_init(struct netif *netif)
   return ERR_OK;
 }
 
-static void input_pkt(struct netif *netif, const u8_t *data, size_t len)
-{
+static void input_pkt(struct netif *netif, const u8_t *data, size_t len) {
   struct pbuf *p, *q;
   err_t err;
 
   LWIP_ASSERT("pkt too big", len <= 0xFFFF);
   p = pbuf_alloc(PBUF_RAW, (u16_t)len, PBUF_POOL);
   LWIP_ASSERT("alloc failed", p);
-  for(q = p; q != NULL; q = q->next) {
+  for (q = p; q != NULL; q = q->next) {
     MEMCPY(q->payload, data, q->len);
     data += q->len;
   }
@@ -110,8 +108,7 @@ static void input_pkt(struct netif *netif, const u8_t *data, size_t len)
   }
 }
 
-static void input_pkts(struct netif *netif, const u8_t *data, size_t len)
-{
+static void input_pkts(struct netif *netif, const u8_t *data, size_t len) {
 #ifdef LWIP_FUZZ_MULTI_PACKET
   const u16_t max_packet_size = 1514;
   const u8_t *ptr = data;
@@ -133,13 +130,12 @@ static void input_pkts(struct netif *netif, const u8_t *data, size_t len)
     ptr += frame_len;
     rem_len -= frame_len;
   }
-#else /* LWIP_FUZZ_MULTI_PACKET */
+#else  /* LWIP_FUZZ_MULTI_PACKET */
   input_pkt(netif, data, len);
 #endif /* LWIP_FUZZ_MULTI_PACKET */
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
   struct netif net_test;
   ip4_addr_t addr;
   ip4_addr_t netmask;
@@ -152,7 +148,8 @@ int main(int argc, char** argv)
   IP4_ADDR(&netmask, 255, 255, 255, 0);
   IP4_ADDR(&gw, 172, 30, 115, 1);
 
-  netif_add(&net_test, &addr, &netmask, &gw, &net_test, testif_init, ethernet_input);
+  netif_add(&net_test, &addr, &netmask, &gw, &net_test, testif_init,
+            ethernet_input);
   netif_set_up(&net_test);
   netif_set_link_up(&net_test);
 
@@ -168,9 +165,9 @@ int main(int argc, char** argv)
   mdns_resp_add_netif(&net_test, "hostname", 255);
   snmp_init();
 
-  if(argc > 1) {
-    FILE* f;
-    const char* filename;
+  if (argc > 1) {
+    FILE *f;
+    const char *filename;
     printf("reading input from file... ");
     fflush(stdout);
     filename = argv[1];

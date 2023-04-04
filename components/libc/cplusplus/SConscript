@@ -16,6 +16,7 @@ if GetDepend('RT_USING_CPLUSPLUS11'):
         src += Glob('cpp11/gcc/*.cpp') + Glob('cpp11/gcc/*.c')
         CPPPATH += [cwd + '/cpp11/gcc']
 
-group = DefineGroup('CPlusPlus', src, depend = ['RT_USING_CPLUSPLUS'], CPPPATH = CPPPATH)
+group = DefineGroup('CPlusPlus', src, depend=[
+                    'RT_USING_CPLUSPLUS'], CPPPATH=CPPPATH)
 
 Return('group')

@@ -8,5 +8,5 @@
  * 2019-05-20     tyustli      the first version
  */
 
-#include <rtthread.h>
 #include <rtdevice.h>
+#include <rtthread.h>

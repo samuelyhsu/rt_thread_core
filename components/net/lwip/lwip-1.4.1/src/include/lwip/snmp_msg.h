@@ -7,8 +7,8 @@
  * Copyright (c) 2006 Axon Digital Design B.V., The Netherlands.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -20,14 +20,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * Author: Christiaan Simons <christiaan.simons@axon.tv>
  */
@@ -35,17 +35,17 @@
 #ifndef __LWIP_SNMP_MSG_H__
 #define __LWIP_SNMP_MSG_H__
 
+#include "lwip/err.h"
+#include "lwip/ip_addr.h"
 #include "lwip/opt.h"
 #include "lwip/snmp.h"
 #include "lwip/snmp_structs.h"
-#include "lwip/ip_addr.h"
-#include "lwip/err.h"
 
 #if LWIP_SNMP
 
 #if SNMP_PRIVATE_MIB
-/* When using a private MIB, you have to create a file 'private_mib.h' that contains
- * a 'struct mib_array_node mib_private' which contains your MIB. */
+/* When using a private MIB, you have to create a file 'private_mib.h' that
+ * contains a 'struct mib_array_node mib_private' which contains your MIB. */
 #include "private_mib.h"
 #endif
 
@@ -76,8 +76,7 @@ extern "C" {
 #define SNMP_GENTRAP_AUTHFAIL 4
 #define SNMP_GENTRAP_ENTERPRISESPC 6
 
-struct snmp_varbind
-{
+struct snmp_varbind {
   /* next pointer, NULL for last in list */
   struct snmp_varbind *next;
   /* previous pointer, NULL for first in list */
@@ -109,8 +108,7 @@ struct snmp_varbind
   u16_t vlen;
 };
 
-struct snmp_varbind_root
-{
+struct snmp_varbind_root {
   struct snmp_varbind *head;
   struct snmp_varbind *tail;
   /* number of variable bindings in list */
@@ -122,8 +120,7 @@ struct snmp_varbind_root
 };
 
 /** output response message header length fields */
-struct snmp_resp_header_lengths
-{
+struct snmp_resp_header_lengths {
   /* encoding error-index length length */
   u8_t erridxlenlen;
   /* encoding error-status length length */
@@ -156,8 +153,7 @@ struct snmp_resp_header_lengths
 };
 
 /** output response message header length fields */
-struct snmp_trap_header_lengths
-{
+struct snmp_trap_header_lengths {
   /* encoding timestamp length length */
   u8_t tslenlen;
   /* encoding specific-trap length length */
@@ -198,28 +194,27 @@ struct snmp_trap_header_lengths
 };
 
 /* Accepting new SNMP messages. */
-#define SNMP_MSG_EMPTY                 0
+#define SNMP_MSG_EMPTY 0
 /* Search for matching object for variable binding. */
-#define SNMP_MSG_SEARCH_OBJ            1
+#define SNMP_MSG_SEARCH_OBJ 1
 /* Perform SNMP operation on in-memory object.
    Pass-through states, for symmetry only. */
-#define SNMP_MSG_INTERNAL_GET_OBJDEF   2
-#define SNMP_MSG_INTERNAL_GET_VALUE    3
-#define SNMP_MSG_INTERNAL_SET_TEST     4
+#define SNMP_MSG_INTERNAL_GET_OBJDEF 2
+#define SNMP_MSG_INTERNAL_GET_VALUE 3
+#define SNMP_MSG_INTERNAL_SET_TEST 4
 #define SNMP_MSG_INTERNAL_GET_OBJDEF_S 5
-#define SNMP_MSG_INTERNAL_SET_VALUE    6
+#define SNMP_MSG_INTERNAL_SET_VALUE 6
 /* Perform SNMP operation on object located externally.
    In theory this could be used for building a proxy agent.
    Practical use is for an enterprise spc. app. gateway. */
-#define SNMP_MSG_EXTERNAL_GET_OBJDEF   7
-#define SNMP_MSG_EXTERNAL_GET_VALUE    8
-#define SNMP_MSG_EXTERNAL_SET_TEST     9
+#define SNMP_MSG_EXTERNAL_GET_OBJDEF 7
+#define SNMP_MSG_EXTERNAL_GET_VALUE 8
+#define SNMP_MSG_EXTERNAL_SET_TEST 9
 #define SNMP_MSG_EXTERNAL_GET_OBJDEF_S 10
-#define SNMP_MSG_EXTERNAL_SET_VALUE    11
+#define SNMP_MSG_EXTERNAL_SET_VALUE 11
 
 #define SNMP_COMMUNITY_STR_LEN 64
-struct snmp_msg_pstat
-{
+struct snmp_msg_pstat {
   /* lwIP local port (161) binding */
   struct udp_pcb *pcb;
   /* source IP address */
@@ -257,8 +252,7 @@ struct snmp_msg_pstat
   struct snmp_resp_header_lengths rhl;
 };
 
-struct snmp_msg_trap
-{
+struct snmp_msg_trap {
   /* lwIP local port (161) binding */
   struct udp_pcb *pcb;
   /* destination IP address in network order */
@@ -293,16 +287,19 @@ void snmp_trap_dst_enable(u8_t dst_idx, u8_t enable);
 void snmp_trap_dst_ip_set(u8_t dst_idx, ip_addr_t *dst);
 
 /** Varbind-list functions. */
-struct snmp_varbind* snmp_varbind_alloc(struct snmp_obj_id *oid, u8_t type, u8_t len);
+struct snmp_varbind *snmp_varbind_alloc(struct snmp_obj_id *oid, u8_t type,
+                                        u8_t len);
 void snmp_varbind_free(struct snmp_varbind *vb);
 void snmp_varbind_list_free(struct snmp_varbind_root *root);
-void snmp_varbind_tail_add(struct snmp_varbind_root *root, struct snmp_varbind *vb);
-struct snmp_varbind* snmp_varbind_tail_remove(struct snmp_varbind_root *root);
+void snmp_varbind_tail_add(struct snmp_varbind_root *root,
+                           struct snmp_varbind *vb);
+struct snmp_varbind *snmp_varbind_tail_remove(struct snmp_varbind_root *root);
 
 /** Handle an internal (recv) or external (private response) event. */
 void snmp_msg_event(u8_t request_id);
 err_t snmp_send_response(struct snmp_msg_pstat *m_stat);
-err_t snmp_send_trap(s8_t generic_trap, struct snmp_obj_id *eoid, s32_t specific_trap);
+err_t snmp_send_trap(s8_t generic_trap, struct snmp_obj_id *eoid,
+                     s32_t specific_trap);
 void snmp_coldstart_trap(void);
 void snmp_authfail_trap(void);
 

@@ -5,9 +5,9 @@ from building import *
 
 Import('rtconfig')
 
-cwd   = GetCurrentDir()
+cwd = GetCurrentDir()
 group = []
-list  = os.listdir(cwd)
+list = os.listdir(cwd)
 
 if rtconfig.ARCH in list:
     group = group + SConscript(os.path.join(rtconfig.ARCH, 'SConscript'))

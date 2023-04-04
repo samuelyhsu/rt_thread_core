@@ -11,6 +11,4 @@
 #ifndef __SYS_IPC_H__
 #define __SYS_IPC_H__
 
-
-
 #endif

@@ -11,15 +11,16 @@
  * 2021-02-24     Meco Man     fix bug of _isatty_r()
  */
 
+#include <fcntl.h>
 #include <reent.h>
 #include <rtthread.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#include <stddef.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <sys/errno.h>
 #include <sys/stat.h>
+#include <unistd.h>
+
 #ifdef RT_USING_POSIX_STDIO
 #include "libc.h"
 #endif /* RT_USING_POSIX_STDIO */
@@ -27,308 +28,259 @@
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
 #include <compiler_private.h>
-#define DBG_TAG    "newlib.syscalls"
-#define DBG_LVL    DBG_INFO
+#define DBG_TAG "newlib.syscalls"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifdef RT_USING_HEAP /* Memory routine */
-void *_malloc_r(struct _reent *ptr, size_t size)
-{
-    void* result;
+void *_malloc_r(struct _reent *ptr, size_t size) {
+  void *result;
 
-    result = (void*)rt_malloc(size);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
+  result = (void *)rt_malloc(size);
+  if (result == RT_NULL) {
+    ptr->_errno = ENOMEM;
+  }
 
-    return result;
+  return result;
 }
 
-void *_realloc_r(struct _reent *ptr, void *old, size_t newlen)
-{
-    void* result;
+void *_realloc_r(struct _reent *ptr, void *old, size_t newlen) {
+  void *result;
 
-    result = (void*)rt_realloc(old, newlen);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
+  result = (void *)rt_realloc(old, newlen);
+  if (result == RT_NULL) {
+    ptr->_errno = ENOMEM;
+  }
 
-    return result;
+  return result;
 }
 
-void *_calloc_r(struct _reent *ptr, size_t size, size_t len)
-{
-    void* result;
+void *_calloc_r(struct _reent *ptr, size_t size, size_t len) {
+  void *result;
 
-    result = (void*)rt_calloc(size, len);
-    if (result == RT_NULL)
-    {
-        ptr->_errno = ENOMEM;
-    }
+  result = (void *)rt_calloc(size, len);
+  if (result == RT_NULL) {
+    ptr->_errno = ENOMEM;
+  }
 
-    return result;
+  return result;
 }
 
-void _free_r(struct _reent *ptr, void *addr)
-{
-    rt_free(addr);
-}
+void _free_r(struct _reent *ptr, void *addr) { rt_free(addr); }
 
 #else
-void *_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
-{
-    LOG_E("Please enable RT_USING_HEAP");
-    RT_ASSERT(0);
-    return RT_NULL;
+void *_sbrk_r(struct _reent *ptr, ptrdiff_t incr) {
+  LOG_E("Please enable RT_USING_HEAP");
+  RT_ASSERT(0);
+  return RT_NULL;
 }
 #endif /*RT_USING_HEAP*/
 
-void __libc_init_array(void)
-{
-    /* we not use __libc init_aray to initialize C++ objects */
-    /* __libc_init_array is ARM code, not Thumb; it will cause a hardfault. */
+void __libc_init_array(void) {
+  /* we not use __libc init_aray to initialize C++ objects */
+  /* __libc_init_array is ARM code, not Thumb; it will cause a hardfault. */
 }
 
 /* Reentrant versions of system calls.  */
 #ifndef _REENT_ONLY
-int *__errno(void)
-{
-  return _rt_errno();
-}
+int *__errno(void) { return _rt_errno(); }
 #endif
 
-int _getpid_r(struct _reent *ptr)
-{
+int _getpid_r(struct _reent *ptr) { return 0; }
+
+int _close_r(struct _reent *ptr, int fd) {
+#ifdef DFS_USING_POSIX
+  return close(fd);
+#else
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
+#endif /* DFS_USING_POSIX */
+}
+
+int _execve_r(struct _reent *ptr, const char *name, char *const *argv,
+              char *const *env) {
+  ptr->_errno = ENOTSUP;
+  return -1;
+}
+
+int _fcntl_r(struct _reent *ptr, int fd, int cmd, int arg) {
+  ptr->_errno = ENOTSUP;
+  return -1;
+}
+
+int _fork_r(struct _reent *ptr) {
+  ptr->_errno = ENOTSUP;
+  return -1;
+}
+
+int _fstat_r(struct _reent *ptr, int fd, struct stat *pstat) {
+  ptr->_errno = ENOTSUP;
+  return -1;
+}
+
+int _isatty_r(struct _reent *ptr, int fd) {
+  if (fd >= 0 && fd < 3) {
+    return 1;
+  } else {
     return 0;
+  }
 }
 
-int _close_r(struct _reent *ptr, int fd)
-{
+int _kill_r(struct _reent *ptr, int pid, int sig) {
+  ptr->_errno = ENOTSUP;
+  return -1;
+}
+
+int _link_r(struct _reent *ptr, const char *old, const char *new) {
+  ptr->_errno = ENOTSUP;
+  return -1;
+}
+
+int _wait_r(struct _reent *ptr, int *status) {
+  ptr->_errno = ENOTSUP;
+  return -1;
+}
+
+mode_t umask(mode_t mask) { return 022; }
+
+int flock(int fd, int operation) { return 0; }
+
+_off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence) {
 #ifdef DFS_USING_POSIX
-    return close(fd);
+  _off_t rc;
+  rc = lseek(fd, pos, whence);
+  return rc;
 #else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    ptr->_errno = ENOTSUP;
-    return -1;
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
 #endif /* DFS_USING_POSIX */
 }
 
-int _execve_r(struct _reent *ptr, const char * name, char *const *argv, char *const *env)
-{
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
-int _fcntl_r(struct _reent *ptr, int fd, int cmd, int arg)
-{
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
-int _fork_r(struct _reent *ptr)
-{
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
-int _fstat_r(struct _reent *ptr, int fd, struct stat *pstat)
-{
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
-int _isatty_r(struct _reent *ptr, int fd)
-{
-    if (fd >=0 && fd < 3)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-int _kill_r(struct _reent *ptr, int pid, int sig)
-{
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
-int _link_r(struct _reent *ptr, const char *old, const char *new)
-{
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
-int _wait_r(struct _reent *ptr, int *status)
-{
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
-mode_t umask(mode_t mask)
-{
-    return 022;
-}
-
-int flock(int fd, int operation)
-{
-    return 0;
-}
-
-_off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
-{
+int _mkdir_r(struct _reent *ptr, const char *name, int mode) {
 #ifdef DFS_USING_POSIX
-    _off_t rc;
-    rc = lseek(fd, pos, whence);
-    return rc;
+  int rc;
+  rc = mkdir(name, mode);
+  return rc;
 #else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    ptr->_errno = ENOTSUP;
-    return -1;
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
 #endif /* DFS_USING_POSIX */
 }
 
-int _mkdir_r(struct _reent *ptr, const char *name, int mode)
-{
+int _open_r(struct _reent *ptr, const char *file, int flags, int mode) {
 #ifdef DFS_USING_POSIX
-    int rc;
-    rc = mkdir(name, mode);
-    return rc;
+  int rc;
+  rc = open(file, flags, mode);
+  return rc;
 #else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    ptr->_errno = ENOTSUP;
-    return -1;
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
 #endif /* DFS_USING_POSIX */
 }
 
-int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
-{
+_ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes) {
 #ifdef DFS_USING_POSIX
-    int rc;
-    rc = open(file, flags, mode);
-    return rc;
-#else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    ptr->_errno = ENOTSUP;
-    return -1;
-#endif /* DFS_USING_POSIX */
-}
-
-_ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
-{
-#ifdef DFS_USING_POSIX
-    _ssize_t rc;
-    if (fd == STDIN_FILENO)
-    {
+  _ssize_t rc;
+  if (fd == STDIN_FILENO) {
 #ifdef RT_USING_POSIX_STDIO
-        if (libc_stdio_get_console() < 0)
-        {
-            LOG_W("Do not invoke standard input before initializing Compiler");
-            return 0;
-        }
+    if (libc_stdio_get_console() < 0) {
+      LOG_W("Do not invoke standard input before initializing Compiler");
+      return 0;
+    }
 #else
-        LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
-        ptr->_errno = ENOTSUP;
-        return -1;
+    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
+    ptr->_errno = ENOTSUP;
+    return -1;
 #endif /* RT_USING_POSIX_STDIO */
-    }
-    else if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
-    {
-        ptr->_errno = ENOTSUP;
-        return -1;
-    }
-
-    rc = read(fd, buf, nbytes);
-    return rc;
-#else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  } else if (fd == STDOUT_FILENO || fd == STDERR_FILENO) {
     ptr->_errno = ENOTSUP;
     return -1;
+  }
+
+  rc = read(fd, buf, nbytes);
+  return rc;
+#else
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
 #endif /* DFS_USING_POSIX */
 }
 
-int _rename_r(struct _reent *ptr, const char *old, const char *new)
-{
+int _rename_r(struct _reent *ptr, const char *old, const char *new) {
 #ifdef DFS_USING_POSIX
-    int rc;
-    rc = rename(old, new);
-    return rc;
+  int rc;
+  rc = rename(old, new);
+  return rc;
 #else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    ptr->_errno = ENOTSUP;
-    return -1;
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
 #endif /* DFS_USING_POSIX */
 }
 
-int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
-{
+int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat) {
 #ifdef DFS_USING_POSIX
-    int rc;
-    rc = stat(file, pstat);
-    return rc;
+  int rc;
+  rc = stat(file, pstat);
+  return rc;
 #else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    ptr->_errno = ENOTSUP;
-    return -1;
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
 #endif /* DFS_USING_POSIX */
 }
 
-int _unlink_r(struct _reent *ptr, const char *file)
-{
+int _unlink_r(struct _reent *ptr, const char *file) {
 #ifdef DFS_USING_POSIX
-    return unlink(file);
+  return unlink(file);
 #else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    ptr->_errno = ENOTSUP;
-    return -1;
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
 #endif /* DFS_USING_POSIX */
 }
 
-_ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
-{
+_ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes) {
 #ifdef DFS_USING_POSIX
-    _ssize_t rc;
+  _ssize_t rc;
 #endif /* DFS_USING_POSIX */
 
-    if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
-    {
+  if (fd == STDOUT_FILENO || fd == STDERR_FILENO) {
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
-        rt_device_t console;
+    rt_device_t console;
 
-        console = rt_console_get_device();
-        if (console)
-            return rt_device_write(console, -1, buf, nbytes);
+    console = rt_console_get_device();
+    if (console)
+      return rt_device_write(console, -1, buf, nbytes);
 #else
-        ptr->_errno = ENOTSUP;
-        return -1;
-#endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
-    }
-    else if (fd == STDIN_FILENO)
-    {
-        ptr->_errno = ENOTSUP;
-        return -1;
-    }
-
-#ifdef DFS_USING_POSIX
-    rc = write(fd, buf, nbytes);
-    return rc;
-#else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
     ptr->_errno = ENOTSUP;
     return -1;
+#endif /* defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE) */
+  } else if (fd == STDIN_FILENO) {
+    ptr->_errno = ENOTSUP;
+    return -1;
+  }
+
+#ifdef DFS_USING_POSIX
+  rc = write(fd, buf, nbytes);
+  return rc;
+#else
+  LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+  ptr->_errno = ENOTSUP;
+  return -1;
 #endif /* DFS_USING_POSIX */
 }
 
 /* for exit() and abort() */
-__attribute__ ((noreturn)) void _exit (int status)
-{
-    extern void __rt_libc_exit(int status);
-    __rt_libc_exit(status);
-    while(1);
+__attribute__((noreturn)) void _exit(int status) {
+  extern void __rt_libc_exit(int status);
+  __rt_libc_exit(status);
+  while (1)
+    ;
 }
 
 /*

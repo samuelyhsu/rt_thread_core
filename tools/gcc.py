@@ -25,6 +25,7 @@ import os
 import re
 import platform
 
+
 def GetGCCRoot(rtconfig):
     exec_path = rtconfig.EXEC_PATH
     prefix = rtconfig.PREFIX
@@ -38,6 +39,7 @@ def GetGCCRoot(rtconfig):
         root_path = os.path.join(exec_path, '..', prefix)
 
     return root_path
+
 
 def CheckHeader(rtconfig, filename):
     root = GetGCCRoot(rtconfig)
@@ -66,17 +68,19 @@ def CheckHeader(rtconfig, filename):
 
     return False
 
+
 def GetNewLibVersion(rtconfig):
     version = 'unknown'
     root = GetGCCRoot(rtconfig)
-    if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
+    # get version from _newlib_version.h file
+    if CheckHeader(rtconfig, '_newlib_version.h'):
         f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
         if f:
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
             f.close()
-    elif CheckHeader(rtconfig, 'newlib.h'): # get version from newlib.h
+    elif CheckHeader(rtconfig, 'newlib.h'):  # get version from newlib.h
         f = open(os.path.join(root, 'include', 'newlib.h'), 'r')
         if f:
             for line in f:
@@ -86,12 +90,16 @@ def GetNewLibVersion(rtconfig):
     return version
 
 # FIXME: it's not very good
+
+
 def CheckMUSLLibc(rtconfig):
     if 'musl' in rtconfig.PREFIX:
         return True
     return False
 
 # FIXME: there is no musl version or musl macros can be found officially
+
+
 def GetMuslVersion(rtconfig):
     version = 'unknown'
     # root = GetGCCRoot(rtconfig)
@@ -99,18 +107,22 @@ def GetMuslVersion(rtconfig):
     return version
 
 # return libc name and version
+
+
 def GetGCCLibcNameVersion(rtconfig):
     if rtconfig.PLATFORM != 'gcc':
         return ('unknown', 'unknown')
 
     newlib_version = GetNewLibVersion(rtconfig)
     if newlib_version != 'unknown':
-        return ('newlib', newlib_version) # libc: newlib, version: newlib_version
+        # libc: newlib, version: newlib_version
+        return ('newlib', newlib_version)
     elif CheckMUSLLibc(rtconfig) == True:
         GetMuslVersion(rtconfig)
-        return ('musl', 'unknown') #libc: musl, version: unknown
+        return ('musl', 'unknown')  # libc: musl, version: unknown
     else:
-        return ('unknown', 'unknown') # libc: unknown, version: unknown
+        return ('unknown', 'unknown')  # libc: unknown, version: unknown
+
 
 def GCCResult(rtconfig, str):
     import subprocess
@@ -131,10 +143,12 @@ def GCCResult(rtconfig, str):
         f.close()
 
         # '-fdirectives-only',
-        if(platform.system() == 'Windows'):
-            child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        if (platform.system() == 'Windows'):
+            child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'],
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         else:
-            child = subprocess.Popen(gcc_cmd + ' -E -P __tmp.c', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            child = subprocess.Popen(
+                gcc_cmd + ' -E -P __tmp.c', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
         stdout, stderr = child.communicate()
 
@@ -197,6 +211,7 @@ def GCCResult(rtconfig, str):
 
         os.remove('__tmp.c')
     return result
+
 
 def GenerateGCCConfig(rtconfig):
     # str = ''

@@ -21,6 +21,6 @@ if GetDepend(['AT_USING_SOCKET']):
     src += Glob('at_socket/*.c')
     path += [cwd + '/at_socket']
 
-group = DefineGroup('AT', src, depend = ['RT_USING_AT'], CPPPATH = path)
+group = DefineGroup('AT', src, depend=['RT_USING_AT'], CPPPATH=path)
 
 Return('group')

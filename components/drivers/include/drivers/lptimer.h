@@ -13,19 +13,15 @@
 
 #include <rtthread.h>
 
-struct rt_lptimer
-{
-    struct rt_timer timer;
-    rt_list_t list;
+struct rt_lptimer {
+  struct rt_timer timer;
+  rt_list_t list;
 };
 typedef struct rt_lptimer *rt_lptimer_t;
 
-void rt_lptimer_init(rt_lptimer_t  timer,
-                   const char *name,
-                   void (*timeout)(void *parameter),
-                   void       *parameter,
-                   rt_tick_t   time,
-                   rt_uint8_t  flag);
+void rt_lptimer_init(rt_lptimer_t timer, const char *name,
+                     void (*timeout)(void *parameter), void *parameter,
+                     rt_tick_t time, rt_uint8_t flag);
 
 rt_err_t rt_lptimer_detach(rt_lptimer_t timer);
 rt_err_t rt_lptimer_start(rt_lptimer_t timer);

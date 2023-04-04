@@ -16,7 +16,8 @@
 
 rt_size_t rt_link_hw_recv_len(struct rt_link_receive_buffer *buffer);
 void rt_link_hw_copy(rt_uint8_t *dst, rt_uint8_t *src, rt_size_t count);
-void rt_link_hw_buffer_point_shift(rt_uint8_t **pointer_address, rt_size_t length);
+void rt_link_hw_buffer_point_shift(rt_uint8_t **pointer_address,
+                                   rt_size_t length);
 
 rt_err_t rt_link_hw_init(void);
 rt_err_t rt_link_hw_deinit(void);

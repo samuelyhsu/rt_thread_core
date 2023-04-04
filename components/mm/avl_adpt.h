@@ -17,21 +17,19 @@
 #include <stdint.h>
 
 #define VAREA_ENTRY(pnode)                                                     \
-    (pnode)                                                                    \
-        ? rt_container_of(rt_container_of(pnode, struct _aspace_node, node),   \
-                          struct rt_varea, node)                               \
-        : 0
+  (pnode) ? rt_container_of(rt_container_of(pnode, struct _aspace_node, node), \
+                            struct rt_varea, node)                             \
+          : 0
 #define ASPACE_VAREA_NEXT(pva) (VAREA_ENTRY(util_avl_next(&pva->node.node)))
-#define ASPACE_VAREA_FIRST(aspace) (VAREA_ENTRY(util_avl_first(&aspace->tree.tree)))
+#define ASPACE_VAREA_FIRST(aspace)                                             \
+  (VAREA_ENTRY(util_avl_first(&aspace->tree.tree)))
 
-typedef struct _aspace_node
-{
-    struct util_avl_struct node;
+typedef struct _aspace_node {
+  struct util_avl_struct node;
 } *_aspace_node_t;
 
-typedef struct _aspace_tree
-{
-    struct util_avl_root tree;
+typedef struct _aspace_tree {
+  struct util_avl_root tree;
 } *_aspace_tree_t;
 
 #endif /* __MM_AVL_ADPT_H__ */

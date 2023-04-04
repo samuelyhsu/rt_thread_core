@@ -1546,8 +1546,8 @@ class Kconfig(object):
                 add(conf_string)
 
             elif expr_value(node.dep) and \
-                 ((item is MENU and expr_value(node.visibility)) or
-                  item is COMMENT):
+                ((item is MENU and expr_value(node.visibility)) or
+                 item is COMMENT):
 
                 add("\n#\n# {}\n#\n".format(node.prompt[0]))
                 after_end_comment = False
@@ -1795,7 +1795,7 @@ class Kconfig(object):
         # Temporary list instead of generator makes this a bit faster
         return "".join([
             sym.config_string for sym in self.unique_defined_syms
-                if not (sym.orig_type in _BOOL_TRISTATE and not sym.tri_value)
+            if not (sym.orig_type in _BOOL_TRISTATE and not sym.tri_value)
         ])
 
     def node_iter(self, unique_syms=False):
@@ -1981,22 +1981,21 @@ class Kconfig(object):
             "configuration with {} symbols".format(len(self.syms)),
             'main menu prompt "{}"'.format(self.mainmenu_text),
             "srctree is current directory" if not self.srctree else
-                'srctree "{}"'.format(self.srctree),
+            'srctree "{}"'.format(self.srctree),
             'config symbol prefix "{}"'.format(self.config_prefix),
             "warnings " + status(self.warn),
             "printing of warnings to stderr " + status(self.warn_to_stderr),
             "undef. symbol assignment warnings " +
-                status(self.warn_assign_undef),
+            status(self.warn_assign_undef),
             "overriding symbol assignment warnings " +
-                status(self.warn_assign_override),
+            status(self.warn_assign_override),
             "redundant symbol assignment warnings " +
-                status(self.warn_assign_redun)
+            status(self.warn_assign_redun)
         )))
 
     #
     # Private methods
     #
-
 
     #
     # File reading
@@ -2026,7 +2025,7 @@ class Kconfig(object):
                    "environment variable ({}) is set correctly."
                    .format(filename, errno.errorcode[e.errno], e.strerror,
                            "set to '{}'".format(self.srctree) if self.srctree
-                               else "unset or blank"))
+                           else "unset or blank"))
 
     def _enter_file(self, filename):
         # Jumps to the beginning of a sourced Kconfig file, saving the previous
@@ -2390,7 +2389,6 @@ class Kconfig(object):
                 elif c == "#":
                     break
 
-
                 # Very rare
 
                 elif s.startswith("<=", i):
@@ -2409,15 +2407,12 @@ class Kconfig(object):
                     token = _T_GREATER
                     i += 1
 
-
                 else:
                     self._parse_error("unknown tokens in line")
-
 
                 # Skip trailing whitespace
                 while i < len(s) and s[i].isspace():
                     i += 1
-
 
             # Add the token
             tokens.append(token)
@@ -2509,14 +2504,12 @@ class Kconfig(object):
         # Assigned variable
         name = s[:i]
 
-
         # Extract assignment operator (=, :=, or +=) and value
         rhs_match = _assignment_rhs_match(s, i)
         if not rhs_match:
             self._parse_error("syntax error")
 
         op, val = rhs_match.groups()
-
 
         if name in self.variables:
             # Already seen variable
@@ -2610,7 +2603,6 @@ class Kconfig(object):
             if not match:
                 self._parse_error("unterminated string")
 
-
             if match.group() == quote:
                 # Found the end of the string
                 return (s, match.end())
@@ -2650,7 +2642,6 @@ class Kconfig(object):
             match = _macro_special_search(s, i)
             if not match:
                 self._parse_error("missing end parenthesis in macro expansion")
-
 
             if match.group() == ")":
                 # Found the end of the macro
@@ -2826,7 +2817,8 @@ class Kconfig(object):
                     if node.item.env_var in os.environ:
                         os.environ[node.item.name] = os.environ[node.item.env_var]
                     else:
-                        os.environ[node.item.name] = ((node.defaults[0])[0]).name
+                        os.environ[node.item.name] = (
+                            (node.defaults[0])[0]).name
 
                 if node.is_menuconfig and not node.prompt:
                     self._warn("the menuconfig symbol {} has no prompt"
@@ -2870,7 +2862,7 @@ class Kconfig(object):
                         .format(self._filename, self._linenr, pattern,
                                 self._line.strip(),
                                 "set to '{}'".format(self.srctree)
-                                    if self.srctree else "unset or blank"))
+                                if self.srctree else "unset or blank"))
 
                 for filename in filenames:
                     self._enter_file(filename)
@@ -2978,8 +2970,8 @@ class Kconfig(object):
                 # check above
                 self._parse_error(
                     "no corresponding 'choice'" if t0 is _T_ENDCHOICE else
-                    "no corresponding 'if'"     if t0 is _T_ENDIF else
-                    "no corresponding 'menu'"   if t0 is _T_ENDMENU else
+                    "no corresponding 'if'" if t0 is _T_ENDIF else
+                    "no corresponding 'menu'" if t0 is _T_ENDMENU else
                     "unrecognized construct")
 
         # End of file reached. Terminate the final node and return it.
@@ -2988,7 +2980,7 @@ class Kconfig(object):
             raise KconfigError(
                 "expected '{}' at end of '{}'"
                 .format("endchoice" if end_token is _T_ENDCHOICE else
-                        "endif"     if end_token is _T_ENDIF else
+                        "endif" if end_token is _T_ENDIF else
                         "endmenu",
                         self._filename))
 
@@ -3682,7 +3674,6 @@ class Kconfig(object):
                 self._warn("{} defined without a type"
                            .format(_name_and_loc(sym)))
 
-
             if sym.ranges:
                 if sym.orig_type not in _INT_HEX:
                     self._warn(
@@ -3766,7 +3757,7 @@ class Kconfig(object):
     def _parse_error(self, msg):
         raise KconfigError("{}couldn't parse '{}': {}".format(
             "" if self._filename is None else
-                "{}:{}: ".format(self._filename, self._linenr),
+            "{}:{}: ".format(self._filename, self._linenr),
             self._line.strip(), msg))
 
     def _trailing_tokens_error(self):
@@ -3807,7 +3798,7 @@ class Kconfig(object):
         #   turns strings into Unicode strings, which gets messy. Python 2
         #   doesn't decode regular strings anyway.
         return open(filename, "rU" if mode == "r" else mode) if _IS_PY2 else \
-               open(filename, mode, encoding=self._encoding)
+            open(filename, mode, encoding=self._encoding)
 
     def _check_undef_syms(self):
         # Prints warnings for all references to undefined symbols within the
@@ -4156,7 +4147,7 @@ class Symbol(object):
         """
         if self.orig_type is TRISTATE and \
            (self.choice and self.choice.tri_value == 2 or
-            not self.kconfig.modules.tri_value):
+                not self.kconfig.modules.tri_value):
 
             return BOOL
 
@@ -4205,9 +4196,9 @@ class Symbol(object):
                     # The zeros are from the C implementation running strtoll()
                     # on empty strings
                     low = int(low_expr.str_value, base) if \
-                      _is_base_n(low_expr.str_value, base) else 0
+                        _is_base_n(low_expr.str_value, base) else 0
                     high = int(high_expr.str_value, base) if \
-                      _is_base_n(high_expr.str_value, base) else 0
+                        _is_base_n(high_expr.str_value, base) else 0
 
                     break
             else:
@@ -4268,8 +4259,8 @@ class Symbol(object):
                         # The value is rewritten to a standard form if it is
                         # clamped
                         val = str(clamp) \
-                              if self.orig_type is INT else \
-                              hex(clamp)
+                            if self.orig_type is INT else \
+                            hex(clamp)
 
                         if has_default:
                             num2str = str if base == 10 else hex
@@ -4482,20 +4473,20 @@ class Symbol(object):
             return True
 
         # Check if the value is valid for our type
-        if not (self.orig_type is BOOL     and value in (2, 0)     or
+        if not (self.orig_type is BOOL and value in (2, 0) or
                 self.orig_type is TRISTATE and value in TRI_TO_STR or
                 value.__class__ is str and
-                (self.orig_type is STRING                        or
+                (self.orig_type is STRING or
                  self.orig_type is INT and _is_base_n(value, 10) or
                  self.orig_type is HEX and _is_base_n(value, 16)
-                                       and int(value, 16) >= 0)):
+                 and int(value, 16) >= 0)):
 
             # Display tristate values as n, m, y in the warning
             self.kconfig._warn(
                 "the value {} is invalid for {}, which has type {} -- "
                 "assignment ignored"
                 .format(TRI_TO_STR[value] if value in TRI_TO_STR else
-                            "'{}'".format(value),
+                        "'{}'".format(value),
                         _name_and_loc(self), TYPE_TO_STR[self.orig_type]))
 
             return False
@@ -4667,17 +4658,17 @@ class Symbol(object):
         self.ranges = []
 
         self.user_value = \
-        self.choice = \
-        self.env_var = \
-        self._cached_str_val = self._cached_tri_val = self._cached_vis = \
-        self._cached_assignable = None
+            self.choice = \
+            self.env_var = \
+            self._cached_str_val = self._cached_tri_val = self._cached_vis = \
+            self._cached_assignable = None
 
         # _write_to_conf is calculated along with the value. If True, the
         # Symbol gets a .config entry.
 
         self.is_allnoconfig_y = \
-        self._was_set = \
-        self._write_to_conf = False
+            self._was_set = \
+            self._write_to_conf = False
 
         # See Kconfig._build_dep()
         self._dependents = set()
@@ -4732,7 +4723,7 @@ class Symbol(object):
         # Marks the symbol as needing to be recalculated
 
         self._cached_str_val = self._cached_tri_val = self._cached_vis = \
-        self._cached_assignable = None
+            self._cached_assignable = None
 
     def _rec_invalidate(self):
         # Invalidates the symbol and all items that (possibly) depend on it
@@ -5113,7 +5104,7 @@ class Choice(object):
             self._was_set = True
             return True
 
-        if not (self.orig_type is BOOL     and value in (2, 0) or
+        if not (self.orig_type is BOOL and value in (2, 0) or
                 self.orig_type is TRISTATE and value in TRI_TO_STR):
 
             # Display tristate values as n, m, y in the warning
@@ -5121,7 +5112,7 @@ class Choice(object):
                 "the value {} is invalid for {}, which has type {} -- "
                 "assignment ignored"
                 .format(TRI_TO_STR[value] if value in TRI_TO_STR else
-                            "'{}'".format(value),
+                        "'{}'".format(value),
                         _name_and_loc(self), TYPE_TO_STR[self.orig_type]))
 
             return False
@@ -5240,8 +5231,8 @@ class Choice(object):
         self.defaults = []
 
         self.name = \
-        self.user_value = self.user_selection = \
-        self._cached_vis = self._cached_assignable = None
+            self.user_value = self.user_selection = \
+            self._cached_vis = self._cached_assignable = None
 
         self._cached_selection = _NO_CACHED_SELECTION
 
@@ -5637,8 +5628,8 @@ class MenuNode(object):
         for all symbol/choice references. See expr_str().
         """
         return self._menu_comment_node_str(sc_expr_str_fn) \
-               if self.item in _MENU_COMMENT else \
-               self._sym_choice_node_str(sc_expr_str_fn)
+            if self.item in _MENU_COMMENT else \
+            self._sym_choice_node_str(sc_expr_str_fn)
 
     def _menu_comment_node_str(self, sc_expr_str_fn):
         s = '{} "{}"'.format("menu" if self.item is MENU else "comment",
@@ -5807,6 +5798,7 @@ class KconfigError(Exception):
     KconfigSyntaxError alias is only maintained for backwards compatibility.
     """
 
+
 KconfigSyntaxError = KconfigError  # Backwards compatibility
 
 
@@ -5886,9 +5878,9 @@ def expr_value(expr):
 
     return 2*(comp == 0 if rel is EQUAL else
               comp != 0 if rel is UNEQUAL else
-              comp <  0 if rel is LESS else
+              comp < 0 if rel is LESS else
               comp <= 0 if rel is LESS_EQUAL else
-              comp >  0 if rel is GREATER else
+              comp > 0 if rel is GREATER else
               comp >= 0)
 
 
@@ -6039,6 +6031,7 @@ def unescape(s):
     that character. Used internally when reading .config files.
     """
     return _unescape_sub(r"\1", s)
+
 
 # unescape() helper
 _unescape_sub = re.compile(r"\\(.)").sub
@@ -6231,7 +6224,7 @@ def _sym_to_num(sym):
     # ("kconfig: fix relational operators for bool and tristate symbols") in
     # the C implementation.
     return sym.tri_value if sym.orig_type in _BOOL_TRISTATE else \
-           int(sym.str_value, _TYPE_TO_BASE[sym.orig_type])
+        int(sym.str_value, _TYPE_TO_BASE[sym.orig_type])
 
 
 def _touch_dep_file(path, sym_name):
@@ -6319,12 +6312,12 @@ def _expr_depends_on(expr, sym):
             return False
 
         return (expr[0] is EQUAL and right is sym.kconfig.m or
-                                     right is sym.kconfig.y) or \
+                right is sym.kconfig.y) or \
                (expr[0] is UNEQUAL and right is sym.kconfig.n)
 
     return expr[0] is AND and \
-           (_expr_depends_on(expr[1], sym) or
-            _expr_depends_on(expr[2], sym))
+        (_expr_depends_on(expr[1], sym) or
+         _expr_depends_on(expr[2], sym))
 
 
 def _auto_menu_dep(node1, node2):
@@ -6465,8 +6458,8 @@ def _check_dep_loop_sym(sym, ignore_choice):
             # Since we aren't entering the choice via a choice symbol, all
             # choice symbols need to be checked, hence the None.
             loop = _check_dep_loop_choice(dep, None) \
-                   if dep.__class__ is Choice \
-                   else _check_dep_loop_sym(dep, False)
+                if dep.__class__ is Choice \
+                else _check_dep_loop_sym(dep, False)
 
             if loop:
                 # Dependency loop found
@@ -6539,7 +6532,7 @@ def _found_dep_loop(loop, cur):
     # Yep, we have the entire loop. Throw an exception that shows it.
 
     msg = "\nDependency loop\n" \
-            "===============\n\n"
+        "===============\n\n"
 
     for item in loop:
         if item is not loop[0]:
@@ -6593,7 +6586,7 @@ def _decoding_error(e, filename, macro_linenr=None):
         "Reason: {}".format(
             e.encoding,
             "'{}'".format(filename) if macro_linenr is None else
-                "output from macro at {}:{}".format(filename, macro_linenr),
+            "output from macro at {}:{}".format(filename, macro_linenr),
             e.object[max(e.start - 40, 0):e.end + 40],
             e.object[e.start:e.end],
             e.reason))
@@ -6658,8 +6651,8 @@ def _shell_fn(kconf, _, command):
 
     if stderr:
         kconf._warn("'{}' wrote to stderr: {}".format(
-                        command, "\n".join(stderr.splitlines())),
-                    kconf._filename, kconf._linenr)
+            command, "\n".join(stderr.splitlines())),
+            kconf._filename, kconf._linenr)
 
     # Universal newlines with splitlines() (to prevent e.g. stray \r's in
     # command output on Windows), trailing newline removal, and
@@ -6673,6 +6666,7 @@ def _shell_fn(kconf, _, command):
 #
 # Global constants
 #
+
 
 TRI_TO_STR = {
     0: "n",
@@ -6817,18 +6811,18 @@ _get_keyword = {
 # need for conversion
 
 # Node types
-MENU    = _T_MENU
+MENU = _T_MENU
 COMMENT = _T_COMMENT
 
 # Expression types
-AND           = _T_AND
-OR            = _T_OR
-NOT           = _T_NOT
-EQUAL         = _T_EQUAL
-UNEQUAL       = _T_UNEQUAL
-LESS          = _T_LESS
-LESS_EQUAL    = _T_LESS_EQUAL
-GREATER       = _T_GREATER
+AND = _T_AND
+OR = _T_OR
+NOT = _T_NOT
+EQUAL = _T_EQUAL
+UNEQUAL = _T_UNEQUAL
+LESS = _T_LESS
+LESS_EQUAL = _T_LESS_EQUAL
+GREATER = _T_GREATER
 GREATER_EQUAL = _T_GREATER_EQUAL
 
 REL_TO_STR = {
@@ -6843,12 +6837,12 @@ REL_TO_STR = {
 # Symbol/choice types. UNKNOWN is 0 (falsy) to simplify some checks.
 # Client code shouldn't rely on it though, as it was non-zero in
 # older versions.
-UNKNOWN  = 0
-BOOL     = _T_BOOL
+UNKNOWN = 0
+BOOL = _T_BOOL
 TRISTATE = _T_TRISTATE
-STRING   = _T_STRING
-INT      = _T_INT
-HEX      = _T_HEX
+STRING = _T_STRING
+INT = _T_INT
+HEX = _T_HEX
 
 TYPE_TO_STR = {
     UNKNOWN:  "unknown",

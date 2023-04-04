@@ -8,9 +8,9 @@
  * 2020/08/21     ShaoJinchun  firset version
  */
 
-#ifndef  __DFS_CROMFS_H__
-#define  __DFS_CROMFS_H__
+#ifndef __DFS_CROMFS_H__
+#define __DFS_CROMFS_H__
 
 int dfs_cromfs_init(void);
 
-#endif  /*__DFS_CROMFS_H__*/
+#endif /*__DFS_CROMFS_H__*/

@@ -11,9 +11,9 @@
 #include <rtthread.h>
 
 /* for exit() and abort() */
-void __exit (int status)
-{
-    extern void __rt_libc_exit(int status);
-    __rt_libc_exit(status);
-    while(1);
+void __exit(int status) {
+  extern void __rt_libc_exit(int status);
+  __rt_libc_exit(status);
+  while (1)
+    ;
 }

@@ -1,5 +1,5 @@
-Import('RTT_ROOT')
 from building import *
+Import('RTT_ROOT')
 
 src = Split("""
 src/api/api_lib.c
@@ -64,8 +64,8 @@ src/netif/ppp/vj.c
 
 # The set of source files associated with this SConscript file.
 path = [GetCurrentDir() + '/src/include',
-    GetCurrentDir() + '/src/include/ipv4',
-    GetCurrentDir() + '/src/include/netif']
+        GetCurrentDir() + '/src/include/ipv4',
+        GetCurrentDir() + '/src/include/netif']
 
 if GetDepend(['RT_LWIP_SNMP']):
     src += snmp_src
@@ -78,6 +78,7 @@ if GetDepend(['RT_LWIP_PPP']):
 if GetDepend(['RT_LWIP_USING_PING']):
     src += Glob('src/apps/ping/ping.c')
 
-group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP141'], CPPPATH = path)
+group = DefineGroup('lwIP', src, depend=[
+                    'RT_USING_LWIP', 'RT_USING_LWIP141'], CPPPATH=path)
 
 Return('group')

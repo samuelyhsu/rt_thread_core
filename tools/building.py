@@ -44,6 +44,8 @@ Rtt_Root = ''
 Env = None
 
 # SCons PreProcessor patch
+
+
 def start_handling_includes(self, t=None):
     """
     Causes the PreProcessor object to start processing #import,
@@ -61,6 +63,7 @@ def start_handling_includes(self, t=None):
     for k in ('import', 'include', 'include_next', 'define'):
         d[k] = p[k]
 
+
 def stop_handling_includes(self, t=None):
     """
     Causes the PreProcessor object to stop processing #import,
@@ -72,13 +75,15 @@ def stop_handling_includes(self, t=None):
     """
     d = self.dispatch_table
     d['import'] = self.do_nothing
-    d['include'] =  self.do_nothing
-    d['include_next'] =  self.do_nothing
-    d['define'] =  self.do_nothing
+    d['include'] = self.do_nothing
+    d['include_next'] = self.do_nothing
+    d['define'] = self.do_nothing
+
 
 PatchedPreProcessor = SCons.cpp.PreProcessor
 PatchedPreProcessor.start_handling_includes = start_handling_includes
 PatchedPreProcessor.stop_handling_includes = stop_handling_includes
+
 
 class Win32Spawn:
     def spawn(self, sh, escape, cmd, args, env):
@@ -113,7 +118,7 @@ class Win32Spawn:
             print('Error in calling command:' + cmdline.split(' ')[0])
             print('Exception: ' + os.strerror(e.errno))
             if (os.strerror(e.errno) == "No such file or directory"):
-                print ("\nPlease check Toolchains PATH setting.\n")
+                print("\nPlease check Toolchains PATH setting.\n")
 
             return e.errno
         finally:
@@ -122,6 +127,8 @@ class Win32Spawn:
         return proc.wait()
 
 # generate cconfig.h file
+
+
 def GenCconfigFile(env, BuildOptions):
 
     # if rtconfig.PLATFORM in ['gcc']:
@@ -147,7 +154,8 @@ def GenCconfigFile(env, BuildOptions):
     #             env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
     pass
 
-def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
+
+def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components=[]):
 
     global BuildOptions
     global Projects
@@ -171,23 +179,23 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
 
     # {target_name:(CROSS_TOOL, PLATFORM)}
-    tgt_dict = {'mdk':('keil', 'armcc'),
-                'mdk4':('keil', 'armcc'),
-                'mdk5':('keil', 'armcc'),
-                'iar':('iar', 'iccarm'),
-                'vs':('msvc', 'cl'),
-                'vs2012':('msvc', 'cl'),
-                'vsc' : ('gcc', 'gcc'),
-                'cb':('keil', 'armcc'),
-                'ua':('gcc', 'gcc'),
-                'cdk':('gcc', 'gcc'),
-                'makefile':('gcc', 'gcc'),
-                'eclipse':('gcc', 'gcc'),
-                'ses' : ('gcc', 'gcc'),
-                'cmake':('gcc', 'gcc'),
-                'cmake-armclang':('keil', 'armclang'),
-                'xmake':('gcc', 'gcc'),
-                'codelite' : ('gcc', 'gcc'),
+    tgt_dict = {'mdk': ('keil', 'armcc'),
+                'mdk4': ('keil', 'armcc'),
+                'mdk5': ('keil', 'armcc'),
+                'iar': ('iar', 'iccarm'),
+                'vs': ('msvc', 'cl'),
+                'vs2012': ('msvc', 'cl'),
+                'vsc': ('gcc', 'gcc'),
+                'cb': ('keil', 'armcc'),
+                'ua': ('gcc', 'gcc'),
+                'cdk': ('gcc', 'gcc'),
+                'makefile': ('gcc', 'gcc'),
+                'eclipse': ('gcc', 'gcc'),
+                'ses': ('gcc', 'gcc'),
+                'cmake': ('gcc', 'gcc'),
+                'cmake-armclang': ('keil', 'armclang'),
+                'xmake': ('gcc', 'gcc'),
+                'codelite': ('gcc', 'gcc'),
                 'esp-idf': ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -195,7 +203,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # --target will change the toolchain settings which clang-analyzer is
         # depend on
         if GetOption('clang-analyzer'):
-            print ('--clang-analyzer cannot be used with --target')
+            print('--clang-analyzer cannot be used with --target')
             sys.exit(1)
 
         SetOption('no_exec', 1)
@@ -204,7 +212,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             # replace the 'RTT_CC' to 'CROSS_TOOL'
             os.environ['RTT_CC'] = rtconfig.CROSS_TOOL
         except KeyError:
-            print('Unknow target: '+ tgt_name+'. Avaible targets: ' +', '.join(tgt_dict.keys()))
+            print('Unknow target: ' + tgt_name +
+                  '. Avaible targets: ' + ', '.join(tgt_dict.keys()))
             sys.exit(1)
 
     exec_prefix = GetOption('exec-prefix')
@@ -221,7 +230,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     if exec_path:
         os.environ['RTT_EXEC_PATH'] = exec_path
 
-    utils.ReloadModule(rtconfig) # update environment variables to rtconfig.py
+    utils.ReloadModule(rtconfig)  # update environment variables to rtconfig.py
 
     # some env variables have loaded in Environment() of SConstruct before re-load rtconfig.py;
     # after update rtconfig.py's variables, those env variables need to synchronize
@@ -237,14 +246,15 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     if GetOption('strict-compiling'):
         STRICT_FLAGS = ''
         if rtconfig.PLATFORM in ['gcc']:
-            STRICT_FLAGS += ' -Werror' #-Wextra
+            STRICT_FLAGS += ' -Werror'  # -Wextra
             env.Append(CFLAGS=STRICT_FLAGS, CXXFLAGS=STRICT_FLAGS)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM in ['armcc', 'armclang']:
         if rtconfig.PLATFORM == 'armcc' and not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
             if rtconfig.EXEC_PATH.find('bin40') > 0:
-                rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
+                rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace(
+                    'bin40', 'armcc/bin')
                 Env['LINKFLAGS'] = Env['LINKFLAGS'].replace('RV31', 'armcc')
 
         # reset AR command flags
@@ -279,9 +289,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
 
     # add library build action
-    act = SCons.Action.Action(BuildLibInstallAction, 'Install compiled library... $TARGET')
-    bld = Builder(action = act)
-    Env.Append(BUILDERS = {'BuildLib': bld})
+    act = SCons.Action.Action(BuildLibInstallAction,
+                              'Install compiled library... $TARGET')
+    bld = Builder(action=act)
+    Env.Append(BUILDERS={'BuildLib': bld})
 
     # parse rtconfig.h to get used component
     PreProcessor = PatchedPreProcessor()
@@ -294,18 +305,21 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     if GetOption('clang-analyzer'):
         # perform what scan-build does
         env.Replace(
-                CC   = 'ccc-analyzer',
-                CXX  = 'c++-analyzer',
-                # skip as and link
-                LINK = 'true',
-                AS   = 'true',)
-        env["ENV"].update(x for x in os.environ.items() if x[0].startswith("CCC_"))
+            CC='ccc-analyzer',
+            CXX='c++-analyzer',
+            # skip as and link
+            LINK='true',
+            AS='true',)
+        env["ENV"].update(x for x in os.environ.items()
+                          if x[0].startswith("CCC_"))
         # only check, don't compile. ccc-analyzer use CCC_CC as the CC.
         # fsyntax-only will give us some additional warning messages
-        env['ENV']['CCC_CC']  = 'clang'
-        env.Append(CFLAGS=['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding'])
+        env['ENV']['CCC_CC'] = 'clang'
+        env.Append(CFLAGS=['-fsyntax-only', '-Wall',
+                   '-Wno-invalid-source-encoding'])
         env['ENV']['CCC_CXX'] = 'clang++'
-        env.Append(CXXFLAGS=['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding'])
+        env.Append(CXXFLAGS=['-fsyntax-only', '-Wall',
+                   '-Wno-invalid-source-encoding'])
         # remove the POST_ACTION as it will cause meaningless errors(file not
         # found or something like that).
         rtconfig.POST_ACTION = ''
@@ -315,7 +329,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # auto append '_REENT_SMALL' when using newlib 'nano.specs' option
     if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
-        env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
+        env.AppendUnique(CPPDEFINES=['_REENT_SMALL'])
 
     if GetOption('genconfig'):
         from genconf import genconfig
@@ -348,16 +362,15 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         mk_rtconfig(configfn)
         exit(0)
 
-
     if not GetOption('verbose'):
         # override the default verbose command string
         env.Replace(
-            ARCOMSTR = 'AR $TARGET',
-            ASCOMSTR = 'AS $TARGET',
-            ASPPCOMSTR = 'AS $TARGET',
-            CCCOMSTR = 'CC $TARGET',
-            CXXCOMSTR = 'CXX $TARGET',
-            LINKCOMSTR = 'LINK $TARGET'
+            ARCOMSTR='AR $TARGET',
+            ASCOMSTR='AS $TARGET',
+            ASPPCOMSTR='AS $TARGET',
+            CCCOMSTR='CC $TARGET',
+            CXXCOMSTR='CXX $TARGET',
+            LINKCOMSTR='LINK $TARGET'
         )
 
     # fix the linker for C++
@@ -373,7 +386,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     # board build script
     objs = SConscript('SConscript', variant_dir=bsp_vdir, duplicate=0)
     # include kernel
-    objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir=kernel_vdir + '/src', duplicate=0))
+    objs.extend(SConscript(Rtt_Root + '/src/SConscript',
+                variant_dir=kernel_vdir + '/src', duplicate=0))
     # include libcpu
     if not has_libcpu:
         objs.extend(SConscript(Rtt_Root + '/libcpu/SConscript',
@@ -387,10 +401,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     # include testcases
     if os.path.isfile(os.path.join(Rtt_Root, 'examples/utest/testcases/SConscript')):
         objs.extend(SConscript(Rtt_Root + '/examples/utest/testcases/SConscript',
-                           variant_dir=kernel_vdir + '/examples/utest/testcases',
-                           duplicate=0))
+                               variant_dir=kernel_vdir + '/examples/utest/testcases',
+                               duplicate=0))
 
     return objs
+
 
 def PrepareModuleBuilding(env, root_directory, bsp_directory):
 
@@ -416,17 +431,18 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     BuildOptions = PreProcessor.cpp_namespace
 
     AddOption('--buildlib',
-                      dest = 'buildlib',
-                      type = 'string',
-                      help = 'building library of a component')
+              dest='buildlib',
+              type='string',
+              help='building library of a component')
     AddOption('--cleanlib',
-                      dest = 'cleanlib',
-                      action = 'store_true',
-                      default = False,
-                      help = 'clean up the library by --buildlib')
+              dest='cleanlib',
+              action='store_true',
+              default=False,
+              help='clean up the library by --buildlib')
 
     # add program path
     env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
 
 def GetConfigValue(name):
     assert type(name) == str, 'GetConfigValue: only string parameter is valid'
@@ -434,6 +450,7 @@ def GetConfigValue(name):
         return BuildOptions[name]
     except:
         return ''
+
 
 def GetDepend(depend):
     building = True
@@ -453,6 +470,7 @@ def GetDepend(depend):
 
     return building
 
+
 def LocalOptions(config_filename):
     from SCons.Script import SCons
 
@@ -467,6 +485,7 @@ def LocalOptions(config_filename):
     local_options = PreProcessor.cpp_namespace
 
     return local_options
+
 
 def GetLocalDepend(options, depend):
     building = True
@@ -485,6 +504,7 @@ def GetLocalDepend(options, depend):
                 building = False
 
     return building
+
 
 def AddDepend(option):
     if isinstance(option, str):
@@ -524,7 +544,8 @@ def MergeGroup(src_group, group):
             src_group['CPPPATH'] = group['CPPPATH']
     if 'CPPDEFINES' in group:
         if 'CPPDEFINES' in src_group:
-            src_group['CPPDEFINES'] = src_group['CPPDEFINES'] + group['CPPDEFINES']
+            src_group['CPPDEFINES'] = src_group['CPPDEFINES'] + \
+                group['CPPDEFINES']
         else:
             src_group['CPPDEFINES'] = group['CPPDEFINES']
     if 'ASFLAGS' in group:
@@ -536,33 +557,39 @@ def MergeGroup(src_group, group):
     # for local CCFLAGS/CPPPATH/CPPDEFINES
     if 'LOCAL_CFLAGS' in group:
         if 'LOCAL_CFLAGS' in src_group:
-            src_group['LOCAL_CFLAGS'] = src_group['LOCAL_CFLAGS'] + group['LOCAL_CFLAGS']
+            src_group['LOCAL_CFLAGS'] = src_group['LOCAL_CFLAGS'] + \
+                group['LOCAL_CFLAGS']
         else:
             src_group['LOCAL_CFLAGS'] = group['LOCAL_CFLAGS']
     if 'LOCAL_CCFLAGS' in group:
         if 'LOCAL_CCFLAGS' in src_group:
-            src_group['LOCAL_CCFLAGS'] = src_group['LOCAL_CCFLAGS'] + group['LOCAL_CCFLAGS']
+            src_group['LOCAL_CCFLAGS'] = src_group['LOCAL_CCFLAGS'] + \
+                group['LOCAL_CCFLAGS']
         else:
             src_group['LOCAL_CCFLAGS'] = group['LOCAL_CCFLAGS']
     if 'LOCAL_CXXFLAGS' in group:
         if 'LOCAL_CXXFLAGS' in src_group:
-            src_group['LOCAL_CXXFLAGS'] = src_group['LOCAL_CXXFLAGS'] + group['LOCAL_CXXFLAGS']
+            src_group['LOCAL_CXXFLAGS'] = src_group['LOCAL_CXXFLAGS'] + \
+                group['LOCAL_CXXFLAGS']
         else:
             src_group['LOCAL_CXXFLAGS'] = group['LOCAL_CXXFLAGS']
     if 'LOCAL_CPPPATH' in group:
         if 'LOCAL_CPPPATH' in src_group:
-            src_group['LOCAL_CPPPATH'] = src_group['LOCAL_CPPPATH'] + group['LOCAL_CPPPATH']
+            src_group['LOCAL_CPPPATH'] = src_group['LOCAL_CPPPATH'] + \
+                group['LOCAL_CPPPATH']
         else:
             src_group['LOCAL_CPPPATH'] = group['LOCAL_CPPPATH']
     if 'LOCAL_CPPDEFINES' in group:
         if 'LOCAL_CPPDEFINES' in src_group:
-            src_group['LOCAL_CPPDEFINES'] = src_group['LOCAL_CPPDEFINES'] + group['LOCAL_CPPDEFINES']
+            src_group['LOCAL_CPPDEFINES'] = src_group['LOCAL_CPPDEFINES'] + \
+                group['LOCAL_CPPDEFINES']
         else:
             src_group['LOCAL_CPPDEFINES'] = group['LOCAL_CPPDEFINES']
 
     if 'LINKFLAGS' in group:
         if 'LINKFLAGS' in src_group:
-            src_group['LINKFLAGS'] = src_group['LINKFLAGS'] + group['LINKFLAGS']
+            src_group['LINKFLAGS'] = src_group['LINKFLAGS'] + \
+                group['LINKFLAGS']
         else:
             src_group['LINKFLAGS'] = group['LINKFLAGS']
     if 'LIBS' in group:
@@ -577,20 +604,23 @@ def MergeGroup(src_group, group):
             src_group['LIBPATH'] = group['LIBPATH']
     if 'LOCAL_ASFLAGS' in group:
         if 'LOCAL_ASFLAGS' in src_group:
-            src_group['LOCAL_ASFLAGS'] = src_group['LOCAL_ASFLAGS'] + group['LOCAL_ASFLAGS']
+            src_group['LOCAL_ASFLAGS'] = src_group['LOCAL_ASFLAGS'] + \
+                group['LOCAL_ASFLAGS']
         else:
             src_group['LOCAL_ASFLAGS'] = group['LOCAL_ASFLAGS']
 
+
 def _PretreatListParameters(target_list):
-    while '' in target_list: # remove null strings
+    while '' in target_list:  # remove null strings
         target_list.remove('')
-    while ' ' in target_list: # remove ' '
+    while ' ' in target_list:  # remove ' '
         target_list.remove(' ')
 
-    if(len(target_list) == 0):
-        return False # ignore this list, don't add this list to the parameter
+    if (len(target_list) == 0):
+        return False  # ignore this list, don't add this list to the parameter
 
-    return True # permit to add this list to the parameter
+    return True  # permit to add this list to the parameter
+
 
 def DefineGroup(name, src, depend, **parameters):
     global Env
@@ -618,15 +648,15 @@ def DefineGroup(name, src, depend, **parameters):
     if 'CFLAGS' in group:
         target = group['CFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(CFLAGS = target)
+            Env.AppendUnique(CFLAGS=target)
     if 'CCFLAGS' in group:
         target = group['CCFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(CCFLAGS = target)
+            Env.AppendUnique(CCFLAGS=target)
     if 'CXXFLAGS' in group:
         target = group['CXXFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(CXXFLAGS = target)
+            Env.AppendUnique(CXXFLAGS=target)
     if 'CPPPATH' in group:
         target = group['CPPPATH']
         if _PretreatListParameters(target) == True:
@@ -634,25 +664,24 @@ def DefineGroup(name, src, depend, **parameters):
             for item in target:
                 paths.append(os.path.abspath(item))
             target = paths
-            Env.AppendUnique(CPPPATH = target)
+            Env.AppendUnique(CPPPATH=target)
     if 'CPPDEFINES' in group:
         target = group['CPPDEFINES']
         if _PretreatListParameters(target) == True:
-            Env.AppendUnique(CPPDEFINES = target)
+            Env.AppendUnique(CPPDEFINES=target)
     if 'LINKFLAGS' in group:
         target = group['LINKFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(LINKFLAGS = target)
+            Env.AppendUnique(LINKFLAGS=target)
     if 'ASFLAGS' in group:
         target = group['ASFLAGS']
         if len(target) > 0:
-            Env.AppendUnique(ASFLAGS = target)
+            Env.AppendUnique(ASFLAGS=target)
     if 'LOCAL_CPPPATH' in group:
         paths = []
         for item in group['LOCAL_CPPPATH']:
             paths.append(os.path.abspath(item))
         group['LOCAL_CPPPATH'] = paths
-
 
     if rtconfig.PLATFORM in ['gcc']:
         if 'CFLAGS' in group:
@@ -664,13 +693,14 @@ def DefineGroup(name, src, depend, **parameters):
         if 'LOCAL_CCFLAGS' in group:
             group['LOCAL_CCFLAGS'] = utils.GCCC99Patch(group['LOCAL_CCFLAGS'])
         if 'LOCAL_CXXFLAGS' in group:
-            group['LOCAL_CXXFLAGS'] = utils.GCCC99Patch(group['LOCAL_CXXFLAGS'])
+            group['LOCAL_CXXFLAGS'] = utils.GCCC99Patch(
+                group['LOCAL_CXXFLAGS'])
         if 'LOCAL_CFLAGS' in group:
             group['LOCAL_CFLAGS'] = utils.GCCC99Patch(group['LOCAL_CFLAGS'])
     # check whether to clean up library
     if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
         if group['src'] != []:
-            print('Remove library:'+ GroupLibFullName(name, Env))
+            print('Remove library:' + GroupLibFullName(name, Env))
             fn = os.path.join(group['path'], GroupLibFullName(name, Env))
             if os.path.exists(fn):
                 os.unlink(fn)
@@ -678,11 +708,11 @@ def DefineGroup(name, src, depend, **parameters):
     if 'LIBS' in group:
         target = group['LIBS']
         if _PretreatListParameters(target) == True:
-            Env.AppendUnique(LIBS = target)
+            Env.AppendUnique(LIBS=target)
     if 'LIBPATH' in group:
         target = group['LIBPATH']
         if _PretreatListParameters(target) == True:
-            Env.AppendUnique(LIBPATH = target)
+            Env.AppendUnique(LIBPATH=target)
 
     # check whether to build group library
     if 'LIBRARY' in group:
@@ -711,6 +741,7 @@ def DefineGroup(name, src, depend, **parameters):
 
     return objs
 
+
 def GetCurrentDir():
     conscript = File('SConscript')
     fn = conscript.rfile()
@@ -718,16 +749,22 @@ def GetCurrentDir():
     path = os.path.dirname(fn.abspath)
     return path
 
+
 PREBUILDING = []
+
+
 def RegisterPreBuildingAction(act):
     global PREBUILDING
-    assert callable(act), 'Could only register callable objects. %s received' % repr(act)
+    assert callable(
+        act), 'Could only register callable objects. %s received' % repr(act)
     PREBUILDING.append(act)
+
 
 def PreBuilding():
     global PREBUILDING
     for a in PREBUILDING:
         a()
+
 
 def GroupLibName(name, env):
 
@@ -738,8 +775,10 @@ def GroupLibName(name, env):
 
     return name
 
+
 def GroupLibFullName(name, env):
     return env['LIBPREFIX'] + GroupLibName(name, env) + env['LIBSUFFIX']
+
 
 def BuildLibInstallAction(target, source, env):
     lib_name = GetOption('buildlib')
@@ -750,6 +789,7 @@ def BuildLibInstallAction(target, source, env):
             print('Copy '+lib_name+' => ' + dst_name)
             do_copy_file(lib_name, dst_name)
             break
+
 
 def DoBuilding(target, objects):
 
@@ -768,14 +808,17 @@ def DoBuilding(target, objects):
         if 'LOCAL_CFLAGS' in group or 'LOCAL_CXXFLAGS' in group or 'LOCAL_CCFLAGS' in group or 'LOCAL_CPPPATH' in group or 'LOCAL_CPPDEFINES' in group or 'LOCAL_ASFLAGS' in group:
             CFLAGS = Env.get('CFLAGS', '') + group.get('LOCAL_CFLAGS', '')
             CCFLAGS = Env.get('CCFLAGS', '') + group.get('LOCAL_CCFLAGS', '')
-            CXXFLAGS = Env.get('CXXFLAGS', '') + group.get('LOCAL_CXXFLAGS', '')
-            CPPPATH = Env.get('CPPPATH', ['']) + group.get('LOCAL_CPPPATH', [''])
-            CPPDEFINES = Env.get('CPPDEFINES', ['']) + group.get('LOCAL_CPPDEFINES', [''])
+            CXXFLAGS = Env.get('CXXFLAGS', '') + \
+                group.get('LOCAL_CXXFLAGS', '')
+            CPPPATH = Env.get('CPPPATH', ['']) + \
+                group.get('LOCAL_CPPPATH', [''])
+            CPPDEFINES = Env.get(
+                'CPPDEFINES', ['']) + group.get('LOCAL_CPPDEFINES', [''])
             ASFLAGS = Env.get('ASFLAGS', '') + group.get('LOCAL_ASFLAGS', '')
 
             for source in group['src']:
-                objects.append(Env.Object(source, CFLAGS = CFLAGS, CCFLAGS = CCFLAGS, CXXFLAGS = CXXFLAGS, ASFLAGS = ASFLAGS,
-                    CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES))
+                objects.append(Env.Object(source, CFLAGS=CFLAGS, CCFLAGS=CCFLAGS, CXXFLAGS=CXXFLAGS, ASFLAGS=ASFLAGS,
+                                          CPPPATH=CPPPATH, CPPDEFINES=CPPDEFINES))
 
             return True
 
@@ -787,7 +830,7 @@ def DoBuilding(target, objects):
     # check whether special buildlib option
     lib_name = GetOption('buildlib')
     if lib_name:
-        objects = [] # remove all of objects
+        objects = []  # remove all of objects
         # build library with special component
         for Group in Projects:
             if Group['name'] == lib_name:
@@ -826,22 +869,26 @@ def DoBuilding(target, objects):
 
     EndBuilding(target, program)
 
-def GenTargetProject(program = None):
+
+def GenTargetProject(program=None):
 
     if GetOption('target') in ['mdk', 'mdk4', 'mdk5']:
         from keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
 
-        if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
+        # Keil5
+        if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']:
             MDK5Project(GetOption('project-name') + '.uvprojx', Projects)
             print("Keil5 project is generating...")
-        elif os.path.isfile('template.uvproj') and GetOption('target') not in ['mdk5']: # Keil4
+        # Keil4
+        elif os.path.isfile('template.uvproj') and GetOption('target') not in ['mdk5']:
             MDK4Project(GetOption('project-name') + '.uvproj', Projects)
             print("Keil4 project is generating...")
-        elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']: # Keil2
+        # Keil2
+        elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']:
             MDK2Project(GetOption('project-name') + '.Uv2', Projects)
             print("Keil2 project is generating...")
         else:
-            print ('No template project file found.')
+            print('No template project file found.')
             exit(1)
         print("Keil Version: " + ARMCC_Version())
         print("Keil-MDK project has generated successfully!")
@@ -858,7 +905,8 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'vs2012':
         from vs2012 import VS2012Project
-        VS2012Project(GetOption('project-name') + '.vcxproj', Projects, program)
+        VS2012Project(GetOption('project-name') +
+                      '.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
         from codeblocks import CBProject
@@ -886,7 +934,8 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'eclipse':
         from eclipse import TargetEclipse
-        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
+        TargetEclipse(Env, GetOption('reset-project-config'),
+                      GetOption('project-name'))
 
     if GetOption('target') == 'codelite':
         from codelite import TargetCodelite
@@ -894,7 +943,7 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
-        CMakeProject(Env,Projects)
+        CMakeProject(Env, Projects)
 
     if GetOption('target') == 'xmake':
         from xmake import XMakeProject
@@ -904,12 +953,13 @@ def GenTargetProject(program = None):
         from esp_idf import ESPIDFProject
         ESPIDFProject(Env, Projects)
 
-def EndBuilding(target, program = None):
+
+def EndBuilding(target, program=None):
     from mkdist import MkDist, MkDist_Strip
 
     need_exit = False
 
-    Env['target']  = program
+    Env['target'] = program
     Env['project'] = Projects
 
     if hasattr(rtconfig, 'BSP_LIBRARY_TYPE'):
@@ -941,10 +991,11 @@ def EndBuilding(target, program = None):
         need_exit = True
     if GetOption('make-dist-ide') and program != None:
         import subprocess
-        if not isinstance(project_path, str) or len(project_path) == 0 :
+        if not isinstance(project_path, str) or len(project_path) == 0:
             project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-        child = subprocess.Popen('scons --target=eclipse --project-name=' + project_name, cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        child = subprocess.Popen('scons --target=eclipse --project-name=' + project_name,
+                                 cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = child.communicate()
         need_exit = True
     if GetOption('cscope'):
@@ -953,11 +1004,13 @@ def EndBuilding(target, program = None):
 
     if not GetOption('help') and not GetOption('target'):
         if not os.path.exists(rtconfig.EXEC_PATH):
-            print ("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
+            print("Error: the toolchain path (" + rtconfig.EXEC_PATH +
+                  ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
             need_exit = True
 
     if need_exit:
         exit(0)
+
 
 def SrcRemove(src, remove):
     if not src:
@@ -1002,6 +1055,7 @@ def SrcRemove(src, remove):
                 if item_str == remove_str:
                     src.remove(item)
 
+
 def GetVersion():
     import SCons.cpp
     import string
@@ -1016,14 +1070,18 @@ def GetVersion():
     prepcessor.process_contents(contents)
     def_ns = prepcessor.cpp_namespace
 
-    version = int([ch for ch in def_ns['RT_VERSION_MAJOR'] if ch in '0123456789.'])
-    subversion = int([ch for ch in def_ns['RT_VERSION_MINOR'] if ch in '0123456789.'])
+    version = int(
+        [ch for ch in def_ns['RT_VERSION_MAJOR'] if ch in '0123456789.'])
+    subversion = int(
+        [ch for ch in def_ns['RT_VERSION_MINOR'] if ch in '0123456789.'])
 
     if 'RT_VERSION_PATCH' in def_ns:
-        revision = int([ch for ch in def_ns['RT_VERSION_PATCH'] if ch in '0123456789.'])
+        revision = int(
+            [ch for ch in def_ns['RT_VERSION_PATCH'] if ch in '0123456789.'])
         return '%d.%d.%d' % (version, subversion, revision)
 
     return '0.%d.%d' % (version, subversion)
+
 
 def GlobSubDir(sub_dir, ext_name):
     import os
@@ -1044,6 +1102,7 @@ def GlobSubDir(sub_dir, ext_name):
     for item in src:
         dst.append(os.path.relpath(item, sub_dir))
     return dst
+
 
 def PackageSConscript(package):
     from package import BuildPackage

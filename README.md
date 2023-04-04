@@ -24,9 +24,7 @@ RT-Thread has Standard version and Nano version. For resource-constrained microc
 
 RT-Thread has not only a real-time kernel, but also rich components. Its architecture is as follows:
 
-
 ![architecture](./documentation/figures/architecture.png)
-
 
 It includes:
 
@@ -146,7 +144,7 @@ RT-Thread is very grateful for the support from all community developers, and if
 
 If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](documentation/contribution_guide/contribution_guide.md).
 
-## Thanks for the following contributors!
+## Thanks for the following contributors
 
 <a href="https://github.com/RT-Thread/rt-thread/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=RT-Thread/rt-thread" />

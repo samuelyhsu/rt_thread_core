@@ -7,7 +7,7 @@
  * Date           Author       Notes
  */
 
-#ifndef  CPUPORT_H__
-#define  CPUPORT_H__
+#ifndef CPUPORT_H__
+#define CPUPORT_H__
 
-#endif  /*CPUPORT_H__*/
+#endif /*CPUPORT_H__*/

@@ -2,8 +2,8 @@
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -15,14 +15,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -30,25 +30,22 @@
  *
  */
 
-
-
 /* ip.c
  *
  * This is the code for the IP layer for IPv6.
  *
  */
 
-
 #include "lwip/opt.h"
 
 #include "lwip/def.h"
-#include "lwip/mem.h"
-#include "lwip/ip.h"
-#include "lwip/inet.h"
-#include "lwip/netif.h"
 #include "lwip/icmp.h"
-#include "lwip/udp.h"
+#include "lwip/inet.h"
+#include "lwip/ip.h"
+#include "lwip/mem.h"
+#include "lwip/netif.h"
 #include "lwip/tcp_impl.h"
+#include "lwip/udp.h"
 
 #include "lwip/stats.h"
 
@@ -59,24 +56,20 @@
  * Initializes the IP layer.
  */
 
-void
-ip_init(void)
-{
-}
+void ip_init(void) {}
 
 /* ip_route:
  *
- * Finds the appropriate network interface for a given IP address. It searches the
- * list of network interfaces linearly. A match is found if the masked IP address of
- * the network interface equals the masked IP address given to the function.
+ * Finds the appropriate network interface for a given IP address. It searches
+ * the list of network interfaces linearly. A match is found if the masked IP
+ * address of the network interface equals the masked IP address given to the
+ * function.
  */
 
-struct netif *
-ip_route(struct ip_addr *dest)
-{
+struct netif *ip_route(struct ip_addr *dest) {
   struct netif *netif;
 
-  for(netif = netif_list; netif != NULL; netif = netif->next) {
+  for (netif = netif_list; netif != NULL; netif = netif->next) {
     if (ip_addr_netcmp(dest, &(netif->ip_addr), &(netif->netmask))) {
       return netif;
     }
@@ -87,14 +80,12 @@ ip_route(struct ip_addr *dest)
 
 /* ip_forward:
  *
- * Forwards an IP packet. It finds an appropriate route for the packet, decrements
- * the TTL value of the packet, adjusts the checksum and outputs the packet on the
- * appropriate interface.
+ * Forwards an IP packet. It finds an appropriate route for the packet,
+ * decrements the TTL value of the packet, adjusts the checksum and outputs the
+ * packet on the appropriate interface.
  */
 
-static void
-ip_forward(struct pbuf *p, struct ip_hdr *iphdr)
-{
+static void ip_forward(struct pbuf *p, struct ip_hdr *iphdr) {
   struct netif *netif;
 
   PERF_START;
@@ -128,7 +119,6 @@ ip_forward(struct pbuf *p, struct ip_hdr *iphdr)
     iphdr->chksum += htons(0x100);
     }*/
 
-
   LWIP_DEBUGF(IP_DEBUG, ("ip_forward: forwarding packet to "));
 #if IP_DEBUG
   ip_addr_debug_print(IP_DEBUG, ((struct ip_addr *)&(iphdr->dest)));
@@ -145,19 +135,18 @@ ip_forward(struct pbuf *p, struct ip_hdr *iphdr)
 
 /* ip_input:
  *
- * This function is called by the network interface device driver when an IP packet is
- * received. The function does the basic checks of the IP header such as packet size
- * being at least larger than the header size etc. If the packet was not destined for
- * us, the packet is forwarded (using ip_forward). The IP checksum is always checked.
+ * This function is called by the network interface device driver when an IP
+ * packet is received. The function does the basic checks of the IP header such
+ * as packet size being at least larger than the header size etc. If the packet
+ * was not destined for us, the packet is forwarded (using ip_forward). The IP
+ * checksum is always checked.
  *
  * Finally, the packet is sent to the upper layer protocol input function.
  */
 
-void
-ip_input(struct pbuf *p, struct netif *inp) {
+void ip_input(struct pbuf *p, struct netif *inp) {
   struct ip_hdr *iphdr;
   struct netif *netif;
-
 
   PERF_START;
 
@@ -165,12 +154,10 @@ ip_input(struct pbuf *p, struct netif *inp) {
   ip_debug_print(p);
 #endif /* IP_DEBUG */
 
-
   IP_STATS_INC(ip.recv);
 
   /* identify the IP header */
   iphdr = p->payload;
-
 
   if (iphdr->v != 6) {
     LWIP_DEBUGF(IP_DEBUG, ("IP packet dropped due to bad version number\n"));
@@ -184,7 +171,7 @@ ip_input(struct pbuf *p, struct netif *inp) {
   }
 
   /* is this packet for us? */
-  for(netif = netif_list; netif != NULL; netif = netif->next) {
+  for (netif = netif_list; netif != NULL; netif = netif->next) {
 #if IP_DEBUG
     LWIP_DEBUGF(IP_DEBUG, ("ip_input: iphdr->dest "));
     ip_addr_debug_print(IP_DEBUG, ((struct ip_addr *)&(iphdr->dest)));
@@ -196,7 +183,6 @@ ip_input(struct pbuf *p, struct netif *inp) {
       break;
     }
   }
-
 
   if (netif == NULL) {
     /* packet not for us, route or discard */
@@ -213,10 +199,11 @@ ip_input(struct pbuf *p, struct netif *inp) {
 #if IP_DEBUG
   /*  LWIP_DEBUGF("ip_input: \n");
   ip_debug_print(p);
-  LWIP_DEBUGF("ip_input: p->len %"U16_F" p->tot_len %"U16_F"\n", p->len, p->tot_len);*/
+  LWIP_DEBUGF("ip_input: p->len %"U16_F" p->tot_len %"U16_F"\n", p->len,
+  p->tot_len);*/
 #endif /* IP_DEBUG */
 
-  if(pbuf_header(p, -IP_HLEN)) {
+  if (pbuf_header(p, -IP_HLEN)) {
     LWIP_ASSERT("Can't move over header in packet", 0);
     return;
   }
@@ -239,8 +226,8 @@ ip_input(struct pbuf *p, struct netif *inp) {
     icmp_dest_unreach(p, ICMP_DUR_PROTO);
 #endif /* LWIP_ICMP */
     pbuf_free(p);
-    LWIP_DEBUGF(IP_DEBUG, ("Unsupported transport protocol %"U16_F"\n",
-          iphdr->nexthdr));
+    LWIP_DEBUGF(IP_DEBUG, ("Unsupported transport protocol %" U16_F "\n",
+                           iphdr->nexthdr));
 
     IP_STATS_INC(ip.proterr);
     IP_STATS_INC(ip.drop);
@@ -248,34 +235,33 @@ ip_input(struct pbuf *p, struct netif *inp) {
   PERF_STOP("ip_input");
 }
 
-
 /* ip_output_if:
  *
- * Sends an IP packet on a network interface. This function constructs the IP header
- * and calculates the IP header checksum. If the source IP address is NULL,
- * the IP address of the outgoing network interface is filled in as source address.
+ * Sends an IP packet on a network interface. This function constructs the IP
+ * header and calculates the IP header checksum. If the source IP address is
+ * NULL, the IP address of the outgoing network interface is filled in as source
+ * address.
  */
 
-err_t
-ip_output_if (struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
-       u8_t ttl,
-       u8_t proto, struct netif *netif)
-{
+err_t ip_output_if(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
+                   u8_t ttl, u8_t proto, struct netif *netif) {
   struct ip_hdr *iphdr;
 
   PERF_START;
 
-  LWIP_DEBUGF(IP_DEBUG, ("len %"U16_F" tot_len %"U16_F"\n", p->len, p->tot_len));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("len %" U16_F " tot_len %" U16_F "\n", p->len, p->tot_len));
   if (pbuf_header(p, IP_HLEN)) {
-    LWIP_DEBUGF(IP_DEBUG, ("ip_output: not enough room for IP header in pbuf\n"));
+    LWIP_DEBUGF(IP_DEBUG,
+                ("ip_output: not enough room for IP header in pbuf\n"));
     IP_STATS_INC(ip.err);
 
     return ERR_BUF;
   }
-  LWIP_DEBUGF(IP_DEBUG, ("len %"U16_F" tot_len %"U16_F"\n", p->len, p->tot_len));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("len %" U16_F " tot_len %" U16_F "\n", p->len, p->tot_len));
 
   iphdr = p->payload;
-
 
   if (dest != IP_HDRINCL) {
     LWIP_DEBUGF(IP_DEBUG, ("!IP_HDRLINCL\n"));
@@ -298,7 +284,8 @@ ip_output_if (struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
 
   IP_STATS_INC(ip.xmit);
 
-  LWIP_DEBUGF(IP_DEBUG, ("ip_output_if: %c%c (len %"U16_F")\n", netif->name[0], netif->name[1], p->tot_len));
+  LWIP_DEBUGF(IP_DEBUG, ("ip_output_if: %c%c (len %" U16_F ")\n",
+                         netif->name[0], netif->name[1], p->tot_len));
 #if IP_DEBUG
   ip_debug_print(p);
 #endif /* IP_DEBUG */
@@ -313,30 +300,29 @@ ip_output_if (struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
  * calls upon ip_output_if to do the actual work.
  */
 
-err_t
-ip_output(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
-    u8_t ttl, u8_t proto)
-{
+err_t ip_output(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
+                u8_t ttl, u8_t proto) {
   struct netif *netif;
   if ((netif = ip_route(dest)) == NULL) {
-    LWIP_DEBUGF(IP_DEBUG, ("ip_output: No route to 0x%"X32_F"\n", dest->addr));
+    LWIP_DEBUGF(IP_DEBUG,
+                ("ip_output: No route to 0x%" X32_F "\n", dest->addr));
     IP_STATS_INC(ip.rterr);
     return ERR_RTE;
   }
 
-  return ip_output_if (p, src, dest, ttl, proto, netif);
+  return ip_output_if(p, src, dest, ttl, proto, netif);
 }
 
 #if LWIP_NETIF_HWADDRHINT
-err_t
-ip_output_hinted(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
-          u8_t ttl, u8_t tos, u8_t proto, u8_t *addr_hint)
-{
+err_t ip_output_hinted(struct pbuf *p, struct ip_addr *src,
+                       struct ip_addr *dest, u8_t ttl, u8_t tos, u8_t proto,
+                       u8_t *addr_hint) {
   struct netif *netif;
   err_t err;
 
   if ((netif = ip_route(dest)) == NULL) {
-    LWIP_DEBUGF(IP_DEBUG, ("ip_output: No route to 0x%"X32_F"\n", dest->addr));
+    LWIP_DEBUGF(IP_DEBUG,
+                ("ip_output: No route to 0x%" X32_F "\n", dest->addr));
     IP_STATS_INC(ip.rterr);
     return ERR_RTE;
   }
@@ -350,48 +336,54 @@ ip_output_hinted(struct pbuf *p, struct ip_addr *src, struct ip_addr *dest,
 #endif /* LWIP_NETIF_HWADDRHINT*/
 
 #if IP_DEBUG
-void
-ip_debug_print(struct pbuf *p)
-{
+void ip_debug_print(struct pbuf *p) {
   struct ip_hdr *iphdr = p->payload;
 
   LWIP_DEBUGF(IP_DEBUG, ("IP header:\n"));
   LWIP_DEBUGF(IP_DEBUG, ("+-------------------------------+\n"));
-  LWIP_DEBUGF(IP_DEBUG, ("|%2"S16_F" |  %"X16_F"%"X16_F"  |      %"X16_F"%"X16_F"           | (v, traffic class, flow label)\n",
-        iphdr->v,
-        iphdr->tclass1, iphdr->tclass2,
-        iphdr->flow1, iphdr->flow2));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|%2" S16_F " |  %" X16_F "%" X16_F "  |      %" X16_F "%" X16_F
+               "           | (v, traffic class, flow label)\n",
+               iphdr->v, iphdr->tclass1, iphdr->tclass2, iphdr->flow1,
+               iphdr->flow2));
   LWIP_DEBUGF(IP_DEBUG, ("+-------------------------------+\n"));
-  LWIP_DEBUGF(IP_DEBUG, ("|    %5"U16_F"      | %2"U16_F"  |  %2"U16_F"   | (len, nexthdr, hoplim)\n",
-        ntohs(iphdr->len),
-        iphdr->nexthdr,
-        iphdr->hoplim));
+  LWIP_DEBUGF(IP_DEBUG, ("|    %5" U16_F "      | %2" U16_F "  |  %2" U16_F
+                         "   | (len, nexthdr, hoplim)\n",
+                         ntohs(iphdr->len), iphdr->nexthdr, iphdr->hoplim));
   LWIP_DEBUGF(IP_DEBUG, ("+-------------------------------+\n"));
-  LWIP_DEBUGF(IP_DEBUG, ("|       %4"X32_F"      |       %4"X32_F"     | (src)\n",
-        (ntohl(iphdr->src.addr[0]) >> 16) & 0xffff,
-        ntohl(iphdr->src.addr[0]) & 0xffff));
-  LWIP_DEBUGF(IP_DEBUG, ("|       %4"X32_F"      |       %4"X32_F"     | (src)\n",
-        (ntohl(iphdr->src.addr[1]) >> 16) & 0xffff,
-        ntohl(iphdr->src.addr[1]) & 0xffff));
-  LWIP_DEBUGF(IP_DEBUG, ("|       %4"X32_F"      |       %4"X32_F"     | (src)\n",
-        (ntohl(iphdr->src.addr[2]) >> 16) & 0xffff,
-        ntohl(iphdr->src.addr[2]) & 0xffff));
-  LWIP_DEBUGF(IP_DEBUG, ("|       %4"X32_F"      |       %4"X32_F"     | (src)\n",
-        (ntohl(iphdr->src.addr[3]) >> 16) & 0xffff,
-        ntohl(iphdr->src.addr[3]) & 0xffff));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|       %4" X32_F "      |       %4" X32_F "     | (src)\n",
+               (ntohl(iphdr->src.addr[0]) >> 16) & 0xffff,
+               ntohl(iphdr->src.addr[0]) & 0xffff));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|       %4" X32_F "      |       %4" X32_F "     | (src)\n",
+               (ntohl(iphdr->src.addr[1]) >> 16) & 0xffff,
+               ntohl(iphdr->src.addr[1]) & 0xffff));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|       %4" X32_F "      |       %4" X32_F "     | (src)\n",
+               (ntohl(iphdr->src.addr[2]) >> 16) & 0xffff,
+               ntohl(iphdr->src.addr[2]) & 0xffff));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|       %4" X32_F "      |       %4" X32_F "     | (src)\n",
+               (ntohl(iphdr->src.addr[3]) >> 16) & 0xffff,
+               ntohl(iphdr->src.addr[3]) & 0xffff));
   LWIP_DEBUGF(IP_DEBUG, ("+-------------------------------+\n"));
-  LWIP_DEBUGF(IP_DEBUG, ("|       %4"X32_F"      |       %4"X32_F"     | (dest)\n",
-        (ntohl(iphdr->dest.addr[0]) >> 16) & 0xffff,
-        ntohl(iphdr->dest.addr[0]) & 0xffff));
-  LWIP_DEBUGF(IP_DEBUG, ("|       %4"X32_F"      |       %4"X32_F"     | (dest)\n",
-        (ntohl(iphdr->dest.addr[1]) >> 16) & 0xffff,
-        ntohl(iphdr->dest.addr[1]) & 0xffff));
-  LWIP_DEBUGF(IP_DEBUG, ("|       %4"X32_F"      |       %4"X32_F"     | (dest)\n",
-        (ntohl(iphdr->dest.addr[2]) >> 16) & 0xffff,
-        ntohl(iphdr->dest.addr[2]) & 0xffff));
-  LWIP_DEBUGF(IP_DEBUG, ("|       %4"X32_F"      |       %4"X32_F"     | (dest)\n",
-        (ntohl(iphdr->dest.addr[3]) >> 16) & 0xffff,
-        ntohl(iphdr->dest.addr[3]) & 0xffff));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|       %4" X32_F "      |       %4" X32_F "     | (dest)\n",
+               (ntohl(iphdr->dest.addr[0]) >> 16) & 0xffff,
+               ntohl(iphdr->dest.addr[0]) & 0xffff));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|       %4" X32_F "      |       %4" X32_F "     | (dest)\n",
+               (ntohl(iphdr->dest.addr[1]) >> 16) & 0xffff,
+               ntohl(iphdr->dest.addr[1]) & 0xffff));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|       %4" X32_F "      |       %4" X32_F "     | (dest)\n",
+               (ntohl(iphdr->dest.addr[2]) >> 16) & 0xffff,
+               ntohl(iphdr->dest.addr[2]) & 0xffff));
+  LWIP_DEBUGF(IP_DEBUG,
+              ("|       %4" X32_F "      |       %4" X32_F "     | (dest)\n",
+               (ntohl(iphdr->dest.addr[3]) >> 16) & 0xffff,
+               ntohl(iphdr->dest.addr[3]) & 0xffff));
   LWIP_DEBUGF(IP_DEBUG, ("+-------------------------------+\n"));
 }
 #endif /* IP_DEBUG */

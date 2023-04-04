@@ -8,6 +8,7 @@ if GetDepend('RT_USING_LWIP141'):
 else:
     src = ['dhcp_server_raw.c']
 
-group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'LWIP_USING_DHCPD'], CPPPATH = CPPPATH)
+group = DefineGroup('lwIP', src, depend=[
+                    'RT_USING_LWIP', 'LWIP_USING_DHCPD'], CPPPATH=CPPPATH)
 
 Return('group')

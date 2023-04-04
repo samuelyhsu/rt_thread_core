@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <stdint.h>
 #include <rtthread.h>
+#include <stdint.h>
 
 namespace rtthread {
 
@@ -20,27 +20,28 @@ namespace rtthread {
 */
 class Mutex {
 public:
-    /** Create and Initialize a Mutex object */
-    Mutex(const char *name = "mutex");
-    ~Mutex();
+  /** Create and Initialize a Mutex object */
+  Mutex(const char *name = "mutex");
+  ~Mutex();
 
-    /** Wait until a Mutex becomes available.
-      @param   millisec  timeout value or 0 in case of no time-out. (default: WaitForever)
-      @return  true if the mutex was acquired, false otherwise.
-     */
-    bool lock(int32_t millisec = -1);
+  /** Wait until a Mutex becomes available.
+    @param   millisec  timeout value or 0 in case of no time-out. (default:
+    WaitForever)
+    @return  true if the mutex was acquired, false otherwise.
+   */
+  bool lock(int32_t millisec = -1);
 
-    /** Try to lock the mutex, and return immediately
-      @return  true if the mutex was acquired, false otherwise.
-     */
-    bool trylock();
+  /** Try to lock the mutex, and return immediately
+    @return  true if the mutex was acquired, false otherwise.
+   */
+  bool trylock();
 
-    /** Unlock the mutex that has previously been locked by the same thread
-     */
-    void unlock();
+  /** Unlock the mutex that has previously been locked by the same thread
+   */
+  void unlock();
 
 private:
-    struct rt_mutex mID;
+  struct rt_mutex mID;
 };
 
-}
+} // namespace rtthread

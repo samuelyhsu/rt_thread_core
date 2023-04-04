@@ -11,14 +11,14 @@
 #ifndef __INTERRUPT_H__
 #define __INTERRUPT_H__
 
-#include <rthw.h>
 #include <board.h>
+#include <rthw.h>
 
-#define INT_IRQ     0x00
-#define INT_FIQ     0x01
+#define INT_IRQ 0x00
+#define INT_FIQ 0x01
 
-#define IRQ_MODE_TRIG_LEVEL         (0x00) /* Trigger: level triggered interrupt */
-#define IRQ_MODE_TRIG_EDGE          (0x01) /* Trigger: edge triggered interrupt */
+#define IRQ_MODE_TRIG_LEVEL (0x00) /* Trigger: level triggered interrupt */
+#define IRQ_MODE_TRIG_EDGE (0x01)  /* Trigger: edge triggered interrupt */
 
 void rt_hw_vector_init(void);
 
@@ -49,12 +49,12 @@ int rt_hw_interrupt_set_prior_group_bits(unsigned int bits);
 unsigned int rt_hw_interrupt_get_prior_group_bits(void);
 
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, const char *name);
+                                         void *param, const char *name);
 
 #ifdef RT_USING_SMP
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
-void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
+void rt_hw_ipi_handler_install(int ipi_vector,
+                               rt_isr_handler_t ipi_isr_handler);
 #endif
 
 #endif
-

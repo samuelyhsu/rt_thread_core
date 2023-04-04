@@ -8,8 +8,8 @@
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -21,14 +21,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -40,12 +40,12 @@
 
 #if !NO_SYS /* don't build if not configured for use in lwipopts.h */
 
-#include "lwip/sys.h"
-#include "lwip/memp.h"
-#include "lwip/mem.h"
-#include "lwip/pbuf.h"
-#include "lwip/tcpip.h"
 #include "lwip/init.h"
+#include "lwip/mem.h"
+#include "lwip/memp.h"
+#include "lwip/pbuf.h"
+#include "lwip/sys.h"
+#include "lwip/tcpip.h"
 #include "netif/etharp.h"
 #include "netif/ppp_oe.h"
 
@@ -59,7 +59,6 @@ static sys_mbox_t mbox;
 sys_mutex_t lock_tcpip_core;
 #endif /* LWIP_TCPIP_CORE_LOCKING */
 
-
 /**
  * The main lwIP thread. This thread has exclusive access to lwIP core functions
  * (unless access to them is not locked). Other threads communicate with this
@@ -70,9 +69,7 @@ sys_mutex_t lock_tcpip_core;
  *
  * @param arg unused argument
  */
-static void
-tcpip_thread(void *arg)
-{
+static void tcpip_thread(void *arg) {
   struct tcpip_msg *msg;
   LWIP_UNUSED_ARG(arg);
 
@@ -81,7 +78,7 @@ tcpip_thread(void *arg)
   }
 
   LOCK_TCPIP_CORE();
-  while (1) {                          /* MAIN Loop */
+  while (1) { /* MAIN Loop */
     UNLOCK_TCPIP_CORE();
     LWIP_TCPIP_THREAD_ALIVE();
     /* wait for a message, timeouts are processed while waiting */
@@ -99,7 +96,8 @@ tcpip_thread(void *arg)
     case TCPIP_MSG_INPKT:
       LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_thread: PACKET %p\n", (void *)msg));
 #if LWIP_ETHERNET
-      if (msg->msg.inp.netif->flags & (NETIF_FLAG_ETHARP | NETIF_FLAG_ETHERNET)) {
+      if (msg->msg.inp.netif->flags &
+          (NETIF_FLAG_ETHARP | NETIF_FLAG_ETHERNET)) {
         ethernet_input(msg->msg.inp.p, msg->msg.inp.netif);
       } else
 #endif /* LWIP_ETHERNET */
@@ -112,7 +110,8 @@ tcpip_thread(void *arg)
 
 #if LWIP_NETIF_API
     case TCPIP_MSG_NETIFAPI:
-      LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_thread: Netif API message %p\n", (void *)msg));
+      LWIP_DEBUGF(TCPIP_DEBUG,
+                  ("tcpip_thread: Netif API message %p\n", (void *)msg));
       msg->msg.netifapimsg->function(&(msg->msg.netifapimsg->msg));
       break;
 #endif /* LWIP_NETIF_API */
@@ -137,12 +136,14 @@ tcpip_thread(void *arg)
       break;
 
     case TCPIP_MSG_CALLBACK_STATIC:
-      LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_thread: CALLBACK_STATIC %p\n", (void *)msg));
+      LWIP_DEBUGF(TCPIP_DEBUG,
+                  ("tcpip_thread: CALLBACK_STATIC %p\n", (void *)msg));
       msg->msg.cb.function(msg->msg.cb.ctx);
       break;
 
     default:
-      LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_thread: invalid message: %d\n", msg->type));
+      LWIP_DEBUGF(TCPIP_DEBUG,
+                  ("tcpip_thread: invalid message: %d\n", msg->type));
       LWIP_ASSERT("tcpip_thread: invalid message", 0);
       break;
     }
@@ -157,12 +158,11 @@ tcpip_thread(void *arg)
  *          NETIF_FLAG_ETHERNET flags)
  * @param inp the network interface on which the packet was received
  */
-err_t
-tcpip_input(struct pbuf *p, struct netif *inp)
-{
+err_t tcpip_input(struct pbuf *p, struct netif *inp) {
 #if LWIP_TCPIP_CORE_LOCKING_INPUT
   err_t ret;
-  LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_input: PACKET %p/%p\n", (void *)p, (void *)inp));
+  LWIP_DEBUGF(TCPIP_DEBUG,
+              ("tcpip_input: PACKET %p/%p\n", (void *)p, (void *)inp));
   LOCK_TCPIP_CORE();
 #if LWIP_ETHERNET
   if (inp->flags & (NETIF_FLAG_ETHARP | NETIF_FLAG_ETHERNET)) {
@@ -174,7 +174,7 @@ tcpip_input(struct pbuf *p, struct netif *inp)
   }
   UNLOCK_TCPIP_CORE();
   return ret;
-#else /* LWIP_TCPIP_CORE_LOCKING_INPUT */
+#else  /* LWIP_TCPIP_CORE_LOCKING_INPUT */
   struct tcpip_msg *msg;
 
   if (!sys_mbox_valid(&mbox)) {
@@ -207,9 +207,8 @@ tcpip_input(struct pbuf *p, struct netif *inp)
  * @param block 1 to block until the request is posted, 0 to non-blocking mode
  * @return ERR_OK if the function was called, another err_t if not
  */
-err_t
-tcpip_callback_with_block(tcpip_callback_fn function, void *ctx, u8_t block)
-{
+err_t tcpip_callback_with_block(tcpip_callback_fn function, void *ctx,
+                                u8_t block) {
   struct tcpip_msg *msg;
 
   if (sys_mbox_valid(&mbox)) {
@@ -243,9 +242,7 @@ tcpip_callback_with_block(tcpip_callback_fn function, void *ctx, u8_t block)
  * @param arg argument to pass to timeout function h
  * @return ERR_MEM on memory error, ERR_OK otherwise
  */
-err_t
-tcpip_timeout(u32_t msecs, sys_timeout_handler h, void *arg)
-{
+err_t tcpip_timeout(u32_t msecs, sys_timeout_handler h, void *arg) {
   struct tcpip_msg *msg;
 
   if (sys_mbox_valid(&mbox)) {
@@ -272,9 +269,7 @@ tcpip_timeout(u32_t msecs, sys_timeout_handler h, void *arg)
  * @param arg argument to pass to timeout function h
  * @return ERR_MEM on memory error, ERR_OK otherwise
  */
-err_t
-tcpip_untimeout(sys_timeout_handler h, void *arg)
-{
+err_t tcpip_untimeout(sys_timeout_handler h, void *arg) {
   struct tcpip_msg *msg;
 
   if (sys_mbox_valid(&mbox)) {
@@ -302,15 +297,13 @@ tcpip_untimeout(sys_timeout_handler h, void *arg)
  * @param apimsg a struct containing the function to call and its parameters
  * @return ERR_OK if the function was called, another err_t if not
  */
-err_t
-tcpip_apimsg(struct api_msg *apimsg)
-{
+err_t tcpip_apimsg(struct api_msg *apimsg) {
   struct tcpip_msg msg;
 #ifdef LWIP_DEBUG
   /* catch functions that don't set err */
   apimsg->msg.err = ERR_VAL;
 #endif
-  
+
   if (sys_mbox_valid(&mbox)) {
     msg.type = TCPIP_MSG_API;
     msg.msg.apimsg = apimsg;
@@ -330,9 +323,7 @@ tcpip_apimsg(struct api_msg *apimsg)
  * @param apimsg a struct containing the function to call and its parameters
  * @return ERR_OK (only for compatibility fo tcpip_apimsg())
  */
-err_t
-tcpip_apimsg_lock(struct api_msg *apimsg)
-{
+err_t tcpip_apimsg_lock(struct api_msg *apimsg) {
 #ifdef LWIP_DEBUG
   /* catch functions that don't set err */
   apimsg->msg.err = ERR_VAL;
@@ -342,7 +333,6 @@ tcpip_apimsg_lock(struct api_msg *apimsg)
   apimsg->function(&(apimsg->msg));
   UNLOCK_TCPIP_CORE();
   return apimsg->msg.err;
-
 }
 #endif /* LWIP_TCPIP_CORE_LOCKING */
 #endif /* LWIP_NETCONN */
@@ -353,21 +343,20 @@ tcpip_apimsg_lock(struct api_msg *apimsg)
  * Much like tcpip_apimsg, but calls the lower part of a netifapi_*
  * function.
  *
- * @param netifapimsg a struct containing the function to call and its parameters
+ * @param netifapimsg a struct containing the function to call and its
+ * parameters
  * @return error code given back by the function that was called
  */
-err_t
-tcpip_netifapi(struct netifapi_msg* netifapimsg)
-{
+err_t tcpip_netifapi(struct netifapi_msg *netifapimsg) {
   struct tcpip_msg msg;
-  
+
   if (sys_mbox_valid(&mbox)) {
     err_t err = sys_sem_new(&netifapimsg->msg.sem, 0);
     if (err != ERR_OK) {
       netifapimsg->msg.err = err;
       return err;
     }
-    
+
     msg.type = TCPIP_MSG_NETIFAPI;
     msg.msg.netifapimsg = netifapimsg;
     sys_mbox_post(&mbox, &msg);
@@ -377,19 +366,18 @@ tcpip_netifapi(struct netifapi_msg* netifapimsg)
   }
   return ERR_VAL;
 }
-#else /* !LWIP_TCPIP_CORE_LOCKING */
+#else  /* !LWIP_TCPIP_CORE_LOCKING */
 /**
  * Call the lower part of a netifapi_* function
  * This function has exclusive access to lwIP core code by locking it
  * before the function is called.
  *
- * @param netifapimsg a struct containing the function to call and its parameters
+ * @param netifapimsg a struct containing the function to call and its
+ * parameters
  * @return ERR_OK (only for compatibility fo tcpip_netifapi())
  */
-err_t
-tcpip_netifapi_lock(struct netifapi_msg* netifapimsg)
-{
-  LOCK_TCPIP_CORE();  
+err_t tcpip_netifapi_lock(struct netifapi_msg *netifapimsg) {
+  LOCK_TCPIP_CORE();
   netifapimsg->function(&(netifapimsg->msg));
   UNLOCK_TCPIP_CORE();
   return netifapimsg->msg.err;
@@ -405,8 +393,8 @@ tcpip_netifapi_lock(struct netifapi_msg* netifapimsg)
  * @param ctx parameter passed to function
  * @return a struct pointer to pass to tcpip_trycallback().
  */
-struct tcpip_callback_msg* tcpip_callbackmsg_new(tcpip_callback_fn function, void *ctx)
-{
+struct tcpip_callback_msg *tcpip_callbackmsg_new(tcpip_callback_fn function,
+                                                 void *ctx) {
   struct tcpip_msg *msg = (struct tcpip_msg *)memp_malloc(MEMP_TCPIP_MSG_API);
   if (msg == NULL) {
     return NULL;
@@ -414,7 +402,7 @@ struct tcpip_callback_msg* tcpip_callbackmsg_new(tcpip_callback_fn function, voi
   msg->type = TCPIP_MSG_CALLBACK_STATIC;
   msg->msg.cb.function = function;
   msg->msg.cb.ctx = ctx;
-  return (struct tcpip_callback_msg*)msg;
+  return (struct tcpip_callback_msg *)msg;
 }
 
 /**
@@ -422,8 +410,7 @@ struct tcpip_callback_msg* tcpip_callbackmsg_new(tcpip_callback_fn function, voi
  *
  * @param msg the message to free
  */
-void tcpip_callbackmsg_delete(struct tcpip_callback_msg* msg)
-{
+void tcpip_callbackmsg_delete(struct tcpip_callback_msg *msg) {
   memp_free(MEMP_TCPIP_MSG_API, msg);
 }
 
@@ -434,9 +421,7 @@ void tcpip_callbackmsg_delete(struct tcpip_callback_msg* msg)
  * @param msg pointer to the message to post
  * @return sys_mbox_trypost() return code
  */
-err_t
-tcpip_trycallback(struct tcpip_callback_msg* msg)
-{
+err_t tcpip_trycallback(struct tcpip_callback_msg *msg) {
   if (!sys_mbox_valid(&mbox)) {
     return ERR_VAL;
   }
@@ -448,26 +433,26 @@ tcpip_trycallback(struct tcpip_callback_msg* msg)
  * - initialize all sub modules
  * - start the tcpip_thread
  *
- * @param initfunc a function to call when tcpip_thread is running and finished initializing
+ * @param initfunc a function to call when tcpip_thread is running and finished
+ * initializing
  * @param arg argument to pass to initfunc
  */
-void
-tcpip_init(tcpip_init_done_fn initfunc, void *arg)
-{
+void tcpip_init(tcpip_init_done_fn initfunc, void *arg) {
   lwip_init();
 
   tcpip_init_done = initfunc;
   tcpip_init_done_arg = arg;
-  if(sys_mbox_new(&mbox, TCPIP_MBOX_SIZE) != ERR_OK) {
+  if (sys_mbox_new(&mbox, TCPIP_MBOX_SIZE) != ERR_OK) {
     LWIP_ASSERT("failed to create tcpip_thread mbox", 0);
   }
 #if LWIP_TCPIP_CORE_LOCKING
-  if(sys_mutex_new(&lock_tcpip_core) != ERR_OK) {
+  if (sys_mutex_new(&lock_tcpip_core) != ERR_OK) {
     LWIP_ASSERT("failed to create lock_tcpip_core", 0);
   }
 #endif /* LWIP_TCPIP_CORE_LOCKING */
 
-  sys_thread_new(TCPIP_THREAD_NAME, tcpip_thread, NULL, TCPIP_THREAD_STACKSIZE, TCPIP_THREAD_PRIO);
+  sys_thread_new(TCPIP_THREAD_NAME, tcpip_thread, NULL, TCPIP_THREAD_STACKSIZE,
+                 TCPIP_THREAD_PRIO);
 }
 
 /**
@@ -476,22 +461,19 @@ tcpip_init(tcpip_init_done_fn initfunc, void *arg)
  *
  * @param p The pbuf (chain) to be dereferenced.
  */
-static void
-pbuf_free_int(void *p)
-{
+static void pbuf_free_int(void *p) {
   struct pbuf *q = (struct pbuf *)p;
   pbuf_free(q);
 }
 
 /**
- * A simple wrapper function that allows you to free a pbuf from interrupt context.
+ * A simple wrapper function that allows you to free a pbuf from interrupt
+ * context.
  *
  * @param p The pbuf (chain) to be dereferenced.
  * @return ERR_OK if callback could be enqueued, an err_t if not
  */
-err_t
-pbuf_free_callback(struct pbuf *p)
-{
+err_t pbuf_free_callback(struct pbuf *p) {
   return tcpip_callback_with_block(pbuf_free_int, p, 0);
 }
 
@@ -502,9 +484,7 @@ pbuf_free_callback(struct pbuf *p)
  * @param m the heap memory to free
  * @return ERR_OK if callback could be enqueued, an err_t if not
  */
-err_t
-mem_free_callback(void *m)
-{
+err_t mem_free_callback(void *m) {
   return tcpip_callback_with_block(mem_free, m, 0);
 }
 

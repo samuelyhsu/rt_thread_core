@@ -7,8 +7,8 @@
  * Copyright (c) 2016 Elias Oenal.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -20,21 +20,21 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * Author: Elias Oenal <lwip@eliasoenal.com>
  */
 
-#include "snmpv3_priv.h"
 #include "lwip/apps/snmpv3.h"
 #include "lwip/sys.h"
+#include "snmpv3_priv.h"
 #include <string.h>
 
 #if LWIP_SNMP && LWIP_SNMP_V3
@@ -46,11 +46,7 @@
 #define SNMP_MAX_TIME_BOOT 2147483647UL
 
 /** Call this if engine has been changed. Has to reset boots, see below */
-void
-snmpv3_engine_id_changed(void)
-{
-  snmpv3_set_engine_boots(0);
-}
+void snmpv3_engine_id_changed(void) { snmpv3_set_engine_boots(0); }
 
 /** According to RFC3414 2.2.2.
  *
@@ -58,9 +54,7 @@ snmpv3_engine_id_changed(void)
  * (re-)initialized itself since snmpEngineID
  * was last configured.
  */
-u32_t
-snmpv3_get_engine_boots_internal(void)
-{
+u32_t snmpv3_get_engine_boots_internal(void) {
   if (snmpv3_get_engine_boots() == 0 ||
       snmpv3_get_engine_boots() < SNMP_MAX_TIME_BOOT) {
     return snmpv3_get_engine_boots();
@@ -75,9 +69,7 @@ snmpv3_get_engine_boots_internal(void)
  * Once the timer reaches 2147483647 it gets reset to zero and the
  * engine boot ups get incremented.
  */
-u32_t
-snmpv3_get_engine_time_internal(void)
-{
+u32_t snmpv3_get_engine_time_internal(void) {
   if (snmpv3_get_engine_time() >= SNMP_MAX_TIME_BOOT) {
     snmpv3_reset_engine_time();
 
@@ -100,9 +92,7 @@ snmpv3_get_engine_time_internal(void)
  *
  * @todo: This is a potential thread safety issue.
  */
-err_t
-snmpv3_build_priv_param(u8_t* priv_param)
-{
+err_t snmpv3_build_priv_param(u8_t *priv_param) {
 #ifdef LWIP_RAND /* Based on RFC3826 */
   static u8_t init;
   static u32_t priv1, priv2;

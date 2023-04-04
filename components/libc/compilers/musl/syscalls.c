@@ -10,11 +10,5 @@
 
 #include <rtthread.h>
 
-int *__errno_location(void)
-{
-    return _rt_errno();
-}
-int *___errno_location(void)
-{
-    return _rt_errno();
-}
+int *__errno_location(void) { return _rt_errno(); }
+int *___errno_location(void) { return _rt_errno(); }

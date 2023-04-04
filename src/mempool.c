@@ -23,10 +23,12 @@
 #ifdef RT_USING_MEMPOOL
 
 #ifndef __on_rt_mp_alloc_hook
-    #define __on_rt_mp_alloc_hook(mp, block)        __ON_HOOK_ARGS(rt_mp_alloc_hook, (mp, block))
+#define __on_rt_mp_alloc_hook(mp, block)                                       \
+  __ON_HOOK_ARGS(rt_mp_alloc_hook, (mp, block))
 #endif
 #ifndef __on_rt_mp_free_hook
-    #define __on_rt_mp_free_hook(mp, block)         __ON_HOOK_ARGS(rt_mp_free_hook, (mp, block))
+#define __on_rt_mp_free_hook(mp, block)                                        \
+  __ON_HOOK_ARGS(rt_mp_free_hook, (mp, block))
 #endif
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
@@ -40,25 +42,23 @@ static void (*rt_mp_free_hook)(struct rt_mempool *mp, void *block);
 /**@{*/
 
 /**
- * @brief This function will set a hook function, which will be invoked when a memory
- *        block is allocated from the memory pool.
+ * @brief This function will set a hook function, which will be invoked when a
+ * memory block is allocated from the memory pool.
  *
  * @param hook the hook function
  */
-void rt_mp_alloc_sethook(void (*hook)(struct rt_mempool *mp, void *block))
-{
-    rt_mp_alloc_hook = hook;
+void rt_mp_alloc_sethook(void (*hook)(struct rt_mempool *mp, void *block)) {
+  rt_mp_alloc_hook = hook;
 }
 
 /**
- * @brief This function will set a hook function, which will be invoked when a memory
- *        block is released to the memory pool.
+ * @brief This function will set a hook function, which will be invoked when a
+ * memory block is released to the memory pool.
  *
  * @param hook the hook function
  */
-void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
-{
-    rt_mp_free_hook = hook;
+void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block)) {
+  rt_mp_free_hook = hook;
 }
 
 /**@}*/
@@ -71,8 +71,8 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
 /**@{*/
 
 /**
- * @brief  This function will initialize a memory pool object, normally which is used
- *         for static object.
+ * @brief  This function will initialize a memory pool object, normally which is
+ * used for static object.
  *
  * @param  mp is the memory pool object.
  *
@@ -86,106 +86,101 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
  *
  * @return RT_EOK
  */
-rt_err_t rt_mp_init(struct rt_mempool *mp,
-                    const char        *name,
-                    void              *start,
-                    rt_size_t          size,
-                    rt_size_t          block_size)
-{
-    rt_uint8_t *block_ptr;
-    rt_size_t offset;
+rt_err_t rt_mp_init(struct rt_mempool *mp, const char *name, void *start,
+                    rt_size_t size, rt_size_t block_size) {
+  rt_uint8_t *block_ptr;
+  rt_size_t offset;
 
-    /* parameter check */
-    RT_ASSERT(mp != RT_NULL);
-    RT_ASSERT(name != RT_NULL);
-    RT_ASSERT(start != RT_NULL);
-    RT_ASSERT(size > 0 && block_size > 0);
+  /* parameter check */
+  RT_ASSERT(mp != RT_NULL);
+  RT_ASSERT(name != RT_NULL);
+  RT_ASSERT(start != RT_NULL);
+  RT_ASSERT(size > 0 && block_size > 0);
 
-    /* initialize object */
-    rt_object_init(&(mp->parent), RT_Object_Class_MemPool, name);
+  /* initialize object */
+  rt_object_init(&(mp->parent), RT_Object_Class_MemPool, name);
 
-    /* initialize memory pool */
-    mp->start_address = start;
-    mp->size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
+  /* initialize memory pool */
+  mp->start_address = start;
+  mp->size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 
-    /* align the block size */
-    block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
-    mp->block_size = block_size;
+  /* align the block size */
+  block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
+  mp->block_size = block_size;
 
-    /* align to align size byte */
-    mp->block_total_count = mp->size / (mp->block_size + sizeof(rt_uint8_t *));
-    mp->block_free_count  = mp->block_total_count;
+  /* align to align size byte */
+  mp->block_total_count = mp->size / (mp->block_size + sizeof(rt_uint8_t *));
+  mp->block_free_count = mp->block_total_count;
 
-    /* initialize suspended thread list */
-    rt_list_init(&(mp->suspend_thread));
+  /* initialize suspended thread list */
+  rt_list_init(&(mp->suspend_thread));
 
-    /* initialize free block list */
-    block_ptr = (rt_uint8_t *)mp->start_address;
-    for (offset = 0; offset < mp->block_total_count; offset ++)
-    {
-        *(rt_uint8_t **)(block_ptr + offset * (block_size + sizeof(rt_uint8_t *))) =
-            (rt_uint8_t *)(block_ptr + (offset + 1) * (block_size + sizeof(rt_uint8_t *)));
-    }
+  /* initialize free block list */
+  block_ptr = (rt_uint8_t *)mp->start_address;
+  for (offset = 0; offset < mp->block_total_count; offset++) {
+    *(rt_uint8_t **)(block_ptr + offset * (block_size + sizeof(rt_uint8_t *))) =
+        (rt_uint8_t *)(block_ptr +
+                       (offset + 1) * (block_size + sizeof(rt_uint8_t *)));
+  }
 
-    *(rt_uint8_t **)(block_ptr + (offset - 1) * (block_size + sizeof(rt_uint8_t *))) =
-        RT_NULL;
+  *(rt_uint8_t **)(block_ptr + (offset - 1) * (block_size +
+                                               sizeof(rt_uint8_t *))) = RT_NULL;
 
-    mp->block_list = block_ptr;
+  mp->block_list = block_ptr;
 
-    return RT_EOK;
+  return RT_EOK;
 }
 RTM_EXPORT(rt_mp_init);
 
 /**
- * @brief  This function will detach a memory pool from system object management.
+ * @brief  This function will detach a memory pool from system object
+ * management.
  *
  * @param  mp is the memory pool object.
  *
  * @return RT_EOK
  */
-rt_err_t rt_mp_detach(struct rt_mempool *mp)
-{
-    struct rt_thread *thread;
-    rt_base_t level;
+rt_err_t rt_mp_detach(struct rt_mempool *mp) {
+  struct rt_thread *thread;
+  rt_base_t level;
 
-    /* parameter check */
-    RT_ASSERT(mp != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
-    RT_ASSERT(rt_object_is_systemobject(&mp->parent));
+  /* parameter check */
+  RT_ASSERT(mp != RT_NULL);
+  RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
+  RT_ASSERT(rt_object_is_systemobject(&mp->parent));
 
-    /* wake up all suspended threads */
-    while (!rt_list_isempty(&(mp->suspend_thread)))
-    {
-        /* disable interrupt */
-        level = rt_hw_interrupt_disable();
+  /* wake up all suspended threads */
+  while (!rt_list_isempty(&(mp->suspend_thread))) {
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
 
-        /* get next suspend thread */
-        thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
-        /* set error code to RT_ERROR */
-        thread->error = -RT_ERROR;
+    /* get next suspend thread */
+    thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
+    /* set error code to RT_ERROR */
+    thread->error = -RT_ERROR;
 
-        /*
-         * resume thread
-         * In rt_thread_resume function, it will remove current thread from
-         * suspend list
-         */
-        rt_thread_resume(thread);
+    /*
+     * resume thread
+     * In rt_thread_resume function, it will remove current thread from
+     * suspend list
+     */
+    rt_thread_resume(thread);
 
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-    }
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+  }
 
-    /* detach object */
-    rt_object_detach(&(mp->parent));
+  /* detach object */
+  rt_object_detach(&(mp->parent));
 
-    return RT_EOK;
+  return RT_EOK;
 }
 RTM_EXPORT(rt_mp_detach);
 
 #ifdef RT_USING_HEAP
 /**
- * @brief This function will create a mempool object and allocate the memory pool from
- *        heap.
+ * @brief This function will create a mempool object and allocate the memory
+ * pool from heap.
  *
  * @param name is the name of memory pool.
  *
@@ -195,62 +190,58 @@ RTM_EXPORT(rt_mp_detach);
  *
  * @return the created mempool object
  */
-rt_mp_t rt_mp_create(const char *name,
-                     rt_size_t   block_count,
-                     rt_size_t   block_size)
-{
-    rt_uint8_t *block_ptr;
-    struct rt_mempool *mp;
-    rt_size_t offset;
+rt_mp_t rt_mp_create(const char *name, rt_size_t block_count,
+                     rt_size_t block_size) {
+  rt_uint8_t *block_ptr;
+  struct rt_mempool *mp;
+  rt_size_t offset;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
+  RT_DEBUG_NOT_IN_INTERRUPT;
 
-    /* parameter check */
-    RT_ASSERT(name != RT_NULL);
-    RT_ASSERT(block_count > 0 && block_size > 0);
+  /* parameter check */
+  RT_ASSERT(name != RT_NULL);
+  RT_ASSERT(block_count > 0 && block_size > 0);
 
-    /* allocate object */
-    mp = (struct rt_mempool *)rt_object_allocate(RT_Object_Class_MemPool, name);
-    /* allocate object failed */
-    if (mp == RT_NULL)
-        return RT_NULL;
+  /* allocate object */
+  mp = (struct rt_mempool *)rt_object_allocate(RT_Object_Class_MemPool, name);
+  /* allocate object failed */
+  if (mp == RT_NULL)
+    return RT_NULL;
 
-    /* initialize memory pool */
-    block_size     = RT_ALIGN(block_size, RT_ALIGN_SIZE);
-    mp->block_size = block_size;
-    mp->size       = (block_size + sizeof(rt_uint8_t *)) * block_count;
+  /* initialize memory pool */
+  block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
+  mp->block_size = block_size;
+  mp->size = (block_size + sizeof(rt_uint8_t *)) * block_count;
 
-    /* allocate memory */
-    mp->start_address = rt_malloc((block_size + sizeof(rt_uint8_t *)) *
-                                  block_count);
-    if (mp->start_address == RT_NULL)
-    {
-        /* no memory, delete memory pool object */
-        rt_object_delete(&(mp->parent));
+  /* allocate memory */
+  mp->start_address =
+      rt_malloc((block_size + sizeof(rt_uint8_t *)) * block_count);
+  if (mp->start_address == RT_NULL) {
+    /* no memory, delete memory pool object */
+    rt_object_delete(&(mp->parent));
 
-        return RT_NULL;
-    }
+    return RT_NULL;
+  }
 
-    mp->block_total_count = block_count;
-    mp->block_free_count  = mp->block_total_count;
+  mp->block_total_count = block_count;
+  mp->block_free_count = mp->block_total_count;
 
-    /* initialize suspended thread list */
-    rt_list_init(&(mp->suspend_thread));
+  /* initialize suspended thread list */
+  rt_list_init(&(mp->suspend_thread));
 
-    /* initialize free block list */
-    block_ptr = (rt_uint8_t *)mp->start_address;
-    for (offset = 0; offset < mp->block_total_count; offset ++)
-    {
-        *(rt_uint8_t **)(block_ptr + offset * (block_size + sizeof(rt_uint8_t *)))
-            = block_ptr + (offset + 1) * (block_size + sizeof(rt_uint8_t *));
-    }
+  /* initialize free block list */
+  block_ptr = (rt_uint8_t *)mp->start_address;
+  for (offset = 0; offset < mp->block_total_count; offset++) {
+    *(rt_uint8_t **)(block_ptr + offset * (block_size + sizeof(rt_uint8_t *))) =
+        block_ptr + (offset + 1) * (block_size + sizeof(rt_uint8_t *));
+  }
 
-    *(rt_uint8_t **)(block_ptr + (offset - 1) * (block_size + sizeof(rt_uint8_t *)))
-        = RT_NULL;
+  *(rt_uint8_t **)(block_ptr + (offset - 1) * (block_size +
+                                               sizeof(rt_uint8_t *))) = RT_NULL;
 
-    mp->block_list = block_ptr;
+  mp->block_list = block_ptr;
 
-    return mp;
+  return mp;
 }
 RTM_EXPORT(rt_mp_create);
 
@@ -261,47 +252,45 @@ RTM_EXPORT(rt_mp_create);
  *
  * @return RT_EOK
  */
-rt_err_t rt_mp_delete(rt_mp_t mp)
-{
-    struct rt_thread *thread;
-    rt_base_t level;
+rt_err_t rt_mp_delete(rt_mp_t mp) {
+  struct rt_thread *thread;
+  rt_base_t level;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
+  RT_DEBUG_NOT_IN_INTERRUPT;
 
-    /* parameter check */
-    RT_ASSERT(mp != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
-    RT_ASSERT(rt_object_is_systemobject(&mp->parent) == RT_FALSE);
+  /* parameter check */
+  RT_ASSERT(mp != RT_NULL);
+  RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
+  RT_ASSERT(rt_object_is_systemobject(&mp->parent) == RT_FALSE);
 
-    /* wake up all suspended threads */
-    while (!rt_list_isempty(&(mp->suspend_thread)))
-    {
-        /* disable interrupt */
-        level = rt_hw_interrupt_disable();
+  /* wake up all suspended threads */
+  while (!rt_list_isempty(&(mp->suspend_thread))) {
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
 
-        /* get next suspend thread */
-        thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
-        /* set error code to RT_ERROR */
-        thread->error = -RT_ERROR;
+    /* get next suspend thread */
+    thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
+    /* set error code to RT_ERROR */
+    thread->error = -RT_ERROR;
 
-        /*
-         * resume thread
-         * In rt_thread_resume function, it will remove current thread from
-         * suspend list
-         */
-        rt_thread_resume(thread);
+    /*
+     * resume thread
+     * In rt_thread_resume function, it will remove current thread from
+     * suspend list
+     */
+    rt_thread_resume(thread);
 
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-    }
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+  }
 
-    /* release allocated room */
-    rt_free(mp->start_address);
+  /* release allocated room */
+  rt_free(mp->start_address);
 
-    /* detach object */
-    rt_object_delete(&(mp->parent));
+  /* detach object */
+  rt_object_delete(&(mp->parent));
 
-    return RT_EOK;
+  return RT_EOK;
 }
 RTM_EXPORT(rt_mp_delete);
 #endif /* RT_USING_HEAP */
@@ -316,94 +305,87 @@ RTM_EXPORT(rt_mp_delete);
  *
  * @return the allocated memory block or RT_NULL on allocated failed.
  */
-void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
-{
-    rt_uint8_t *block_ptr;
-    rt_base_t level;
-    struct rt_thread *thread;
-    rt_uint32_t before_sleep = 0;
+void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time) {
+  rt_uint8_t *block_ptr;
+  rt_base_t level;
+  struct rt_thread *thread;
+  rt_uint32_t before_sleep = 0;
 
-    /* parameter check */
-    RT_ASSERT(mp != RT_NULL);
+  /* parameter check */
+  RT_ASSERT(mp != RT_NULL);
 
-    /* get current thread */
-    thread = rt_thread_self();
+  /* get current thread */
+  thread = rt_thread_self();
 
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
+  /* disable interrupt */
+  level = rt_hw_interrupt_disable();
 
-    while (mp->block_free_count == 0)
-    {
-        /* memory block is unavailable. */
-        if (time == 0)
-        {
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
+  while (mp->block_free_count == 0) {
+    /* memory block is unavailable. */
+    if (time == 0) {
+      /* enable interrupt */
+      rt_hw_interrupt_enable(level);
 
-            rt_set_errno(-RT_ETIMEOUT);
+      rt_set_errno(-RT_ETIMEOUT);
 
-            return RT_NULL;
-        }
-
-        RT_DEBUG_NOT_IN_INTERRUPT;
-
-        thread->error = RT_EOK;
-
-        /* need suspend thread */
-        rt_thread_suspend(thread);
-        rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
-
-        if (time > 0)
-        {
-            /* get the start tick of timer */
-            before_sleep = rt_tick_get();
-
-            /* init thread timer and start it */
-            rt_timer_control(&(thread->thread_timer),
-                             RT_TIMER_CTRL_SET_TIME,
-                             &time);
-            rt_timer_start(&(thread->thread_timer));
-        }
-
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-
-        /* do a schedule */
-        rt_schedule();
-
-        if (thread->error != RT_EOK)
-            return RT_NULL;
-
-        if (time > 0)
-        {
-            time -= rt_tick_get() - before_sleep;
-            if (time < 0)
-                time = 0;
-        }
-        /* disable interrupt */
-        level = rt_hw_interrupt_disable();
+      return RT_NULL;
     }
 
-    /* memory block is available. decrease the free block counter */
-    mp->block_free_count--;
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
-    /* get block from block list */
-    block_ptr = mp->block_list;
-    RT_ASSERT(block_ptr != RT_NULL);
+    thread->error = RT_EOK;
 
-    /* Setup the next free node. */
-    mp->block_list = *(rt_uint8_t **)block_ptr;
+    /* need suspend thread */
+    rt_thread_suspend(thread);
+    rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
 
-    /* point to memory pool */
-    *(rt_uint8_t **)block_ptr = (rt_uint8_t *)mp;
+    if (time > 0) {
+      /* get the start tick of timer */
+      before_sleep = rt_tick_get();
+
+      /* init thread timer and start it */
+      rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &time);
+      rt_timer_start(&(thread->thread_timer));
+    }
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
-    RT_OBJECT_HOOK_CALL(rt_mp_alloc_hook,
-                        (mp, (rt_uint8_t *)(block_ptr + sizeof(rt_uint8_t *))));
+    /* do a schedule */
+    rt_schedule();
 
-    return (rt_uint8_t *)(block_ptr + sizeof(rt_uint8_t *));
+    if (thread->error != RT_EOK)
+      return RT_NULL;
+
+    if (time > 0) {
+      time -= rt_tick_get() - before_sleep;
+      if (time < 0)
+        time = 0;
+    }
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+  }
+
+  /* memory block is available. decrease the free block counter */
+  mp->block_free_count--;
+
+  /* get block from block list */
+  block_ptr = mp->block_list;
+  RT_ASSERT(block_ptr != RT_NULL);
+
+  /* Setup the next free node. */
+  mp->block_list = *(rt_uint8_t **)block_ptr;
+
+  /* point to memory pool */
+  *(rt_uint8_t **)block_ptr = (rt_uint8_t *)mp;
+
+  /* enable interrupt */
+  rt_hw_interrupt_enable(level);
+
+  RT_OBJECT_HOOK_CALL(rt_mp_alloc_hook,
+                      (mp, (rt_uint8_t *)(block_ptr + sizeof(rt_uint8_t *))));
+
+  return (rt_uint8_t *)(block_ptr + sizeof(rt_uint8_t *));
 }
 RTM_EXPORT(rt_mp_alloc);
 
@@ -412,56 +394,53 @@ RTM_EXPORT(rt_mp_alloc);
  *
  * @param block the address of memory block to be released.
  */
-void rt_mp_free(void *block)
-{
-    rt_uint8_t **block_ptr;
-    struct rt_mempool *mp;
-    struct rt_thread *thread;
-    rt_base_t level;
+void rt_mp_free(void *block) {
+  rt_uint8_t **block_ptr;
+  struct rt_mempool *mp;
+  struct rt_thread *thread;
+  rt_base_t level;
 
-    /* parameter check */
-    if (block == RT_NULL) return;
+  /* parameter check */
+  if (block == RT_NULL)
+    return;
 
-    /* get the control block of pool which the block belongs to */
-    block_ptr = (rt_uint8_t **)((rt_uint8_t *)block - sizeof(rt_uint8_t *));
-    mp        = (struct rt_mempool *)*block_ptr;
+  /* get the control block of pool which the block belongs to */
+  block_ptr = (rt_uint8_t **)((rt_uint8_t *)block - sizeof(rt_uint8_t *));
+  mp = (struct rt_mempool *)*block_ptr;
 
-    RT_OBJECT_HOOK_CALL(rt_mp_free_hook, (mp, block));
+  RT_OBJECT_HOOK_CALL(rt_mp_free_hook, (mp, block));
 
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
+  /* disable interrupt */
+  level = rt_hw_interrupt_disable();
 
-    /* increase the free block count */
-    mp->block_free_count ++;
+  /* increase the free block count */
+  mp->block_free_count++;
 
-    /* link the block into the block list */
-    *block_ptr = mp->block_list;
-    mp->block_list = (rt_uint8_t *)block_ptr;
+  /* link the block into the block list */
+  *block_ptr = mp->block_list;
+  mp->block_list = (rt_uint8_t *)block_ptr;
 
-    if (!rt_list_isempty(&(mp->suspend_thread)))
-    {
-        /* get the suspended thread */
-        thread = rt_list_entry(mp->suspend_thread.next,
-                               struct rt_thread,
-                               tlist);
+  if (!rt_list_isempty(&(mp->suspend_thread))) {
+    /* get the suspended thread */
+    thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
 
-        /* set error */
-        thread->error = RT_EOK;
+    /* set error */
+    thread->error = RT_EOK;
 
-        /* resume thread */
-        rt_thread_resume(thread);
-
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-
-        /* do a schedule */
-        rt_schedule();
-
-        return;
-    }
+    /* resume thread */
+    rt_thread_resume(thread);
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
+
+    /* do a schedule */
+    rt_schedule();
+
+    return;
+  }
+
+  /* enable interrupt */
+  rt_hw_interrupt_enable(level);
 }
 RTM_EXPORT(rt_mp_free);
 

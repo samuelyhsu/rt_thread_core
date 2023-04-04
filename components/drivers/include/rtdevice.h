@@ -14,20 +14,20 @@
 
 #include <rtthread.h>
 
-#include "ipc/ringbuffer.h"
 #include "ipc/completion.h"
 #include "ipc/dataqueue.h"
-#include "ipc/workqueue.h"
-#include "ipc/waitqueue.h"
 #include "ipc/pipe.h"
 #include "ipc/poll.h"
 #include "ipc/ringblk_buf.h"
+#include "ipc/ringbuffer.h"
+#include "ipc/waitqueue.h"
+#include "ipc/workqueue.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define RT_DEVICE(device)            ((rt_device_t)device)
+#define RT_DEVICE(device) ((rt_device_t)device)
 
 #ifdef RT_USING_RTC
 #include "drivers/rtc.h"
@@ -83,7 +83,6 @@ extern "C" {
 #include "drivers/sd.h"
 #include "drivers/sdio.h"
 #endif /* RT_USING_SDIO */
-
 
 #ifdef RT_USING_WDT
 #include "drivers/watchdog.h"

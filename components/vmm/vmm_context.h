@@ -25,4 +25,3 @@ void vmm_verify_guest_status(struct rt_hw_stack *sp);
 
 void vmm_show_guest(void);
 #endif
-

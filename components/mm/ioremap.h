@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2021-05-06     Jesven       first version
  */
-#ifndef  __IOREMAP_H__
-#define  __IOREMAP_H__
+#ifndef __IOREMAP_H__
+#define __IOREMAP_H__
 
 #include <stddef.h>
 
@@ -18,7 +18,7 @@ extern "C" {
 
 void *rt_ioremap(void *paddr, size_t size);
 void *rt_ioremap_nocache(void *paddr, size_t size);
-void *rt_ioremap_cached (void *paddr, size_t size);
+void *rt_ioremap_cached(void *paddr, size_t size);
 void rt_iounmap(volatile void *addr);
 
 extern void *rt_ioremap_start;
@@ -28,4 +28,4 @@ extern size_t rt_ioremap_size;
 }
 #endif
 
-#endif  /*__LWP_IOREMAP_H__*/
+#endif /*__LWP_IOREMAP_H__*/

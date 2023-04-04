@@ -12,27 +12,21 @@
 
 /* Setups/teardown functions */
 
-static void
-mem_setup(void)
-{
+static void mem_setup(void) {
   lwip_check_ensure_no_alloc(SKIP_POOL(MEMP_SYS_TIMEOUT));
 }
 
-static void
-mem_teardown(void)
-{
+static void mem_teardown(void) {
   lwip_check_ensure_no_alloc(SKIP_POOL(MEMP_SYS_TIMEOUT));
 }
-
 
 /* Test functions */
 
 /** Call mem_malloc, mem_free and mem_trim and check stats */
-START_TEST(test_mem_one)
-{
-#define SIZE1   16
+START_TEST(test_mem_one) {
+#define SIZE1 16
 #define SIZE1_2 12
-#define SIZE2   16
+#define SIZE2 16
   void *p1, *p2;
   mem_size_t s1, s2;
   LWIP_UNUSED_ARG(_i);
@@ -59,38 +53,36 @@ START_TEST(test_mem_one)
 }
 END_TEST
 
-static void malloc_keep_x(int x, int num, int size, int freestep)
-{
-   int i;
-   void* p[16];
-   LWIP_ASSERT("invalid size", size >= 0 && size < (mem_size_t)-1);
-   memset(p, 0, sizeof(p));
-   for(i = 0; i < num && i < 16; i++) {
-      p[i] = mem_malloc((mem_size_t)size);
-      fail_unless(p[i] != NULL);
-   }
-   for(i = 0; i < num && i < 16; i += freestep) {
-      if (i == x) {
-         continue;
-      }
+static void malloc_keep_x(int x, int num, int size, int freestep) {
+  int i;
+  void *p[16];
+  LWIP_ASSERT("invalid size", size >= 0 && size < (mem_size_t)-1);
+  memset(p, 0, sizeof(p));
+  for (i = 0; i < num && i < 16; i++) {
+    p[i] = mem_malloc((mem_size_t)size);
+    fail_unless(p[i] != NULL);
+  }
+  for (i = 0; i < num && i < 16; i += freestep) {
+    if (i == x) {
+      continue;
+    }
+    mem_free(p[i]);
+    p[i] = NULL;
+  }
+  for (i = 0; i < num && i < 16; i++) {
+    if (i == x) {
+      continue;
+    }
+    if (p[i] != NULL) {
       mem_free(p[i]);
       p[i] = NULL;
-   }
-   for(i = 0; i < num && i < 16; i++) {
-      if (i == x) {
-         continue;
-      }
-      if (p[i] != NULL) {
-         mem_free(p[i]);
-         p[i] = NULL;
-      }
-   }
-   fail_unless(p[x] != NULL);
-   mem_free(p[x]);
+    }
+  }
+  fail_unless(p[x] != NULL);
+  mem_free(p[x]);
 }
 
-START_TEST(test_mem_random)
-{
+START_TEST(test_mem_random) {
   const int num = 16;
   int x;
   int size;
@@ -100,19 +92,18 @@ START_TEST(test_mem_random)
   fail_unless(lwip_stats.mem.used == 0);
 
   for (x = 0; x < num; x++) {
-     for (size = 1; size < 32; size++) {
-        for (freestep = 1; freestep <= 3; freestep++) {
-          fail_unless(lwip_stats.mem.used == 0);
-          malloc_keep_x(x, num, size, freestep);
-          fail_unless(lwip_stats.mem.used == 0);
-        }
-     }
+    for (size = 1; size < 32; size++) {
+      for (freestep = 1; freestep <= 3; freestep++) {
+        fail_unless(lwip_stats.mem.used == 0);
+        malloc_keep_x(x, num, size, freestep);
+        fail_unless(lwip_stats.mem.used == 0);
+      }
+    }
   }
 }
 END_TEST
 
-START_TEST(test_mem_invalid_free)
-{
+START_TEST(test_mem_invalid_free) {
   u8_t *ptr, *ptr_low, *ptr_high;
   LWIP_UNUSED_ARG(_i);
 
@@ -139,8 +130,7 @@ START_TEST(test_mem_invalid_free)
 }
 END_TEST
 
-START_TEST(test_mem_double_free)
-{
+START_TEST(test_mem_double_free) {
   u8_t *ptr1b, *ptr1, *ptr2, *ptr3;
   LWIP_UNUSED_ARG(_i);
 
@@ -211,14 +201,10 @@ START_TEST(test_mem_double_free)
 END_TEST
 
 /** Create the suite including all tests for this module */
-Suite *
-mem_suite(void)
-{
-  testfunc tests[] = {
-    TESTFUNC(test_mem_one),
-    TESTFUNC(test_mem_random),
-    TESTFUNC(test_mem_invalid_free),
-    TESTFUNC(test_mem_double_free)
-  };
-  return create_suite("MEM", tests, sizeof(tests)/sizeof(testfunc), mem_setup, mem_teardown);
+Suite *mem_suite(void) {
+  testfunc tests[] = {TESTFUNC(test_mem_one), TESTFUNC(test_mem_random),
+                      TESTFUNC(test_mem_invalid_free),
+                      TESTFUNC(test_mem_double_free)};
+  return create_suite("MEM", tests, sizeof(tests) / sizeof(testfunc), mem_setup,
+                      mem_teardown);
 }

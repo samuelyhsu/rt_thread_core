@@ -1,6 +1,6 @@
 from building import *
 
-cwd     = GetCurrentDir()
+cwd = GetCurrentDir()
 CPPPATH = [cwd]
 
 src = Split('''
@@ -25,6 +25,7 @@ if GetDepend(['RT_WLAN_CFG_ENABLE']):
 if GetDepend(['RT_WLAN_WORK_THREAD_ENABLE']):
     src += ['wlan_workqueue.c']
 
-group   = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_WIFI'], CPPPATH = CPPPATH)
+group = DefineGroup('DeviceDrivers', src, depend=[
+                    'RT_USING_WIFI'], CPPPATH=CPPPATH)
 
 Return('group')

@@ -7,8 +7,8 @@
  * Copyright (c) 2006 Axon Digital Design B.V., The Netherlands.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -20,14 +20,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * Author: Dirk Ziegelmeier <dziegel@gmx.de>
  *         Christiaan Simons <christiaan.simons@axon.tv>
@@ -41,14 +41,14 @@
 
 #if LWIP_SNMP && SNMP_LWIP_MIB2
 
-#define MIB2_AUTH_TRAPS_ENABLED  1
+#define MIB2_AUTH_TRAPS_ENABLED 1
 #define MIB2_AUTH_TRAPS_DISABLED 2
 
-/* --- snmp .1.3.6.1.2.1.11 ----------------------------------------------------- */
-static s16_t
-snmp_get_value(const struct snmp_scalar_array_node_def *node, void *value)
-{
-  u32_t *uint_ptr = (u32_t*)value;
+/* --- snmp .1.3.6.1.2.1.11
+ * ----------------------------------------------------- */
+static s16_t snmp_get_value(const struct snmp_scalar_array_node_def *node,
+                            void *value) {
+  u32_t *uint_ptr = (u32_t *)value;
   switch (node->oid) {
   case 1: /* snmpInPkts */
     *uint_ptr = snmp_stats.inpkts;
@@ -138,46 +138,46 @@ snmp_get_value(const struct snmp_scalar_array_node_def *node, void *value)
       *uint_ptr = MIB2_AUTH_TRAPS_ENABLED;
     }
     break;
-  case 31: /* snmpSilentDrops */
+  case 31:         /* snmpSilentDrops */
     *uint_ptr = 0; /* not supported */
     break;
-  case 32: /* snmpProxyDrops */
+  case 32:         /* snmpProxyDrops */
     *uint_ptr = 0; /* not supported */
     break;
   default:
-    LWIP_DEBUGF(SNMP_MIB_DEBUG,("snmp_get_value(): unknown id: %"S32_F"\n", node->oid));
+    LWIP_DEBUGF(SNMP_MIB_DEBUG,
+                ("snmp_get_value(): unknown id: %" S32_F "\n", node->oid));
     return 0;
   }
 
   return sizeof(*uint_ptr);
 }
 
-static snmp_err_t
-snmp_set_test(const struct snmp_scalar_array_node_def *node, u16_t len, void *value)
-{
+static snmp_err_t snmp_set_test(const struct snmp_scalar_array_node_def *node,
+                                u16_t len, void *value) {
   snmp_err_t ret = SNMP_ERR_WRONGVALUE;
   LWIP_UNUSED_ARG(len);
 
   if (node->oid == 30) {
     /* snmpEnableAuthenTraps */
-    s32_t *sint_ptr = (s32_t*)value;
+    s32_t *sint_ptr = (s32_t *)value;
 
     /* we should have writable non-volatile mem here */
-    if ((*sint_ptr == MIB2_AUTH_TRAPS_DISABLED) || (*sint_ptr == MIB2_AUTH_TRAPS_ENABLED)) {
+    if ((*sint_ptr == MIB2_AUTH_TRAPS_DISABLED) ||
+        (*sint_ptr == MIB2_AUTH_TRAPS_ENABLED)) {
       ret = SNMP_ERR_NOERROR;
     }
   }
   return ret;
 }
 
-static snmp_err_t
-snmp_set_value(const struct snmp_scalar_array_node_def *node, u16_t len, void *value)
-{
+static snmp_err_t snmp_set_value(const struct snmp_scalar_array_node_def *node,
+                                 u16_t len, void *value) {
   LWIP_UNUSED_ARG(len);
 
   if (node->oid == 30) {
     /* snmpEnableAuthenTraps */
-    s32_t *sint_ptr = (s32_t*)value;
+    s32_t *sint_ptr = (s32_t *)value;
     if (*sint_ptr == MIB2_AUTH_TRAPS_DISABLED) {
       snmp_set_auth_traps_enabled(SNMP_AUTH_TRAPS_DISABLED);
     } else {
@@ -188,40 +188,71 @@ snmp_set_value(const struct snmp_scalar_array_node_def *node, u16_t len, void *v
   return SNMP_ERR_NOERROR;
 }
 
-/* the following nodes access variables in SNMP stack (snmp_stats) from SNMP worker thread -> OK, no sync needed */
+/* the following nodes access variables in SNMP stack (snmp_stats) from SNMP
+ * worker thread -> OK, no sync needed */
 static const struct snmp_scalar_array_node_def snmp_nodes[] = {
-  { 1, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInPkts */
-  { 2, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutPkts */
-  { 3, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInBadVersions */
-  { 4, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInBadCommunityNames */
-  { 5, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInBadCommunityUses */
-  { 6, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInASNParseErrs */
-  { 8, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInTooBigs */
-  { 9, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInNoSuchNames */
-  {10, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInBadValues */
-  {11, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInReadOnlys */
-  {12, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInGenErrs */
-  {13, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInTotalReqVars */
-  {14, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInTotalSetVars */
-  {15, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInGetRequests */
-  {16, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInGetNexts */
-  {17, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInSetRequests */
-  {18, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInGetResponses */
-  {19, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpInTraps */
-  {20, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutTooBigs */
-  {21, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutNoSuchNames */
-  {22, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutBadValues */
-  {24, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutGenErrs */
-  {25, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutGetRequests */
-  {26, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutGetNexts */
-  {27, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutSetRequests */
-  {28, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutGetResponses */
-  {29, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpOutTraps */
-  {30, SNMP_ASN1_TYPE_INTEGER, SNMP_NODE_INSTANCE_READ_WRITE}, /* snmpEnableAuthenTraps */
-  {31, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY},  /* snmpSilentDrops */
-  {32, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY}   /* snmpProxyDrops */
+    {1, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInPkts */
+    {2, SNMP_ASN1_TYPE_COUNTER, SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutPkts */
+    {3, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInBadVersions */
+    {4, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInBadCommunityNames */
+    {5, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInBadCommunityUses */
+    {6, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInASNParseErrs */
+    {8, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInTooBigs */
+    {9, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInNoSuchNames */
+    {10, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInBadValues */
+    {11, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInReadOnlys */
+    {12, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInGenErrs */
+    {13, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInTotalReqVars */
+    {14, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInTotalSetVars */
+    {15, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInGetRequests */
+    {16, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInGetNexts */
+    {17, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInSetRequests */
+    {18, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInGetResponses */
+    {19, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpInTraps */
+    {20, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutTooBigs */
+    {21, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutNoSuchNames */
+    {22, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutBadValues */
+    {24, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutGenErrs */
+    {25, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutGetRequests */
+    {26, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutGetNexts */
+    {27, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutSetRequests */
+    {28, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutGetResponses */
+    {29, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpOutTraps */
+    {30, SNMP_ASN1_TYPE_INTEGER,
+     SNMP_NODE_INSTANCE_READ_WRITE}, /* snmpEnableAuthenTraps */
+    {31, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY}, /* snmpSilentDrops */
+    {32, SNMP_ASN1_TYPE_COUNTER,
+     SNMP_NODE_INSTANCE_READ_ONLY} /* snmpProxyDrops */
 };
 
-const struct snmp_scalar_array_node snmp_mib2_snmp_root = SNMP_SCALAR_CREATE_ARRAY_NODE(11, snmp_nodes, snmp_get_value, snmp_set_test, snmp_set_value);
+const struct snmp_scalar_array_node snmp_mib2_snmp_root =
+    SNMP_SCALAR_CREATE_ARRAY_NODE(11, snmp_nodes, snmp_get_value, snmp_set_test,
+                                  snmp_set_value);
 
 #endif /* LWIP_SNMP && SNMP_LWIP_MIB2 */

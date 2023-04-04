@@ -19,23 +19,25 @@ import SCons.Util
 
 import rtconfig
 
+
 def generate(env):
-    assert(rtconfig.CROSS_TOOL == 'clang-analyze')
+    assert (rtconfig.CROSS_TOOL == 'clang-analyze')
     # let gnu_tools setup a basic env(learnt from SCons/Tools/mingw.py)
     gnu_tools = ['gcc', 'g++', 'gnulink', 'ar', 'gas', 'm4']
     for tool in gnu_tools:
         SCons.Tool.Tool(tool)(env)
 
     # then we could stand on the shoulders of gaints
-    env['CC']   = 'ccc-analyzer'
-    env['CXX']  = 'c++-analyzer'
-    env['AS']   = 'true'
-    env['AR']   = 'true'
+    env['CC'] = 'ccc-analyzer'
+    env['CXX'] = 'c++-analyzer'
+    env['AS'] = 'true'
+    env['AR'] = 'true'
     env['LINK'] = 'true'
 
-    env['CFLAGS']    = ['-fsyntax-only', '-Wall', '-Wno-invalid-source-encoding', '-m32']
+    env['CFLAGS'] = ['-fsyntax-only', '-Wall',
+                     '-Wno-invalid-source-encoding', '-m32']
     env['LINKFLAGS'] = '-Wl,--gc-sections'
-    env['ARFLAGS']   = '-rc'
+    env['ARFLAGS'] = '-rc'
 
     # only check, don't compile. ccc-analyzer use CCC_CC as the CC.
     # fsyntax-only will give us some additional warning messages
@@ -54,10 +56,12 @@ def generate(env):
     if rtconfig.EXEC_PATH:
         if not os.path.exists(rtconfig.EXEC_PATH):
             print()
-            print('warning: rtconfig.EXEC_PATH(%s) does not exists.' % rtconfig.EXEC_PATH)
+            print('warning: rtconfig.EXEC_PATH(%s) does not exists.' %
+                  rtconfig.EXEC_PATH)
             print()
             return
         env.AppendENVPath('PATH', rtconfig.EXEC_PATH)
+
 
 def exists(env):
     return env.Detect(['ccc-analyzer', 'c++-analyzer'])

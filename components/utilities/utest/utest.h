@@ -11,10 +11,10 @@
 #ifndef __UTEST_H__
 #define __UTEST_H__
 
+#include "utest_assert.h"
+#include "utest_log.h"
 #include <rtthread.h>
 #include <stdint.h>
-#include "utest_log.h"
-#include "utest_assert.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,13 +29,8 @@ extern "C" {
  * @member UTEST_FAILED Test failed.
  * @member UTEST_PASSED Test skipped.
  *
-*/
-enum utest_error
-{
-    UTEST_PASSED  = 0,
-    UTEST_FAILED  = 1,
-    UTEST_SKIPPED = 2
-};
+ */
+enum utest_error { UTEST_PASSED = 0, UTEST_FAILED = 1, UTEST_SKIPPED = 2 };
 typedef enum utest_error utest_err_e;
 
 /**
@@ -47,12 +42,11 @@ typedef enum utest_error utest_err_e;
  * @member passed_num Total number of tests passed.
  * @member failed_num Total number of tests failed.
  *
-*/
-struct utest
-{
-    utest_err_e error;
-    uint32_t passed_num;
-    uint32_t failed_num;
+ */
+struct utest {
+  utest_err_e error;
+  uint32_t passed_num;
+  uint32_t failed_num;
 };
 typedef struct utest *utest_t;
 
@@ -64,17 +58,18 @@ typedef struct utest *utest_t;
  *
  * @member name        Testcase name.
  * @member run_timeout Testcase maximum test time (Time unit: seconds).
- * @member init        Necessary initialization before executing the test case function.
+ * @member init        Necessary initialization before executing the test case
+ * function.
  * @member tc          Total number of tests failed.
  * @member cleanup     Total number of tests failed.
  *
-*/
+ */
 struct utest_tc_export {
-    const char  *name;
-    uint32_t     run_timeout;
-    rt_err_t   (*init)(void);
-    void       (*tc)(void);
-    rt_err_t   (*cleanup)(void);
+  const char *name;
+  uint32_t run_timeout;
+  rt_err_t (*init)(void);
+  void (*tc)(void);
+  rt_err_t (*cleanup)(void);
 };
 typedef struct utest_tc_export *utest_tc_export_t;
 
@@ -83,7 +78,7 @@ typedef struct utest_tc_export *utest_tc_export_t;
  *
  * @brief Unit test handler function pointer.
  *
-*/
+ */
 typedef void (*test_unit_func)(void);
 
 /**
@@ -97,7 +92,7 @@ typedef void (*test_unit_func)(void);
  *
  * @return void
  *
-*/
+ */
 void utest_unit_run(test_unit_func func, const char *unit_func_name);
 
 /**
@@ -110,7 +105,7 @@ void utest_unit_run(test_unit_func func, const char *unit_func_name);
  *
  * @return utest_t type. (struct utest *)
  *
-*/
+ */
 utest_t utest_handle_get(void);
 
 /**
@@ -118,7 +113,7 @@ utest_t utest_handle_get(void);
  *
  * @brief Testcase name maximum length.
  *
-*/
+ */
 #define UTEST_NAME_MAX_LEN (128u)
 
 /**
@@ -135,17 +130,10 @@ utest_t utest_handle_get(void);
  *
  * @return None
  *
-*/
+ */
 #define UTEST_TC_EXPORT(testcase, name, init, cleanup, timeout)                \
-    rt_used static const struct utest_tc_export _utest_testcase                \
-    rt_section("UtestTcTab") =                                                    \
-    {                                                                          \
-        name,                                                                  \
-        timeout,                                                               \
-        init,                                                                  \
-        testcase,                                                              \
-        cleanup                                                                \
-    }
+  rt_used static const struct utest_tc_export _utest_testcase rt_section(      \
+      "UtestTcTab") = {name, timeout, init, testcase, cleanup}
 
 /**
  * UTEST_UNIT_RUN
@@ -157,10 +145,11 @@ utest_t utest_handle_get(void);
  *
  * @return None
  *
-*/
+ */
 #define UTEST_UNIT_RUN(test_unit_func)                                         \
-    utest_unit_run(test_unit_func, #test_unit_func);                           \
-    if(utest_handle_get()->failed_num != 0) return;
+  utest_unit_run(test_unit_func, #test_unit_func);                             \
+  if (utest_handle_get()->failed_num != 0)                                     \
+    return;
 
 #ifdef __cplusplus
 }

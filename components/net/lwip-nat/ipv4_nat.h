@@ -5,8 +5,8 @@
  * COPYRIGHT (C) 2015, RT-Thread Development Team
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -18,14 +18,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -45,7 +45,7 @@
 #include "lwip/opt.h"
 
 /** Timer interval at which to call ip_nat_tmr() */
-#define LWIP_NAT_TMR_INTERVAL_SEC        (30)
+#define LWIP_NAT_TMR_INTERVAL_SEC (30)
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,23 +54,22 @@ extern "C" {
 struct netif;
 struct pbuf;
 
-typedef struct ip_nat_entry
-{
-  ip_addr_t    source_net;
-  ip_addr_t    source_netmask;
-  ip_addr_t    dest_net;
-  ip_addr_t    dest_netmask;
+typedef struct ip_nat_entry {
+  ip_addr_t source_net;
+  ip_addr_t source_netmask;
+  ip_addr_t dest_net;
+  ip_addr_t dest_netmask;
   struct netif *out_if;
   struct netif *in_if;
 } ip_nat_entry_t;
 
-void  ip_nat_init(void);
-void  ip_nat_tmr(void);
-u8_t  ip_nat_input(struct pbuf *p);
-u8_t  ip_nat_out(struct pbuf *p);
+void ip_nat_init(void);
+void ip_nat_tmr(void);
+u8_t ip_nat_input(struct pbuf *p);
+u8_t ip_nat_out(struct pbuf *p);
 
 err_t ip_nat_add(const ip_nat_entry_t *new_entry);
-void  ip_nat_remove(const ip_nat_entry_t *remove_entry);
+void ip_nat_remove(const ip_nat_entry_t *remove_entry);
 
 #ifdef __cplusplus
 }

@@ -18,20 +18,19 @@
 extern "C" {
 #endif
 
-#define RT_I2C_DEV_CTRL_10BIT        (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x01)
-#define RT_I2C_DEV_CTRL_ADDR         (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x02)
-#define RT_I2C_DEV_CTRL_TIMEOUT      (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x03)
-#define RT_I2C_DEV_CTRL_RW           (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x04)
-#define RT_I2C_DEV_CTRL_CLK          (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x05)
+#define RT_I2C_DEV_CTRL_10BIT (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x01)
+#define RT_I2C_DEV_CTRL_ADDR (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x02)
+#define RT_I2C_DEV_CTRL_TIMEOUT (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x03)
+#define RT_I2C_DEV_CTRL_RW (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x04)
+#define RT_I2C_DEV_CTRL_CLK (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x05)
 
-struct rt_i2c_priv_data
-{
-    struct rt_i2c_msg  *msgs;
-    rt_size_t  number;
+struct rt_i2c_priv_data {
+  struct rt_i2c_msg *msgs;
+  rt_size_t number;
 };
 
 rt_err_t rt_i2c_bus_device_device_init(struct rt_i2c_bus_device *bus,
-                                       const char               *name);
+                                       const char *name);
 
 #ifdef __cplusplus
 }

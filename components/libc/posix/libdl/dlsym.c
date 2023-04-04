@@ -8,26 +8,24 @@
  * 2010-11-17     yi.qiu      first version
  */
 
-#include <rtthread.h>
 #include <rtm.h>
+#include <rtthread.h>
 
 #include "dlmodule.h"
 
-void* dlsym(void *handle, const char* symbol)
-{
-    int i;
-    struct rt_dlmodule *module;
+void *dlsym(void *handle, const char *symbol) {
+  int i;
+  struct rt_dlmodule *module;
 
-    RT_ASSERT(handle != RT_NULL);
+  RT_ASSERT(handle != RT_NULL);
 
-    module = (struct rt_dlmodule *)handle;
+  module = (struct rt_dlmodule *)handle;
 
-    for(i=0; i<module->nsym; i++)
-    {
-        if (rt_strcmp(module->symtab[i].name, symbol) == 0)
-            return (void*)module->symtab[i].addr;
-    }
+  for (i = 0; i < module->nsym; i++) {
+    if (rt_strcmp(module->symtab[i].name, symbol) == 0)
+      return (void *)module->symtab[i].addr;
+  }
 
-    return RT_NULL;
+  return RT_NULL;
 }
 RTM_EXPORT(dlsym)

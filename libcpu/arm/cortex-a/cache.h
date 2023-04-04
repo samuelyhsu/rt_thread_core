@@ -11,9 +11,8 @@
 #ifndef __CACHE_H__
 #define __CACHE_H__
 
-static inline void rt_hw_icache_invalidate_all(void)
-{
-    __asm__ volatile("mcr p15, 0, %0, c7, c5, 0"::"r"(0ul));
+static inline void rt_hw_icache_invalidate_all(void) {
+  __asm__ volatile("mcr p15, 0, %0, c7, c5, 0" ::"r"(0ul));
 }
 
 #endif /* __CACHE_H__ */

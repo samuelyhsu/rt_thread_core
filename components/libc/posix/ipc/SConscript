@@ -1,8 +1,8 @@
 from building import *
 
-cwd        = GetCurrentDir()
-src        = []
-inc        = [cwd]
+cwd = GetCurrentDir()
+src = []
+inc = [cwd]
 
 # We have't implement of 'systemv ipc', so hide it firstly.
 # if GetDepend('RT_USING_POSIX_IPC_SYSTEM_V'):
@@ -15,6 +15,6 @@ if GetDepend('RT_USING_POSIX_MESSAGE_QUEUE'):
 if GetDepend('RT_USING_POSIX_MESSAGE_SEMAPHORE'):
     src += ['semaphore.c']
 
-group = DefineGroup('POSIX', src, depend = [''], CPPPATH = inc)
+group = DefineGroup('POSIX', src, depend=[''], CPPPATH=inc)
 
 Return('group')

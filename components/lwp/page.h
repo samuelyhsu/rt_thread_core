@@ -8,9 +8,8 @@
  * 2019-11-01     Jesven      The first version
  */
 
-#ifndef  __PAGE_H__
-#define  __PAGE_H__
+#ifndef __PAGE_H__
+#define __PAGE_H__
 
 #include <mm_page.h>
-#endif  /*__PAGE_H__*/
-
+#endif /*__PAGE_H__*/

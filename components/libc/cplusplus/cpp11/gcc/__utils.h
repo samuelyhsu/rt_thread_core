@@ -10,50 +10,47 @@
 
 #pragma once
 
-#include <cstdlib>
-#include <system_error>
 #include <chrono>
+#include <cstdlib>
 #include <ratio>
+#include <system_error>
 
 #include <rtthread.h>
 
 #define RT_USING_CPP_EXCEPTION
 
-inline void throw_system_error(int err, const char *what_msg)
-{
+inline void throw_system_error(int err, const char *what_msg) {
 #ifdef RT_USING_CPP_EXCEPTION
-    throw std::system_error(std::error_code(err, std::system_category()), what_msg);
+  throw std::system_error(std::error_code(err, std::system_category()),
+                          what_msg);
 #else
-    (void)err;
-    (void)what_msg;
-    ::abort();
+  (void)err;
+  (void)what_msg;
+  ::abort();
 #endif
 }
 
-class tick_clock
-{
+class tick_clock {
 public:
-    typedef clock_t rep;
-    typedef std::ratio<1, RT_TICK_PER_SECOND> period;
+  typedef clock_t rep;
+  typedef std::ratio<1, RT_TICK_PER_SECOND> period;
 
-    typedef std::chrono::duration<tick_clock::rep, tick_clock::period> duration;
-    typedef std::chrono::time_point<tick_clock> time_point;
+  typedef std::chrono::duration<tick_clock::rep, tick_clock::period> duration;
+  typedef std::chrono::time_point<tick_clock> time_point;
 
-    constexpr static bool is_ready = true;
+  constexpr static bool is_ready = true;
 
-    static time_point now();
+  static time_point now();
 };
 
-class real_time_clock
-{
+class real_time_clock {
 public:
-    typedef std::chrono::nanoseconds duration;
-    typedef duration::rep rep;
-    typedef duration::period period;
-    typedef std::chrono::time_point<real_time_clock, duration> time_point;
+  typedef std::chrono::nanoseconds duration;
+  typedef duration::rep rep;
+  typedef duration::period period;
+  typedef std::chrono::time_point<real_time_clock, duration> time_point;
 
-    static constexpr bool is_steady = true;
+  static constexpr bool is_steady = true;
 
-    static time_point
-    now() noexcept;
+  static time_point now() noexcept;
 };

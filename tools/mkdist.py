@@ -26,6 +26,7 @@ import shutil
 
 from shutil import ignore_patterns
 
+
 def do_copy_file(src, dst):
     # check source file
     if not os.path.exists(src):
@@ -37,6 +38,7 @@ def do_copy_file(src, dst):
         os.makedirs(path)
 
     shutil.copy2(src, dst)
+
 
 def do_copy_folder(src_dir, dst_dir, ignore=None):
     import shutil
@@ -51,10 +53,12 @@ def do_copy_folder(src_dir, dst_dir, ignore=None):
         print('Deletes folder: %s failed.' % dst_dir)
         return
 
-    shutil.copytree(src_dir, dst_dir, ignore = ignore)
+    shutil.copytree(src_dir, dst_dir, ignore=ignore)
+
 
 source_ext = ['c', 'h', 's', 'S', 'cpp', 'xpm']
 source_list = []
+
 
 def walk_children(child):
     global source_list
@@ -62,8 +66,8 @@ def walk_children(child):
 
     # print child
     full_path = child.rfile().abspath
-    file_type  = full_path.rsplit('.',1)[1]
-    #print file_type
+    file_type = full_path.rsplit('.', 1)[1]
+    # print file_type
     if file_type in source_ext:
         if full_path not in source_list:
             source_list.append(full_path)
@@ -72,6 +76,7 @@ def walk_children(child):
     if children != []:
         for item in children:
             walk_children(item)
+
 
 def walk_kconfig(RTT_ROOT, source_list):
     for parent, dirnames, filenames in os.walk(RTT_ROOT):
@@ -89,10 +94,12 @@ def walk_kconfig(RTT_ROOT, source_list):
             pathfile = os.path.join(parent, 'KConfig')
             source_list.append(pathfile)
 
+
 def bsp_copy_files(bsp_root, dist_dir):
     # copy BSP files
     do_copy_folder(os.path.join(bsp_root), dist_dir,
-        ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
+                   ignore_patterns('build', 'dist', '*.pyc', '*.old', '*.map', 'rtthread.bin', '.sconsign.dblite', '*.elf', '*.axf', 'cconfig.h'))
+
 
 def bsp_update_sconstruct(dist_dir):
     with open(os.path.join(dist_dir, 'SConstruct'), 'r') as f:
@@ -102,8 +109,10 @@ def bsp_update_sconstruct(dist_dir):
             if line.find('RTT_ROOT') != -1:
                 if line.find('sys.path') != -1:
                     f.write('# set RTT_ROOT\n')
-                    f.write('if not os.getenv("RTT_ROOT"): \n    RTT_ROOT="rt-thread"\n\n')
+                    f.write(
+                        'if not os.getenv("RTT_ROOT"): \n    RTT_ROOT="rt-thread"\n\n')
             f.write(line)
+
 
 def bsp_update_kconfig_testcases(dist_dir):
     # delete testcases in rt-thread/Kconfig
@@ -116,6 +125,7 @@ def bsp_update_kconfig_testcases(dist_dir):
         for line in data:
             if line.find('examples/utest/testcases/Kconfig') == -1:
                 f.write(line)
+
 
 def bsp_update_kconfig(dist_dir):
     # change RTT_ROOT in Kconfig
@@ -134,6 +144,7 @@ def bsp_update_kconfig(dist_dir):
                 line = line[0:position] + 'default "rt-thread"\n'
                 found = 0
             f.write(line)
+
 
 def bsp_update_kconfig_library(dist_dir):
     # change RTT_ROOT in Kconfig
@@ -166,6 +177,7 @@ def bsp_update_kconfig_library(dist_dir):
                 line = line[0:position] + 'libraries/HAL_Drivers/Kconfig"\n'
             f.write(line)
 
+
 def zip_dist(dist_dir, dist_name):
     import zipfile
 
@@ -181,13 +193,14 @@ def zip_dist(dist_dir, dist_name):
 
     zip.close()
 
+
 def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     global source_list
 
     print('make distribution and strip useless files....')
 
     dist_name = os.path.basename(BSP_ROOT)
-    dist_dir  = os.path.join(BSP_ROOT, 'dist-strip', dist_name)
+    dist_dir = os.path.join(BSP_ROOT, 'dist-strip', dist_name)
     target_path = os.path.join(dist_dir, 'rt-thread')
 
     print('=> %s' % os.path.basename(BSP_ROOT))
@@ -197,10 +210,13 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     if os.path.basename(os.path.dirname(BSP_ROOT)) == 'stm32':
         print("=> copy stm32 bsp library")
         library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
-        library_dir  = os.path.join(dist_dir, 'libraries')
-        bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
-        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
-        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+        library_dir = os.path.join(dist_dir, 'libraries')
+        bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'),
+                       os.path.join(library_dir, 'HAL_Drivers'))
+        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(
+            library_dir, Env['bsp_lib_type']))
+        shutil.copyfile(os.path.join(library_path, 'Kconfig'),
+                        os.path.join(library_dir, 'Kconfig'))
 
     # do bsp special dist handle
     if 'dist_handle' in Env:
@@ -216,7 +232,8 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     # copy the source files without libcpu and components/libc in RT-Thread
     target_list = []
     libcpu_dir = os.path.join(RTT_ROOT, 'libcpu').lower()
-    libc_dir = os.path.join(RTT_ROOT, 'components', 'libc', 'compilers').lower()
+    libc_dir = os.path.join(RTT_ROOT, 'components',
+                            'libc', 'compilers').lower()
     sal_dir = os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket').lower()
     sources_include_sal = False
     for src in source_list:
@@ -271,29 +288,41 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
 
     # copy tools directory
     print('=> tools')
-    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(target_path, 'tools'), ignore_patterns('*.pyc'))
-    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
-    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(target_path, 'README_zh.md'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(
+        target_path, 'tools'), ignore_patterns('*.pyc'))
+    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'),
+                 os.path.join(target_path, 'Kconfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'),
+                 os.path.join(target_path, 'AUTHORS'))
+    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'),
+                 os.path.join(target_path, 'COPYING'))
+    do_copy_file(os.path.join(RTT_ROOT, 'README.md'),
+                 os.path.join(target_path, 'README.md'))
+    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'),
+                 os.path.join(target_path, 'README_zh.md'))
 
     print('=> %s' % os.path.join('components', 'libc', 'compilers'))
-    do_copy_folder(os.path.join(RTT_ROOT, 'components', 'libc', 'compilers'), os.path.join(target_path, 'components', 'libc', 'compilers'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'components', 'libc', 'compilers'),
+                   os.path.join(target_path, 'components', 'libc', 'compilers'))
 
     if sources_include_sal:
         print('=> %s' % os.path.join('components', 'net', 'sal_socket'))
-        do_copy_folder(os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket'), os.path.join(target_path, 'components', 'net', 'sal_socket'))
+        do_copy_folder(os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket'), os.path.join(
+            target_path, 'components', 'net', 'sal_socket'))
 
     # copy all libcpu/ARCH directory
     import rtconfig
     print('=> %s' % (os.path.join('libcpu', rtconfig.ARCH, rtconfig.CPU)))
-    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, rtconfig.CPU), os.path.join(target_path, 'libcpu', rtconfig.ARCH, rtconfig.CPU))
+    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, rtconfig.CPU),
+                   os.path.join(target_path, 'libcpu', rtconfig.ARCH, rtconfig.CPU))
     if os.path.exists(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common')):
         print('=> %s' % (os.path.join('libcpu', rtconfig.ARCH, 'common')))
-        do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common'), os.path.join(target_path, 'libcpu', rtconfig.ARCH, 'common'))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(target_path, 'libcpu', 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
+        do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common'), os.path.join(
+            target_path, 'libcpu', rtconfig.ARCH, 'common'))
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'),
+                 os.path.join(target_path, 'libcpu', 'Kconfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'),
+                 os.path.join(target_path, 'libcpu', 'SConscript'))
 
     print('Update configuration files...')
     # change RTT_ROOT in SConstruct
@@ -307,6 +336,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     zip_dist(dist_dir, dist_name)
 
     print('done!')
+
 
 def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     print('make distribution....')
@@ -330,35 +360,47 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
 
     # copy tools directory
     print('=> components')
-    do_copy_folder(os.path.join(RTT_ROOT, 'components'), os.path.join(target_path, 'components'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'components'),
+                   os.path.join(target_path, 'components'))
 
     # skip documentation directory
     # skip examples
 
     # copy include directory
     print('=> include')
-    do_copy_folder(os.path.join(RTT_ROOT, 'include'), os.path.join(target_path, 'include'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'include'),
+                   os.path.join(target_path, 'include'))
 
     # copy all libcpu/ARCH directory
     print('=> libcpu')
     import rtconfig
-    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH), os.path.join(target_path, 'libcpu', rtconfig.ARCH))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(target_path, 'libcpu', 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH),
+                   os.path.join(target_path, 'libcpu', rtconfig.ARCH))
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'),
+                 os.path.join(target_path, 'libcpu', 'Kconfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'),
+                 os.path.join(target_path, 'libcpu', 'SConscript'))
 
     # copy src directory
     print('=> src')
-    do_copy_folder(os.path.join(RTT_ROOT, 'src'), os.path.join(target_path, 'src'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'src'),
+                   os.path.join(target_path, 'src'))
 
     # copy tools directory
     print('=> tools')
-    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(target_path, 'tools'), ignore_patterns('*.pyc'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(
+        target_path, 'tools'), ignore_patterns('*.pyc'))
 
-    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
-    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(target_path, 'README_zh.md'))
+    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'),
+                 os.path.join(target_path, 'Kconfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'),
+                 os.path.join(target_path, 'AUTHORS'))
+    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'),
+                 os.path.join(target_path, 'COPYING'))
+    do_copy_file(os.path.join(RTT_ROOT, 'README.md'),
+                 os.path.join(target_path, 'README.md'))
+    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'),
+                 os.path.join(target_path, 'README_zh.md'))
 
     print('Update configuration files...')
     # change RTT_ROOT in SConstruct
@@ -374,4 +416,3 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
         zip_dist(dist_dir, project_name)
 
     print('done!')
-

@@ -9,15 +9,14 @@ liuxianliang@rt-thread.com
 The major jobs following RT-Thread Team. The RT-Thread network interface device need to synchronize some network status and address information in lwIP, so it need to make some changes in the lwIP netwrok status and address operations function.
 The specific changes are as follows:
 
- - netif.c: add RT-Thread netdev header file , status synchronize(UP, LINK_UP), address synchronize(IP, netmask, gateway);
- 
- - dns.c: add RT-Thread header file, dns servers synchronize;
- 
- - sockets.c: custom 'select' function implementation in RT-Thread by the wait queue mode.
- 
+- netif.c: add RT-Thread netdev header file , status synchronize(UP, LINK_UP), address synchronize(IP, netmask, gateway);
+
+- dns.c: add RT-Thread header file, dns servers synchronize;
+
+- sockets.c: custom 'select' function implementation in RT-Thread by the wait queue mode.
+
 by ChenYong 2019/3/26 10:00 AM
 chenyong@rt-thread.com
-
 
 Porting lwip 2.0.2 running on RT-Thread.
 The major jobs following RT-Thread Team. The RT-Thread team already port the lwip 2.0.0, so I only do some move code and test jobs.

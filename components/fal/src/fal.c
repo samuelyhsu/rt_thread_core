@@ -18,37 +18,33 @@ static uint8_t init_ok = 0;
  *
  * @return >= 0: partitions total number
  */
-int fal_init(void)
-{
-    extern int fal_flash_init(void);
-    extern int fal_partition_init(void);
+int fal_init(void) {
+  extern int fal_flash_init(void);
+  extern int fal_partition_init(void);
 
-    int result;
+  int result;
 
-    /* initialize all flash device on FAL flash table */
-    result = fal_flash_init();
+  /* initialize all flash device on FAL flash table */
+  result = fal_flash_init();
 
-    if (result < 0) {
-        goto __exit;
-    }
+  if (result < 0) {
+    goto __exit;
+  }
 
-    /* initialize all flash partition on FAL partition table */
-    result = fal_partition_init();
+  /* initialize all flash partition on FAL partition table */
+  result = fal_partition_init();
 
 __exit:
 
-    if ((result > 0) && (!init_ok))
-    {
-        init_ok = 1;
-        log_i("RT-Thread Flash Abstraction Layer initialize success.");
-    }
-    else if(result <= 0)
-    {
-        init_ok = 0;
-        log_e("RT-Thread Flash Abstraction Layer initialize failed.");
-    }
+  if ((result > 0) && (!init_ok)) {
+    init_ok = 1;
+    log_i("RT-Thread Flash Abstraction Layer initialize success.");
+  } else if (result <= 0) {
+    init_ok = 0;
+    log_e("RT-Thread Flash Abstraction Layer initialize failed.");
+  }
 
-    return result;
+  return result;
 }
 
 /**
@@ -56,7 +52,4 @@ __exit:
  *
  * @return 0: not init or init failed; 1: init success
  */
-int fal_init_check(void)
-{
-    return init_ok;
-}
+int fal_init_check(void) { return init_ok; }

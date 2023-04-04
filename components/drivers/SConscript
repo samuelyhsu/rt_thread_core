@@ -2,7 +2,7 @@
 import os
 from building import *
 
-cwd  = GetCurrentDir()
+cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
 

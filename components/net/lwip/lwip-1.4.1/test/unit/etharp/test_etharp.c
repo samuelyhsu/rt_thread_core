@@ -1,8 +1,8 @@
 #include "test_etharp.h"
 
+#include "lwip/stats.h"
 #include "lwip/udp.h"
 #include "netif/etharp.h"
-#include "lwip/stats.h"
 
 #if !LWIP_STATS || !UDP_STATS || !MEMP_STATS || !ETHARP_STATS
 #error "This tests needs UDP-, MEMP- and ETHARP-statistics enabled"
@@ -13,35 +13,29 @@
 
 static struct netif test_netif;
 static ip_addr_t test_ipaddr, test_netmask, test_gw;
-struct eth_addr test_ethaddr = {1,1,1,1,1,1};
-struct eth_addr test_ethaddr2 = {1,1,1,1,1,2};
-struct eth_addr test_ethaddr3 = {1,1,1,1,1,3};
-struct eth_addr test_ethaddr4 = {1,1,1,1,1,4};
+struct eth_addr test_ethaddr = {1, 1, 1, 1, 1, 1};
+struct eth_addr test_ethaddr2 = {1, 1, 1, 1, 1, 2};
+struct eth_addr test_ethaddr3 = {1, 1, 1, 1, 1, 3};
+struct eth_addr test_ethaddr4 = {1, 1, 1, 1, 1, 4};
 static int linkoutput_ctr;
 
 /* Helper functions */
-static void
-etharp_remove_all(void)
-{
+static void etharp_remove_all(void) {
   int i;
   /* call etharp_tmr often enough to have all entries cleaned */
-  for(i = 0; i < 0xff; i++) {
+  for (i = 0; i < 0xff; i++) {
     etharp_tmr();
   }
 }
 
-static err_t
-default_netif_linkoutput(struct netif *netif, struct pbuf *p)
-{
+static err_t default_netif_linkoutput(struct netif *netif, struct pbuf *p) {
   fail_unless(netif == &test_netif);
   fail_unless(p != NULL);
   linkoutput_ctr++;
   return ERR_OK;
 }
 
-static err_t
-default_netif_init(struct netif *netif)
-{
+static err_t default_netif_init(struct netif *netif) {
   fail_unless(netif != NULL);
   netif->linkoutput = default_netif_linkoutput;
   netif->output = etharp_output;
@@ -51,12 +45,10 @@ default_netif_init(struct netif *netif)
   return ERR_OK;
 }
 
-static void
-default_netif_add(void)
-{
-  IP4_ADDR(&test_gw, 192,168,0,1);
-  IP4_ADDR(&test_ipaddr, 192,168,0,1);
-  IP4_ADDR(&test_netmask, 255,255,0,0);
+static void default_netif_add(void) {
+  IP4_ADDR(&test_gw, 192, 168, 0, 1);
+  IP4_ADDR(&test_ipaddr, 192, 168, 0, 1);
+  IP4_ADDR(&test_netmask, 255, 255, 0, 0);
 
   fail_unless(netif_default == NULL);
   netif_set_default(netif_add(&test_netif, &test_ipaddr, &test_netmask,
@@ -64,25 +56,22 @@ default_netif_add(void)
   netif_set_up(&test_netif);
 }
 
-static void
-default_netif_remove(void)
-{
+static void default_netif_remove(void) {
   fail_unless(netif_default == &test_netif);
   netif_remove(&test_netif);
 }
 
-static void
-create_arp_response(ip_addr_t *adr)
-{
+static void create_arp_response(ip_addr_t *adr) {
   int k;
   struct eth_hdr *ethhdr;
   struct etharp_hdr *etharphdr;
-  struct pbuf *p = pbuf_alloc(PBUF_RAW, sizeof(struct eth_hdr) + sizeof(struct etharp_hdr), PBUF_RAM);
-  if(p == NULL) {
+  struct pbuf *p = pbuf_alloc(
+      PBUF_RAW, sizeof(struct eth_hdr) + sizeof(struct etharp_hdr), PBUF_RAM);
+  if (p == NULL) {
     FAIL_RET();
   }
-  ethhdr = (struct eth_hdr*)p->payload;
-  etharphdr = (struct etharp_hdr*)(ethhdr + 1);
+  ethhdr = (struct eth_hdr *)p->payload;
+  etharphdr = (struct etharp_hdr *)(ethhdr + 1);
 
   ethhdr->dest = test_ethaddr;
   ethhdr->src = test_ethaddr2;
@@ -98,14 +87,14 @@ create_arp_response(ip_addr_t *adr)
   SMEMCPY(&etharphdr->dipaddr, &test_ipaddr, sizeof(ip_addr_t));
 
   k = 6;
-  while(k > 0) {
+  while (k > 0) {
     k--;
     /* Write the ARP MAC-Addresses */
     etharphdr->shwaddr.addr[k] = test_ethaddr2.addr[k];
     etharphdr->dhwaddr.addr[k] = test_ethaddr.addr[k];
     /* Write the Ethernet MAC-Addresses */
     ethhdr->dest.addr[k] = test_ethaddr.addr[k];
-    ethhdr->src.addr[k]  = test_ethaddr2.addr[k];
+    ethhdr->src.addr[k] = test_ethaddr2.addr[k];
   }
 
   ethernet_input(p, &test_netif);
@@ -113,32 +102,26 @@ create_arp_response(ip_addr_t *adr)
 
 /* Setups/teardown functions */
 
-static void
-etharp_setup(void)
-{
+static void etharp_setup(void) {
   etharp_remove_all();
   default_netif_add();
 }
 
-static void
-etharp_teardown(void)
-{
+static void etharp_teardown(void) {
   etharp_remove_all();
   default_netif_remove();
 }
 
-
 /* Test functions */
 
-START_TEST(test_etharp_table)
-{
+START_TEST(test_etharp_table) {
 #if ETHARP_SUPPORT_STATIC_ENTRIES
   err_t err;
 #endif /* ETHARP_SUPPORT_STATIC_ENTRIES */
   s8_t idx;
   ip_addr_t *unused_ipaddr;
   struct eth_addr *unused_ethaddr;
-  struct udp_pcb* pcb;
+  struct udp_pcb *pcb;
   LWIP_UNUSED_ARG(_i);
 
   if (netif_default != &test_netif) {
@@ -152,24 +135,24 @@ START_TEST(test_etharp_table)
   if (pcb != NULL) {
     ip_addr_t adrs[ARP_TABLE_SIZE + 2];
     int i;
-    for(i = 0; i < ARP_TABLE_SIZE + 2; i++) {
-      IP4_ADDR(&adrs[i], 192,168,0,i+2);
+    for (i = 0; i < ARP_TABLE_SIZE + 2; i++) {
+      IP4_ADDR(&adrs[i], 192, 168, 0, i + 2);
     }
     /* fill ARP-table with dynamic entries */
-    for(i = 0; i < ARP_TABLE_SIZE; i++) {
+    for (i = 0; i < ARP_TABLE_SIZE; i++) {
       struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, 10, PBUF_RAM);
       fail_unless(p != NULL);
       if (p != NULL) {
         err_t err = udp_sendto(pcb, p, &adrs[i], 123);
         fail_unless(err == ERR_OK);
         /* etharp request sent? */
-        fail_unless(linkoutput_ctr == (2*i) + 1);
+        fail_unless(linkoutput_ctr == (2 * i) + 1);
         pbuf_free(p);
 
         /* create an ARP response */
         create_arp_response(&adrs[i]);
         /* queued UDP packet sent? */
-        fail_unless(linkoutput_ctr == (2*i) + 2);
+        fail_unless(linkoutput_ctr == (2 * i) + 2);
 
         idx = etharp_find_addr(NULL, &adrs[i], &unused_ethaddr, &unused_ipaddr);
         fail_unless(idx == i);
@@ -181,31 +164,32 @@ START_TEST(test_etharp_table)
     /* create one static entry */
     err = etharp_add_static_entry(&adrs[ARP_TABLE_SIZE], &test_ethaddr3);
     fail_unless(err == ERR_OK);
-    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr, &unused_ipaddr);
+    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr,
+                           &unused_ipaddr);
     fail_unless(idx == 0);
     fail_unless(linkoutput_ctr == 0);
 #endif /* ETHARP_SUPPORT_STATIC_ENTRIES */
 
     linkoutput_ctr = 0;
     /* fill ARP-table with dynamic entries */
-    for(i = 0; i < ARP_TABLE_SIZE; i++) {
+    for (i = 0; i < ARP_TABLE_SIZE; i++) {
       struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, 10, PBUF_RAM);
       fail_unless(p != NULL);
       if (p != NULL) {
         err_t err = udp_sendto(pcb, p, &adrs[i], 123);
         fail_unless(err == ERR_OK);
         /* etharp request sent? */
-        fail_unless(linkoutput_ctr == (2*i) + 1);
+        fail_unless(linkoutput_ctr == (2 * i) + 1);
         pbuf_free(p);
 
         /* create an ARP response */
         create_arp_response(&adrs[i]);
         /* queued UDP packet sent? */
-        fail_unless(linkoutput_ctr == (2*i) + 2);
+        fail_unless(linkoutput_ctr == (2 * i) + 2);
 
         idx = etharp_find_addr(NULL, &adrs[i], &unused_ethaddr, &unused_ipaddr);
         if (i < ARP_TABLE_SIZE - 1) {
-          fail_unless(idx == i+1);
+          fail_unless(idx == i + 1);
         } else {
           /* the last entry must not overwrite the static entry! */
           fail_unless(idx == 1);
@@ -215,33 +199,40 @@ START_TEST(test_etharp_table)
     }
 #if ETHARP_SUPPORT_STATIC_ENTRIES
     /* create a second static entry */
-    err = etharp_add_static_entry(&adrs[ARP_TABLE_SIZE+1], &test_ethaddr4);
+    err = etharp_add_static_entry(&adrs[ARP_TABLE_SIZE + 1], &test_ethaddr4);
     fail_unless(err == ERR_OK);
-    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr, &unused_ipaddr);
+    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr,
+                           &unused_ipaddr);
     fail_unless(idx == 0);
-    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE+1], &unused_ethaddr, &unused_ipaddr);
+    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE + 1], &unused_ethaddr,
+                           &unused_ipaddr);
     fail_unless(idx == 2);
     /* and remove it again */
-    err = etharp_remove_static_entry(&adrs[ARP_TABLE_SIZE+1]);
+    err = etharp_remove_static_entry(&adrs[ARP_TABLE_SIZE + 1]);
     fail_unless(err == ERR_OK);
-    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr, &unused_ipaddr);
+    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr,
+                           &unused_ipaddr);
     fail_unless(idx == 0);
-    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE+1], &unused_ethaddr, &unused_ipaddr);
+    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE + 1], &unused_ethaddr,
+                           &unused_ipaddr);
     fail_unless(idx == -1);
 #endif /* ETHARP_SUPPORT_STATIC_ENTRIES */
 
     /* check that static entries don't time out */
     etharp_remove_all();
-    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr, &unused_ipaddr);
+    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr,
+                           &unused_ipaddr);
     fail_unless(idx == 0);
 
 #if ETHARP_SUPPORT_STATIC_ENTRIES
     /* remove the first static entry */
     err = etharp_remove_static_entry(&adrs[ARP_TABLE_SIZE]);
     fail_unless(err == ERR_OK);
-    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr, &unused_ipaddr);
+    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE], &unused_ethaddr,
+                           &unused_ipaddr);
     fail_unless(idx == -1);
-    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE+1], &unused_ethaddr, &unused_ipaddr);
+    idx = etharp_find_addr(NULL, &adrs[ARP_TABLE_SIZE + 1], &unused_ethaddr,
+                           &unused_ipaddr);
     fail_unless(idx == -1);
 #endif /* ETHARP_SUPPORT_STATIC_ENTRIES */
 
@@ -250,13 +241,9 @@ START_TEST(test_etharp_table)
 }
 END_TEST
 
-
 /** Create the suite including all tests for this module */
-Suite *
-etharp_suite(void)
-{
-  TFun tests[] = {
-    test_etharp_table
-  };
-  return create_suite("ETHARP", tests, sizeof(tests)/sizeof(TFun), etharp_setup, etharp_teardown);
+Suite *etharp_suite(void) {
+  TFun tests[] = {test_etharp_table};
+  return create_suite("ETHARP", tests, sizeof(tests) / sizeof(TFun),
+                      etharp_setup, etharp_teardown);
 }

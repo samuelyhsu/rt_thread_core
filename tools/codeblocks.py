@@ -36,6 +36,7 @@ import utils
 
 fs_encoding = sys.getfilesystemencoding()
 
+
 def CB_AddHeadFiles(program, elem, project_path):
     utils.source_ext = []
     utils.source_ext = ["h"]
@@ -48,6 +49,7 @@ def CB_AddHeadFiles(program, elem, project_path):
         path = _make_path_relative(project_path, f)
         Unit = SubElement(elem, 'Unit')
         Unit.set('filename', path.decode(fs_encoding))
+
 
 def CB_AddCFiles(ProjectFiles, parent, gname, files, project_path):
     for f in files:
@@ -63,13 +65,15 @@ def CB_AddCFiles(ProjectFiles, parent, gname, files, project_path):
         Option = SubElement(Unit, 'Option')
         Option.set('compilerVar', "CC")
 
+
 def CBProject(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
 
     if os.path.isfile('template.cbp'):
         tree = etree.parse('template.cbp')
     else:
-        tree = etree.parse(os.path.join(os.path.dirname(__file__), 'template.cbp'))
+        tree = etree.parse(os.path.join(
+            os.path.dirname(__file__), 'template.cbp'))
 
     root = tree.getroot()
 
@@ -84,7 +88,8 @@ def CBProject(target, script, program):
         break
     # add c files
     for group in script:
-        group_xml = CB_AddCFiles(ProjectFiles, elem, group['name'], group['src'], project_path)
+        group_xml = CB_AddCFiles(
+            ProjectFiles, elem, group['name'], group['src'], project_path)
     # add h files
     CB_AddHeadFiles(program, elem, project_path)
 
@@ -92,10 +97,10 @@ def CBProject(target, script, program):
     # write head include path
     if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
-        paths  = set()
+        paths = set()
         for path in cpp_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc) #.replace('\\', '/')
+            paths.add(inc)  # .replace('\\', '/')
 
         paths = [i for i in paths]
         paths.sort()

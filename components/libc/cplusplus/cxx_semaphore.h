@@ -10,33 +10,33 @@
 
 #pragma once
 
-#include <stdint.h>
 #include <rtthread.h>
+#include <stdint.h>
 
 namespace rtthread {
 
-/** The Semaphore class is used to manage and protect access to a set of shared resources. */
-class Semaphore
-{
+/** The Semaphore class is used to manage and protect access to a set of shared
+ * resources. */
+class Semaphore {
 public:
-    /** Create and Initialize a Semaphore object used for managing resources.
-      @param number of available resources; maximum index value is (count-1).
-    */
-    Semaphore(const char *name = "sem", int32_t count = 0);
-    ~Semaphore();
+  /** Create and Initialize a Semaphore object used for managing resources.
+    @param number of available resources; maximum index value is (count-1).
+  */
+  Semaphore(const char *name = "sem", int32_t count = 0);
+  ~Semaphore();
 
-    /** Wait until a Semaphore resource becomes available.
-      @param   millisec  timeout value or 0 in case of no time-out.
-      @return  true on success.
-    */
-    bool wait(int32_t millisec = -1);
+  /** Wait until a Semaphore resource becomes available.
+    @param   millisec  timeout value or 0 in case of no time-out.
+    @return  true on success.
+  */
+  bool wait(int32_t millisec = -1);
 
-    /** Release a Semaphore resource that was obtain with Semaphore::wait.
-    */
-    void release(void);
+  /** Release a Semaphore resource that was obtain with Semaphore::wait.
+   */
+  void release(void);
 
 private:
-    struct rt_semaphore mID;
+  struct rt_semaphore mID;
 };
 
-}
+} // namespace rtthread

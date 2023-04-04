@@ -1,10 +1,10 @@
 # for module compiling
+from building import *
 import os
 Import('remove_components')
-from building import *
 
 objs = []
-cwd  = GetCurrentDir()
+cwd = GetCurrentDir()
 list = os.listdir(cwd)
 
 for item in list:

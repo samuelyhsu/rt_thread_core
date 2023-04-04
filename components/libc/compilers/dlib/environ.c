@@ -9,4 +9,3 @@
  */
 
 const char *__environ = "OS=RT-Thread";
-

@@ -1,6 +1,6 @@
 # FAL API
 
-## 查找 Flash 设备 
+## 查找 Flash 设备
 
 ```C
 const struct fal_flash_dev *fal_flash_device_find(const char *name)
@@ -87,7 +87,7 @@ int fal_partition_erase(const struct fal_partition *part, uint32_t addr, size_t 
 | size   | 擦除区域的大小 |
 | return | 返回实际擦除的区域大小   |
 
-##  擦除整个分区数据
+## 擦除整个分区数据
 
 ```C
 int fal_partition_erase_all(const struct fal_partition *part)
@@ -142,4 +142,3 @@ struct rt_device *fal_char_device_create(const char *parition_name)
 | :------------ | :----------------------------------------- |
 | parition_name | 分区名称                                   |
 | return        | 创建成功，则返回对应的字符设备，失败返回空 |
-

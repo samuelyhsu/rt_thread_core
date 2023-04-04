@@ -25,8 +25,6 @@
  * After adding metadata of every syscalls in front of their definition,
  * this should be replaced by a pointer to that structure
  */
-#define SYSCALL_SIGN(func) \
-    (void *)func,          \
-        RT_STRINGIFY(func)
+#define SYSCALL_SIGN(func) (void *)func, RT_STRINGIFY(func)
 
 #endif /* __SYSCALL_DATA_H__ */

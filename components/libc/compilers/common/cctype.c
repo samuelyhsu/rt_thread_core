@@ -12,16 +12,10 @@
 
 #if !(defined(__ICCARM__) && (__VER__ > 9000000)) /* IAR9.0 has defined */
 #ifndef isascii /* some toolchain use macro to define it */
-int isascii(int c)
-{
-    return c >= 0x00 && c <= 0x7f;
-}
+int isascii(int c) { return c >= 0x00 && c <= 0x7f; }
 #endif
 #endif /* !(defined(__ICCARM__) && (__VER__ > 9000000)) */
 
 #ifndef toascii
-int toascii(int c)
-{
-    return (c)&0177;
-}
+int toascii(int c) { return (c)&0177; }
 #endif

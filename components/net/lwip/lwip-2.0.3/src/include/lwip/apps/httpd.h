@@ -7,8 +7,8 @@
  * Copyright (c) 2001-2003 Swedish Institute of Computer Science.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -20,14 +20,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -71,8 +71,8 @@ extern "C" {
  * browser, for example "/thanks.htm" or "/response/error.ssi".
  *
  * The maximum number of parameters that will be passed to this function via
- * iNumParams is defined by LWIP_HTTPD_MAX_CGI_PARAMETERS. Any parameters in the incoming
- * HTTP request above this number will be discarded.
+ * iNumParams is defined by LWIP_HTTPD_MAX_CGI_PARAMETERS. Any parameters in the
+ * incoming HTTP request above this number will be discarded.
  *
  * Requests intended for use by this CGI mechanism must be sent using the GET
  * method (which encodes all parameters within the URI rather than in a block
@@ -81,16 +81,15 @@ extern "C" {
  *
  */
 typedef const char *(*tCGIHandler)(int iIndex, int iNumParams, char *pcParam[],
-                             char *pcValue[]);
+                                   char *pcValue[]);
 
 /*
  * Structure defining the base filename (URL) of a CGI and the associated
  * function which is to be called when that URL is requested.
  */
-typedef struct
-{
-    const char *pcCGIName;
-    tCGIHandler pfnCGIHandler;
+typedef struct {
+  const char *pcCGIName;
+  tCGIHandler pfnCGIHandler;
 } tCGI;
 
 void http_set_cgi_handlers(const tCGI *pCGIs, int iNumHandlers);
@@ -102,13 +101,15 @@ void http_set_cgi_handlers(const tCGI *pCGIs, int iNumHandlers);
 #if LWIP_HTTPD_CGI_SSI
 /** Define this generic CGI handler in your application.
  * It is called once for every URI with parameters.
- * The parameters can be stored to 
+ * The parameters can be stored to
  */
-extern void httpd_cgi_handler(const char* uri, int iNumParams, char **pcParam, char **pcValue
+extern void httpd_cgi_handler(const char *uri, int iNumParams, char **pcParam,
+                              char **pcValue
 #if defined(LWIP_HTTPD_FILE_STATE) && LWIP_HTTPD_FILE_STATE
-                                     , void *connection_state
+                              ,
+                              void *connection_state
 #endif /* LWIP_HTTPD_FILE_STATE */
-                                     );
+);
 #endif /* LWIP_HTTPD_CGI_SSI */
 
 #endif /* LWIP_HTTPD_CGI || LWIP_HTTPD_CGI_SSI */
@@ -146,24 +147,26 @@ extern void httpd_cgi_handler(const char* uri, int iNumParams, char **pcParam, c
  */
 typedef u16_t (*tSSIHandler)(
 #if LWIP_HTTPD_SSI_RAW
-                             const char* ssi_tag_name,
-#else /* LWIP_HTTPD_SSI_RAW */
-                             int iIndex,
+    const char *ssi_tag_name,
+#else  /* LWIP_HTTPD_SSI_RAW */
+    int iIndex,
 #endif /* LWIP_HTTPD_SSI_RAW */
-                             char *pcInsert, int iInsertLen
+    char *pcInsert, int iInsertLen
 #if LWIP_HTTPD_SSI_MULTIPART
-                             , u16_t current_tag_part, u16_t *next_tag_part
+    ,
+    u16_t current_tag_part, u16_t *next_tag_part
 #endif /* LWIP_HTTPD_SSI_MULTIPART */
 #if defined(LWIP_HTTPD_FILE_STATE) && LWIP_HTTPD_FILE_STATE
-                             , void *connection_state
+    ,
+    void *connection_state
 #endif /* LWIP_HTTPD_FILE_STATE */
-                             );
+);
 
 /** Set the SSI handler function
  * (if LWIP_HTTPD_SSI_RAW==1, only the first argument is used)
  */
-void http_set_ssi_handler(tSSIHandler pfnSSIHandler,
-                          const char **ppcTags, int iNumTags);
+void http_set_ssi_handler(tSSIHandler pfnSSIHandler, const char **ppcTags,
+                          int iNumTags);
 
 /** For LWIP_HTTPD_SSI_RAW==1, return this to indicate the tag is unknown.
  * In this case, the webserver writes a warning into the page.
@@ -195,8 +198,9 @@ void http_set_ssi_handler(tSSIHandler pfnSSIHandler,
  * @return ERR_OK: Accept the POST request, data may be passed in
  *         another err_t: Deny the POST request, send back 'bad request'.
  */
-err_t httpd_post_begin(void *connection, const char *uri, const char *http_request,
-                       u16_t http_request_len, int content_len, char *response_uri,
+err_t httpd_post_begin(void *connection, const char *uri,
+                       const char *http_request, u16_t http_request_len,
+                       int content_len, char *response_uri,
                        u16_t response_uri_len, u8_t *post_auto_wnd);
 
 /** Called for each pbuf of data that has been received for a POST.
@@ -205,7 +209,8 @@ err_t httpd_post_begin(void *connection, const char *uri, const char *http_reque
  * @param connection Unique connection identifier.
  * @param p Received data.
  * @return ERR_OK: Data accepted.
- *         another err_t: Data denied, http_post_get_response_uri will be called.
+ *         another err_t: Data denied, http_post_get_response_uri will be
+ * called.
  */
 err_t httpd_post_receive_data(void *connection, struct pbuf *p);
 
@@ -215,10 +220,12 @@ err_t httpd_post_receive_data(void *connection, struct pbuf *p);
  * response is returned.
  *
  * @param connection Unique connection identifier.
- * @param response_uri Filename of response file, to be filled when denying the request
+ * @param response_uri Filename of response file, to be filled when denying the
+ * request
  * @param response_uri_len Size of the 'response_uri' buffer.
  */
-void httpd_post_finished(void *connection, char *response_uri, u16_t response_uri_len);
+void httpd_post_finished(void *connection, char *response_uri,
+                         u16_t response_uri_len);
 
 #if LWIP_HTTPD_POST_MANUAL_WND
 void httpd_post_data_recved(void *connection, u16_t recved_len);
@@ -227,7 +234,6 @@ void httpd_post_data_recved(void *connection, u16_t recved_len);
 #endif /* LWIP_HTTPD_SUPPORT_POST */
 
 void httpd_init(void);
-
 
 #ifdef __cplusplus
 }

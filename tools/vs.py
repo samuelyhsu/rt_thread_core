@@ -34,9 +34,10 @@ from utils import _make_path_relative
 from utils import xml_indent
 fs_encoding = sys.getfilesystemencoding()
 
+
 def VS_AddGroup(ProjectFiles, parent, name, files, libs, project_path):
     Filter = SubElement(parent, 'Filter')
-    Filter.set('Name', name) #set group name to group
+    Filter.set('Name', name)  # set group name to group
 
     for f in files:
         fn = f.rfile()
@@ -66,6 +67,7 @@ def VS_AddGroup(ProjectFiles, parent, name, files, libs, project_path):
             path = path
         File.set('RelativePath', path)
 
+
 def VS_AddHeadFilesGroup(program, elem, project_path):
     utils.source_ext = []
     utils.source_ext = ["h"]
@@ -83,6 +85,7 @@ def VS_AddHeadFilesGroup(program, elem, project_path):
             path = path
         File.set('RelativePath', path)
 
+
 def VSProject(target, script, program):
     project_path = os.path.dirname(os.path.abspath(target))
 
@@ -97,7 +100,7 @@ def VSProject(target, script, program):
     # add "*.c" files group
     for elem in tree.iter(tag='Filter'):
         if elem.attrib['Name'] == 'Source Files':
-            #print elem.tag, elem.attrib
+            # print elem.tag, elem.attrib
             break
 
     for group in script:
@@ -107,13 +110,14 @@ def VSProject(target, script, program):
                 lib_path = ''
                 for path_item in group['LIBPATH']:
                     full_path = os.path.join(path_item, item + '.lib')
-                    if os.path.isfile(full_path): # has this library
+                    if os.path.isfile(full_path):  # has this library
                         lib_path = full_path
 
                 if lib_path != '':
                     libs.append(lib_path)
 
-        group_xml = VS_AddGroup(ProjectFiles, elem, group['name'], group['src'], libs, project_path)
+        group_xml = VS_AddGroup(
+            ProjectFiles, elem, group['name'], group['src'], libs, project_path)
 
     # add "*.h" files group
     for elem in tree.iter(tag='Filter'):
@@ -124,10 +128,10 @@ def VSProject(target, script, program):
     # write head include path
     if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
-        paths  = set()
+        paths = set()
         for path in cpp_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc) #.replace('\\', '/')
+            paths.add(inc)  # .replace('\\', '/')
 
         paths = [i for i in paths]
         paths.sort()
@@ -136,7 +140,7 @@ def VSProject(target, script, program):
         # write include path, definitions
         for elem in tree.iter(tag='Tool'):
             if elem.attrib['Name'] == 'VCCLCompilerTool':
-                #print elem.tag, elem.attrib
+                # print elem.tag, elem.attrib
                 break
         elem.set('AdditionalIncludeDirectories', cpp_path)
 
@@ -165,10 +169,10 @@ def VSProject(target, script, program):
     # write lib include path
     if 'LIBPATH' in building.Env:
         lib_path = building.Env['LIBPATH']
-        paths  = set()
+        paths = set()
         for path in lib_path:
             inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc) #.replace('\\', '/')
+            paths.add(inc)  # .replace('\\', '/')
 
         paths = [i for i in paths]
         paths.sort()

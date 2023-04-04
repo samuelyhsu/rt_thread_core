@@ -1,5 +1,5 @@
-Import('RTT_ROOT')
 from building import *
+Import('RTT_ROOT')
 
 cwd = GetCurrentDir()
 src = Split("""
@@ -26,9 +26,10 @@ if GetDepend('RT_USBH_HID_MOUSE'):
 if GetDepend('RT_USBH_HID_KEYBOARD'):
     src += Glob('class/ukbd.c')
 
-CPPPATH = [cwd, cwd + '/class', cwd + '/core', \
-    cwd + '/include', cwd + '../../../include']
+CPPPATH = [cwd, cwd + '/class', cwd + '/core',
+           cwd + '/include', cwd + '../../../include']
 
-group = DefineGroup('rt_usbh', src, depend = ['RT_USING_USB_HOST'], CPPPATH = CPPPATH)
+group = DefineGroup('rt_usbh', src, depend=[
+                    'RT_USING_USB_HOST'], CPPPATH=CPPPATH)
 
 Return('group')

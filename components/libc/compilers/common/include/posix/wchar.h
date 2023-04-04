@@ -18,7 +18,7 @@ extern "C" {
 #include <wchar.h>
 
 int wcwidth(wchar_t);
-int wcswidth(const wchar_t*, size_t);
+int wcswidth(const wchar_t *, size_t);
 
 #ifdef __cplusplus
 }

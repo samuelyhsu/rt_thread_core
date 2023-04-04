@@ -7,8 +7,8 @@
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -20,14 +20,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -42,26 +42,25 @@
 #include "lwip/opt.h"
 #if LWIP_PERF
 #include "arch/perf.h"
-#else /* LWIP_PERF */
-#define PERF_START    /* null definition */
-#define PERF_STOP(x)  /* null definition */
-#endif /* LWIP_PERF */
+#else                /* LWIP_PERF */
+#define PERF_START   /* null definition */
+#define PERF_STOP(x) /* null definition */
+#endif               /* LWIP_PERF */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define LWIP_MAX(x , y)  (((x) > (y)) ? (x) : (y))
-#define LWIP_MIN(x , y)  (((x) < (y)) ? (x) : (y))
+#define LWIP_MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define LWIP_MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 /* Get the number of entries in an array ('x' must NOT be a pointer!) */
-#define LWIP_ARRAYSIZE(x) (sizeof(x)/sizeof((x)[0]))
+#define LWIP_ARRAYSIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 /** Create u32_t value from bytes */
-#define LWIP_MAKEU32(a,b,c,d) (((u32_t)((a) & 0xff) << 24) | \
-                               ((u32_t)((b) & 0xff) << 16) | \
-                               ((u32_t)((c) & 0xff) << 8)  | \
-                                (u32_t)((d) & 0xff))
+#define LWIP_MAKEU32(a, b, c, d)                                               \
+  (((u32_t)((a)&0xff) << 24) | ((u32_t)((b)&0xff) << 16) |                     \
+   ((u32_t)((c)&0xff) << 8) | (u32_t)((d)&0xff))
 
 #ifndef NULL
 #ifdef __cplusplus
@@ -94,16 +93,16 @@ u32_t lwip_htonl(u32_t x);
 /* These macros should be calculated by the preprocessor and are used
    with compile-time constants only (so that there is no little-endian
    overhead at runtime). */
-#define PP_HTONS(x) ((((x) & 0x00ffUL) << 8) | (((x) & 0xff00UL) >> 8))
+#define PP_HTONS(x) ((((x)&0x00ffUL) << 8) | (((x)&0xff00UL) >> 8))
 #define PP_NTOHS(x) PP_HTONS(x)
-#define PP_HTONL(x) ((((x) & 0x000000ffUL) << 24) | \
-                     (((x) & 0x0000ff00UL) <<  8) | \
-                     (((x) & 0x00ff0000UL) >>  8) | \
-                     (((x) & 0xff000000UL) >> 24))
+#define PP_HTONL(x)                                                            \
+  ((((x)&0x000000ffUL) << 24) | (((x)&0x0000ff00UL) << 8) |                    \
+   (((x)&0x00ff0000UL) >> 8) | (((x)&0xff000000UL) >> 24))
 #define PP_NTOHL(x) PP_HTONL(x)
 #endif /* BYTE_ORDER == BIG_ENDIAN */
 
-/* Provide usual function names as macros for users, but this can be turned off */
+/* Provide usual function names as macros for users, but this can be turned off
+ */
 #ifndef LWIP_DONT_PROVIDE_BYTEORDER_FUNCTIONS
 #define htons(x) lwip_htons(x)
 #define ntohs(x) lwip_ntohs(x)
@@ -118,20 +117,23 @@ u32_t lwip_htonl(u32_t x);
  */
 
 #ifndef lwip_itoa
-/* This can be #defined to itoa() or snprintf(result, bufsize, "%d", number) depending on your platform */
-void  lwip_itoa(char* result, size_t bufsize, int number);
+/* This can be #defined to itoa() or snprintf(result, bufsize, "%d", number)
+ * depending on your platform */
+void lwip_itoa(char *result, size_t bufsize, int number);
 #endif
 #ifndef lwip_strnicmp
-/* This can be #defined to strnicmp() or strncasecmp() depending on your platform */
-int   lwip_strnicmp(const char* str1, const char* str2, size_t len);
+/* This can be #defined to strnicmp() or strncasecmp() depending on your
+ * platform */
+int lwip_strnicmp(const char *str1, const char *str2, size_t len);
 #endif
 #ifndef lwip_stricmp
-/* This can be #defined to stricmp() or strcasecmp() depending on your platform */
-int   lwip_stricmp(const char* str1, const char* str2);
+/* This can be #defined to stricmp() or strcasecmp() depending on your platform
+ */
+int lwip_stricmp(const char *str1, const char *str2);
 #endif
 #ifndef lwip_strnstr
 /* This can be #defined to strnstr() depending on your platform */
-char* lwip_strnstr(const char* buffer, const char* token, size_t n);
+char *lwip_strnstr(const char *buffer, const char *token, size_t n);
 #endif
 
 #ifdef __cplusplus

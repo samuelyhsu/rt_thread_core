@@ -36,6 +36,7 @@ if GetDepend('RT_USING_SFUD'):
 
 src += src_device
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SPI'], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
+group = DefineGroup('DeviceDrivers', src, depend=[
+                    'RT_USING_SPI'], CPPPATH=CPPPATH, LOCAL_CFLAGS=LOCAL_CFLAGS)
 
 Return('group')

@@ -10,10 +10,14 @@ import io
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('rootdir', type=str, help='the path to rootfs')
-parser.add_argument('output', type=argparse.FileType('wb'), nargs='?', help='output file name')
-parser.add_argument('--dump', action='store_true', help='dump the fs hierarchy')
+parser.add_argument('output', type=argparse.FileType('wb'),
+                    nargs='?', help='output file name')
+parser.add_argument('--dump', action='store_true',
+                    help='dump the fs hierarchy')
 parser.add_argument('--binary', action='store_true', help='output binary file')
-parser.add_argument('--addr', default='0', help='set the base address of the binary file, default to 0.')
+parser.add_argument('--addr', default='0',
+                    help='set the base address of the binary file, default to 0.')
+
 
 class File(object):
     def __init__(self, name):
@@ -38,7 +42,7 @@ class File(object):
     def c_data(self, prefix=''):
         '''Get the C code represent of the file content.'''
         head = 'static const rt_uint8_t %s[] = {\n' % \
-                (prefix + self.c_name)
+            (prefix + self.c_name)
         tail = '\n};'
 
         if self.entry_size == 0:
@@ -57,6 +61,7 @@ class File(object):
 
     def dump(self, indent=0):
         print('%s%s' % (' ' * indent, self._name))
+
 
 class Folder(object):
     bin_fmt = struct.Struct('IIII')
@@ -128,10 +133,11 @@ class Folder(object):
         if self.entry_size == 0:
             return ''
 
-        dhead = 'static const struct romfs_dirent %s[] = {\n' % (prefix + self.c_name)
+        dhead = 'static const struct romfs_dirent %s[] = {\n' % (
+            prefix + self.c_name)
         dtail = '\n};'
         body_fmt = '    {{{type}, "{name}", (rt_uint8_t *){data}, sizeof({data})/sizeof({data}[0])}}'
-        body_fmt0= '    {{{type}, "{name}", RT_NULL, 0}}'
+        body_fmt0 = '    {{{type}, "{name}", RT_NULL, 0}}'
         # prefix of children
         cpf = prefix+self.c_name
         body_li = []
@@ -145,11 +151,11 @@ class Folder(object):
             else:
                 assert False, 'Unkown instance:%s' % str(c)
             if entry_size == 0:
-                body_li.append(body_fmt0.format(type=tp, name = c.name))
+                body_li.append(body_fmt0.format(type=tp, name=c.name))
             else:
                 body_li.append(body_fmt.format(type=tp,
-                                            name=c.name,
-                                            data=cpf+c.c_name))
+                                               name=c.name,
+                                               data=cpf+c.c_name))
             payload_li.append(c.c_data(prefix=cpf))
 
         # All the data we need is defined in payload so we should append the
@@ -168,12 +174,12 @@ class Folder(object):
         # dirent before the payload in this mode. But the idea is still simple:
         #                           Depth-First.
 
-        #{
+        # {
         #  rt_uint32_t type;
         #  const char *name;
         #  const rt_uint8_t *data;
         #  rt_size_t size;
-        #}
+        # }
         d_li = []
         # payload base
         p_base = base_addr + self.bin_fmt.size * self.entry_size
@@ -200,18 +206,20 @@ class Folder(object):
             # pad the data to 4 bytes boundary
             pad_len = 4
             if len(data) % pad_len != 0:
-                data += ('\0' * (pad_len - len(data) % pad_len)).encode('utf-8')
+                data += ('\0' * (pad_len - len(data) %
+                         pad_len)).encode('utf-8')
             v_len += len(data)
 
             d_li.append(self.bin_fmt.pack(*self.bin_item(
-                                               type=tp,
-                                               name=name_addr,
-                                               data=data_addr,
-                                               size=c.entry_size)))
+                type=tp,
+                name=name_addr,
+                data=data_addr,
+                size=c.entry_size)))
 
             p_li.extend((name, data))
 
         return bytes().join(d_li) + bytes().join(p_li)
+
 
 def get_c_data(tree):
     # Handle the root dirent specially.
@@ -230,6 +238,7 @@ const struct romfs_dirent {name} = {{
                                   rootdirent=tree.c_name,
                                   data=tree.c_data())
 
+
 def get_bin_data(tree, base_addr):
     v_len = base_addr + Folder.bin_fmt.size
     name = bytes('/\0\0\0'.encode("utf-8"))
@@ -242,6 +251,7 @@ def get_bin_data(tree, base_addr):
                                                 data=data_addr,
                                                 size=tree.entry_size))
     return data + name + tree.bin_data(v_len)
+
 
 if __name__ == '__main__':
     args = parser.parse_args()

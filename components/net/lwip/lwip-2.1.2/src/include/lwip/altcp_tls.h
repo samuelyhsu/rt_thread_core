@@ -13,8 +13,8 @@
  * Copyright (c) 2017 Simon Goldschmidt
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -26,14 +26,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -63,21 +63,24 @@ struct altcp_tls_config;
 /** @ingroup altcp_tls
  * Create an ALTCP_TLS server configuration handle
  */
-struct altcp_tls_config *altcp_tls_create_config_server_privkey_cert(const u8_t *privkey, size_t privkey_len,
-                            const u8_t *privkey_pass, size_t privkey_pass_len,
-                            const u8_t *cert, size_t cert_len);
+struct altcp_tls_config *altcp_tls_create_config_server_privkey_cert(
+    const u8_t *privkey, size_t privkey_len, const u8_t *privkey_pass,
+    size_t privkey_pass_len, const u8_t *cert, size_t cert_len);
 
 /** @ingroup altcp_tls
  * Create an ALTCP_TLS client configuration handle
  */
-struct altcp_tls_config *altcp_tls_create_config_client(const u8_t *cert, size_t cert_len);
+struct altcp_tls_config *altcp_tls_create_config_client(const u8_t *cert,
+                                                        size_t cert_len);
 
 /** @ingroup altcp_tls
- * Create an ALTCP_TLS client configuration handle with two-way server/client authentication
+ * Create an ALTCP_TLS client configuration handle with two-way server/client
+ * authentication
  */
-struct altcp_tls_config *altcp_tls_create_config_client_2wayauth(const u8_t *ca, size_t ca_len, const u8_t *privkey, size_t privkey_len,
-                            const u8_t *privkey_pass, size_t privkey_pass_len,
-                            const u8_t *cert, size_t cert_len);
+struct altcp_tls_config *altcp_tls_create_config_client_2wayauth(
+    const u8_t *ca, size_t ca_len, const u8_t *privkey, size_t privkey_len,
+    const u8_t *privkey_pass, size_t privkey_pass_len, const u8_t *cert,
+    size_t cert_len);
 
 /** @ingroup altcp_tls
  * Free an ALTCP_TLS configuration handle
@@ -85,9 +88,11 @@ struct altcp_tls_config *altcp_tls_create_config_client_2wayauth(const u8_t *ca,
 void altcp_tls_free_config(struct altcp_tls_config *conf);
 
 /** @ingroup altcp_tls
- * Create new ALTCP_TLS layer wrapping an existing pcb as inner connection (e.g. TLS over TCP)
+ * Create new ALTCP_TLS layer wrapping an existing pcb as inner connection (e.g.
+ * TLS over TCP)
  */
-struct altcp_pcb *altcp_tls_wrap(struct altcp_tls_config *config, struct altcp_pcb *inner_pcb);
+struct altcp_pcb *altcp_tls_wrap(struct altcp_tls_config *config,
+                                 struct altcp_pcb *inner_pcb);
 
 /** @ingroup altcp_tls
  * Create new ALTCP_TLS pcb and its inner tcp pcb

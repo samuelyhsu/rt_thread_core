@@ -1,8 +1,8 @@
 from building import *
 
-cwd     = GetCurrentDir()
+cwd = GetCurrentDir()
 CPPPATH = [cwd + '/../include']
-src     = Split('''
+src = Split('''
 cputime.c
 cputimer.c
 ''')
@@ -13,6 +13,7 @@ if GetDepend('RT_USING_CPUTIME_CORTEXM'):
 if GetDepend('RT_USING_CPUTIME_RISCV'):
     src += ['cputime_riscv.c']
 
-group   = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_CPUTIME'], CPPPATH = CPPPATH)
+group = DefineGroup('DeviceDrivers', src, depend=[
+                    'RT_USING_CPUTIME'], CPPPATH=CPPPATH)
 
 Return('group')

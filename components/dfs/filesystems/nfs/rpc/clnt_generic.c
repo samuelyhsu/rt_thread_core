@@ -50,46 +50,41 @@ static char sccsid[] = "@(#)clnt_generic.c 1.4 87/08/11 (C) 1987 SMI";
  * change using the rpc equivalent of ioctl()'s.
  */
 CLIENT *clnt_create(const char *hostname, const unsigned long prog,
-                    const unsigned long vers, const char *proto)
-{
-    int sock;
-    struct sockaddr_in server;
-    struct addrinfo hint, *res = NULL;
-    struct timeval tv;
-    CLIENT *client;
-    int ret;
+                    const unsigned long vers, const char *proto) {
+  int sock;
+  struct sockaddr_in server;
+  struct addrinfo hint, *res = NULL;
+  struct timeval tv;
+  CLIENT *client;
+  int ret;
 
-    memset(&hint, 0, sizeof(hint));
-    ret = getaddrinfo(hostname, NULL, &hint, &res);
-    if (ret != 0)
-    {
-        rt_kprintf("getaddrinfo err: %d '%s'\n", ret, hostname);
-        return NULL;
-    }
+  memset(&hint, 0, sizeof(hint));
+  ret = getaddrinfo(hostname, NULL, &hint, &res);
+  if (ret != 0) {
+    rt_kprintf("getaddrinfo err: %d '%s'\n", ret, hostname);
+    return NULL;
+  }
 
-    memcpy(&server, res->ai_addr, sizeof(struct sockaddr_in));
-    freeaddrinfo(res);
+  memcpy(&server, res->ai_addr, sizeof(struct sockaddr_in));
+  freeaddrinfo(res);
 
-    sock = -1;
-    if (strcmp(proto, "udp") == 0)
-    {
-        tv.tv_sec = 5;
-        tv.tv_usec = 0;
-        client = clntudp_create(&server, prog, vers, tv, &sock);
-        if (client == NULL) return NULL;
-        tv.tv_sec = 1;
-        clnt_control(client, CLSET_TIMEOUT, (char *)&tv);
-    }
-    else
-    {
-        rt_kprintf("unknow protocol\n");
-        return NULL;
-    }
+  sock = -1;
+  if (strcmp(proto, "udp") == 0) {
+    tv.tv_sec = 5;
+    tv.tv_usec = 0;
+    client = clntudp_create(&server, prog, vers, tv, &sock);
+    if (client == NULL)
+      return NULL;
+    tv.tv_sec = 1;
+    clnt_control(client, CLSET_TIMEOUT, (char *)&tv);
+  } else {
+    rt_kprintf("unknow protocol\n");
+    return NULL;
+  }
 
-    return (client);
+  return (client);
 }
 
-void clnt_perror(CLIENT *rpch, const char *s)
-{
-    rt_kprintf("rpc client error:%s\n", s);
+void clnt_perror(CLIENT *rpch, const char *s) {
+  rt_kprintf("rpc client error:%s\n", s);
 }

@@ -39,6 +39,6 @@ void vmm_vector_init(void);
 
 #endif
 
-#define ARRAY_SIZE(ar)     (sizeof(ar)/sizeof(ar[0]))
+#define ARRAY_SIZE(ar) (sizeof(ar) / sizeof(ar[0]))
 
 #endif

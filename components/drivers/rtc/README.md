@@ -62,4 +62,3 @@ msh />
 #### 2.4.1 使用方法
 
 在 menuconfig 中启用 `RT_USING_SOFT_RTC` 配置。
-

@@ -63,7 +63,8 @@ class CheckOut:
                     if file is not None:
                         file_real_path = os.path.join(dir_name, file)
                         if file_real_path == file_path:
-                            logging.info("ignore file path: {}".format(file_real_path))
+                            logging.info(
+                                "ignore file path: {}".format(file_real_path))
                             return 0
 
                 file_dir_path = os.path.dirname(file_path)
@@ -71,7 +72,8 @@ class CheckOut:
                     if _dir is not None:
                         dir_real_path = os.path.join(dir_name, _dir)
                         if file_dir_path.startswith(dir_real_path):
-                            logging.info("ignore dir path: {}".format(dir_real_path))
+                            logging.info(
+                                "ignore dir path: {}".format(dir_real_path))
                             return 0
             except Exception as e:
                 logging.error(e)
@@ -102,7 +104,8 @@ class CheckOut:
                 file_path = line.split('new file:')[1].strip()
                 logging.info('new file -> {}'.format(file_path))
             elif 'deleted' in line:
-                logging.info('deleted file -> {}'.format(line.split('deleted:')[1].strip()))
+                logging.info(
+                    'deleted file -> {}'.format(line.split('deleted:')[1].strip()))
             elif 'modified' in line:
                 file_path = line.split('modified:')[1].strip()
                 logging.info('modified file -> {}'.format(file_path))
@@ -128,12 +131,14 @@ class FormatCheck:
             line_start = line.replace(' ', '')
             # find tab
             if line_start.startswith('\t'):
-                logging.error("{} line[{}]: please use space replace tab at the start of this line.".format(file_path, line_num))
+                logging.error("{} line[{}]: please use space replace tab at the start of this line.".format(
+                    file_path, line_num))
                 check_result = False
             # check line end
             lin_end = line.split('\n')[0]
             if lin_end.endswith(' ') or lin_end.endswith('\t'):
-                logging.error("{} line[{}]: please delete extra space at the end of this line.".format(file_path, line_num))
+                logging.error("{} line[{}]: please delete extra space at the end of this line.".format(
+                    file_path, line_num))
                 check_result = False
             line_num += 1
 
@@ -160,12 +165,14 @@ class FormatCheck:
                 continue
 
             if code != 'utf-8' and code != 'ascii':
-                logging.error("[{0}]: encoding not utf-8, please format it.".format(file_path))
+                logging.error(
+                    "[{0}]: encoding not utf-8, please format it.".format(file_path))
                 encoding_check_result = False
             else:
-                logging.info('[{0}]: encoding check success.'.format(file_path))
+                logging.info(
+                    '[{0}]: encoding check success.'.format(file_path))
 
-            with open(file_path, 'r', encoding = "utf-8") as f:
+            with open(file_path, 'r', encoding="utf-8") as f:
                 file_lines = f.readlines()
             if not self.__check_file(file_lines, file_path):
                 format_check_fail_files += 1
@@ -211,7 +218,8 @@ class LicenseCheck:
                                                                                                          true_year))
 
                     else:
-                        logging.info("[{0}]: license check success.".format(file_path))
+                        logging.info(
+                            "[{0}]: license check success.".format(file_path))
                 except Exception as e:
                     logging.error(e)
 

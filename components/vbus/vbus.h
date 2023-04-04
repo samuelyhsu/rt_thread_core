@@ -35,30 +35,27 @@ void rt_vbus_resume_out_thread(void);
  *
  * @sa rt_vbus_register_listener .
  */
-rt_err_t rt_vbus_post(rt_uint8_t chnr,
-                      rt_uint8_t prio,
-                      const void *datap,
-                      rt_size_t size,
-                      rt_int32_t timeout);
+rt_err_t rt_vbus_post(rt_uint8_t chnr, rt_uint8_t prio, const void *datap,
+                      rt_size_t size, rt_int32_t timeout);
 
 struct rt_vbus_data {
-    /* Number of bytes in current data package. */
-    unsigned char size;
-    /* Used internally in VBus. Don't modify this field as it may corrupt the
-     * receive queue. */
-    struct rt_vbus_data *next;
-    /* Data follows the struct */
+  /* Number of bytes in current data package. */
+  unsigned char size;
+  /* Used internally in VBus. Don't modify this field as it may corrupt the
+   * receive queue. */
+  struct rt_vbus_data *next;
+  /* Data follows the struct */
 };
 
 struct rt_vbus_wm_cfg {
-    unsigned int low, high;
+  unsigned int low, high;
 };
 
 struct rt_vbus_request {
-    unsigned char prio;
-    const char *name;
-    int is_server;
-    struct rt_vbus_wm_cfg recv_wm, post_wm;
+  unsigned char prio;
+  const char *name;
+  int is_server;
+  struct rt_vbus_wm_cfg recv_wm, post_wm;
 };
 
 /** Request a channel.
@@ -71,58 +68,55 @@ int rt_vbus_request_chn(struct rt_vbus_request *req, int timeout);
 void rt_vbus_close_chn(unsigned char chnr);
 
 /** Set the water mark level for posting into the channel @chnr. */
-void rt_vbus_set_post_wm(unsigned char chnr, unsigned int low, unsigned int high);
+void rt_vbus_set_post_wm(unsigned char chnr, unsigned int low,
+                         unsigned int high);
 /** Set the water mark level for receiving from the channel @chnr. */
-void rt_vbus_set_recv_wm(unsigned char chnr, unsigned int low, unsigned int high);
+void rt_vbus_set_recv_wm(unsigned char chnr, unsigned int low,
+                         unsigned int high);
 
 typedef void (*rt_vbus_event_listener)(void *ctx);
 
 enum rt_vbus_event_id {
-    /* On a packet received in channel. */
-    RT_VBUS_EVENT_ID_RX,
-    /* On the data of rt_vbus_post has been written to the ring buffer. */
-    RT_VBUS_EVENT_ID_TX,
-    /* On the channel has been closed. */
-    RT_VBUS_EVENT_ID_DISCONN,
-    RT_VBUS_EVENT_ID_MAX,
+  /* On a packet received in channel. */
+  RT_VBUS_EVENT_ID_RX,
+  /* On the data of rt_vbus_post has been written to the ring buffer. */
+  RT_VBUS_EVENT_ID_TX,
+  /* On the channel has been closed. */
+  RT_VBUS_EVENT_ID_DISCONN,
+  RT_VBUS_EVENT_ID_MAX,
 };
 
 /** Register callback @indi on the event @eve on the @chnr.
  *
  * @ctx will passed to @indi on calling the @indi.
  */
-void rt_vbus_register_listener(unsigned char chnr,
-                               enum rt_vbus_event_id eve,
-                               rt_vbus_event_listener indi,
-                               void *ctx);
+void rt_vbus_register_listener(unsigned char chnr, enum rt_vbus_event_id eve,
+                               rt_vbus_event_listener indi, void *ctx);
 
 /** Listen on any events happen on the @chnr for @timeout ticks.
  *
  * This function blocks until events occur or timeout happened.
  */
-rt_err_t rt_vbus_listen_on(rt_uint8_t chnr,
-                           rt_int32_t timeout);
+rt_err_t rt_vbus_listen_on(rt_uint8_t chnr, rt_int32_t timeout);
 
 /** Push a data package into the receive queue of the channel @chnr. */
-void rt_vbus_data_push(unsigned int chnr,
-                       struct rt_vbus_data *data);
+void rt_vbus_data_push(unsigned int chnr, struct rt_vbus_data *data);
 /** Pop a data package from the receive queue of the channel @chnr.
  *
  * The actual data is following the struct rt_vbus_data. After using it, it
  * should be freed by rt_free.
  */
-struct rt_vbus_data* rt_vbus_data_pop(unsigned int chnr);
+struct rt_vbus_data *rt_vbus_data_pop(unsigned int chnr);
 
-struct rt_vbus_dev
-{
-    /* Runtime infomations. */
-    rt_uint8_t chnr;
-    struct rt_vbus_data *act;
-    rt_size_t pos;
+struct rt_vbus_dev {
+  /* Runtime infomations. */
+  rt_uint8_t chnr;
+  struct rt_vbus_data *act;
+  rt_size_t pos;
 
-    /* There will be a request for each channel. So no need to seperate them so
-     * clearly. */
-    struct rt_vbus_request req;
+  /* There will be a request for each channel. So no need to seperate them so
+   * clearly. */
+  struct rt_vbus_request req;
 };
 
 rt_err_t rt_vbus_chnx_init(void);
@@ -132,21 +126,19 @@ rt_uint8_t rt_vbus_get_chnnr(rt_device_t dev);
  *
  * @sa rt_vbus_register_listener .
  */
-void rt_vbus_chnx_register_disconn(rt_device_t dev,
-                                   rt_vbus_event_listener indi,
+void rt_vbus_chnx_register_disconn(rt_device_t dev, rt_vbus_event_listener indi,
                                    void *ctx);
 
 /* Commands for the device control interface. */
-#define VBUS_IOCRECV_WM      0xD1
-#define VBUS_IOCPOST_WM      0xD2
+#define VBUS_IOCRECV_WM 0xD1
+#define VBUS_IOCPOST_WM 0xD2
 /** Configure event listener */
-#define VBUS_IOC_LISCFG      0xD3
+#define VBUS_IOC_LISCFG 0xD3
 
-struct rt_vbus_dev_liscfg
-{
-    enum rt_vbus_event_id event;
-    rt_vbus_event_listener listener;
-    void *ctx;
+struct rt_vbus_dev_liscfg {
+  enum rt_vbus_event_id event;
+  rt_vbus_event_listener listener;
+  void *ctx;
 };
 
 int rt_vbus_shell_start(void);

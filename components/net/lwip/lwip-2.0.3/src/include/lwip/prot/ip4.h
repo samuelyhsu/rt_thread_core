@@ -7,8 +7,8 @@
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -20,14 +20,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -47,7 +47,7 @@ extern "C" {
 /** This is the packed version of ip4_addr_t,
     used in network headers that are itself packed */
 #ifdef PACK_STRUCT_USE_INCLUDES
-#  include "arch/bpstruct.h"
+#include "arch/bpstruct.h"
 #endif
 PACK_STRUCT_BEGIN
 struct ip4_addr_packed {
@@ -55,7 +55,7 @@ struct ip4_addr_packed {
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
-#  include "arch/epstruct.h"
+#include "arch/epstruct.h"
 #endif
 
 typedef struct ip4_addr_packed ip4_addr_p_t;
@@ -64,7 +64,7 @@ typedef struct ip4_addr_packed ip4_addr_p_t;
 #define IP_HLEN 20
 
 #ifdef PACK_STRUCT_USE_INCLUDES
-#  include "arch/bpstruct.h"
+#include "arch/bpstruct.h"
 #endif
 PACK_STRUCT_BEGIN
 /* The IPv4 header */
@@ -79,10 +79,10 @@ struct ip_hdr {
   PACK_STRUCT_FIELD(u16_t _id);
   /* fragment offset field */
   PACK_STRUCT_FIELD(u16_t _offset);
-#define IP_RF 0x8000U        /* reserved fragment flag */
-#define IP_DF 0x4000U        /* don't fragment flag */
-#define IP_MF 0x2000U        /* more fragments flag */
-#define IP_OFFMASK 0x1fffU   /* mask for fragmenting bits */
+#define IP_RF 0x8000U      /* reserved fragment flag */
+#define IP_DF 0x4000U      /* don't fragment flag */
+#define IP_MF 0x2000U      /* more fragments flag */
+#define IP_OFFMASK 0x1fffU /* mask for fragmenting bits */
   /* time to live */
   PACK_STRUCT_FLD_8(u8_t _ttl);
   /* protocol*/
@@ -95,11 +95,11 @@ struct ip_hdr {
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
-#  include "arch/epstruct.h"
+#include "arch/epstruct.h"
 #endif
 
 /* Macros to get struct ip_hdr fields: */
-#define IPH_V(hdr)  ((hdr)->_v_hl >> 4)
+#define IPH_V(hdr) ((hdr)->_v_hl >> 4)
 #define IPH_HL(hdr) ((hdr)->_v_hl & 0x0f)
 #define IPH_TOS(hdr) ((hdr)->_tos)
 #define IPH_LEN(hdr) ((hdr)->_len)
@@ -118,7 +118,6 @@ PACK_STRUCT_END
 #define IPH_TTL_SET(hdr, ttl) (hdr)->_ttl = (u8_t)(ttl)
 #define IPH_PROTO_SET(hdr, proto) (hdr)->_proto = (u8_t)(proto)
 #define IPH_CHKSUM_SET(hdr, chksum) (hdr)->_chksum = (chksum)
-
 
 #ifdef __cplusplus
 }

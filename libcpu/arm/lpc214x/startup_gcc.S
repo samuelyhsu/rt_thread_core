@@ -317,4 +317,3 @@ rt_hw_context_switch_interrupt_do:
 .org 0x01FC
 .word 0x87654321
 #endif
-

@@ -110,4 +110,3 @@ requests required from a client.
 
 Removing services is currently not supported. Services are removed when the
 netif is removed.
-

@@ -40,4 +40,3 @@ if [ "${plain}" -eq 1 ]; then
 else
     echo "${k_ver}${k_ver_extra}.${kf_ver}"
 fi
-

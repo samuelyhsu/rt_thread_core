@@ -10,22 +10,20 @@
 #ifndef __SCHED_H__
 #define __SCHED_H__
 
-#include <rtthread.h>
 #include <pthread.h>
+#include <rtthread.h>
 
 /* Thread scheduling policies */
-enum
-{
-    SCHED_OTHER = 0,
-    SCHED_FIFO,
-    SCHED_RR,
-    SCHED_MIN = SCHED_OTHER,
-    SCHED_MAX = SCHED_RR
+enum {
+  SCHED_OTHER = 0,
+  SCHED_FIFO,
+  SCHED_RR,
+  SCHED_MIN = SCHED_OTHER,
+  SCHED_MAX = SCHED_RR
 };
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 int sched_yield(void);

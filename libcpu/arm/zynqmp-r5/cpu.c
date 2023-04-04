@@ -8,29 +8,28 @@
  * 2020-03-19     WangHuachen  first version
  */
 
+#include "zynqmp-r5.h"
 #include <rthw.h>
 #include <rtthread.h>
-#include "zynqmp-r5.h"
 
-void rt_hw_cpu_reset()
-{
-    __REG32(ZynqMP_CRL_APB_BASEADDR + ZynqMP_CRL_APB_RESET_CTRL) |= ZynqMP_RESET_MASK;
-    while (1);  /* loop forever and wait for reset to happen */
-    /* NEVER REACHED */
+void rt_hw_cpu_reset() {
+  __REG32(ZynqMP_CRL_APB_BASEADDR + ZynqMP_CRL_APB_RESET_CTRL) |=
+      ZynqMP_RESET_MASK;
+  while (1)
+    ; /* loop forever and wait for reset to happen */
+      /* NEVER REACHED */
 }
 
 /**
  *  shutdown CPU
  *
  */
-void rt_hw_cpu_shutdown()
-{
-    rt_base_t level;
-    rt_kprintf("shutdown...\n");
+void rt_hw_cpu_shutdown() {
+  rt_base_t level;
+  rt_kprintf("shutdown...\n");
 
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
+  level = rt_hw_interrupt_disable();
+  while (level) {
+    RT_ASSERT(0);
+  }
 }

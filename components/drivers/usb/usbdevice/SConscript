@@ -1,5 +1,5 @@
-Import('RTT_ROOT')
 from building import *
+Import('RTT_ROOT')
 
 cwd = GetCurrentDir()
 src = Split("""
@@ -33,6 +33,7 @@ if GetDepend('RT_USB_DEVICE_AUDIO_SPEAKER'):
 
 CPPPATH = [cwd]
 
-group = DefineGroup('rt_usbd', src, depend = ['RT_USING_USB_DEVICE'], CPPPATH = CPPPATH)
+group = DefineGroup('rt_usbd', src, depend=[
+                    'RT_USING_USB_DEVICE'], CPPPATH=CPPPATH)
 
 Return('group')

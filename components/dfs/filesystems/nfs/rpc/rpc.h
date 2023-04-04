@@ -46,17 +46,17 @@
 #ifndef _RPC_RPC_H
 #define _RPC_RPC_H 1
 
-#include <rpc/types.h>      /* some typedefs */
+#include <rpc/types.h> /* some typedefs */
 
 /* external data representation interfaces */
-#include <rpc/xdr.h>        /* generic (de)serializer */
+#include <rpc/xdr.h> /* generic (de)serializer */
 
 #include <rpc/auth.h>
 
 /* Client side (mostly) remote procedure call */
-#include <rpc/clnt.h>       /* generic rpc stuff */
+#include <rpc/clnt.h> /* generic rpc stuff */
 
 /* semi-private protocol headers */
-#include <rpc/rpc_msg.h>    /* protocol for rpc messages */
+#include <rpc/rpc_msg.h> /* protocol for rpc messages */
 
 #endif

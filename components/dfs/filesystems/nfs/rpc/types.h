@@ -41,23 +41,24 @@
 #ifndef _RPC_TYPES_H
 #define _RPC_TYPES_H 1
 
-#include <rtthread.h>
 #include <lwip/netdb.h>
 #include <lwip/sockets.h>
+#include <rtthread.h>
 
-#include <string.h>
 #include <stdint.h>
+#include <string.h>
 
 #ifndef RT_USING_MINILIBC
 typedef unsigned int u_int;
 typedef unsigned char u_char;
 typedef unsigned long u_long;
 #else
-#include <sys/types.h>
 #include <stdint.h>
+#include <sys/types.h>
+
 #endif
 
-typedef long long   int64_t;
+typedef long long int64_t;
 typedef unsigned long long uint64_t;
 
 typedef int bool_t;
@@ -67,8 +68,9 @@ typedef int enum_t;
 typedef unsigned long dev_t;
 #endif
 
-#if !defined(RT_USING_NEWLIB) && !defined(RT_USING_MINILIBC) &&  !defined(RT_USING_MUSL)
-typedef rt_int32_t  ssize_t;
+#if !defined(RT_USING_NEWLIB) && !defined(RT_USING_MINILIBC) &&                \
+    !defined(RT_USING_MUSL)
+typedef rt_int32_t ssize_t;
 #endif
 
 /* This needs to be changed to uint32_t in the future */
@@ -78,18 +80,18 @@ typedef unsigned long rpcproc_t;
 typedef unsigned long rpcprot_t;
 typedef unsigned long rpcport_t;
 
-#define        __dontcare__    -1
+#define __dontcare__ -1
 
 #ifndef FALSE
-# define  FALSE   (0)
+#define FALSE (0)
 #endif
 
 #ifndef TRUE
-# define  TRUE    (1)
+#define TRUE (1)
 #endif
 
 #ifndef MAXHOSTNAMELEN
-#define MAXHOSTNAMELEN  64
+#define MAXHOSTNAMELEN 64
 #endif
 
 #endif /* rpc/types.h */

@@ -12,8 +12,8 @@
 #define __WLAN_H__
 
 #include <rtthread.h>
-#include <wlan_dev.h>
 #include <wlan_cfg.h>
+#include <wlan_dev.h>
 #include <wlan_mgnt.h>
 #include <wlan_prot.h>
 #include <wlan_workqueue.h>

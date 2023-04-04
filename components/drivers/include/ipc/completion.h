@@ -15,17 +15,16 @@
  * Completion
  */
 
-struct rt_completion
-{
-    rt_uint32_t flag;
+struct rt_completion {
+  rt_uint32_t flag;
 
-    /* suspended list */
-    rt_list_t suspended_list;
+  /* suspended list */
+  rt_list_t suspended_list;
 };
 
 void rt_completion_init(struct rt_completion *completion);
 rt_err_t rt_completion_wait(struct rt_completion *completion,
-                            rt_int32_t            timeout);
+                            rt_int32_t timeout);
 void rt_completion_done(struct rt_completion *completion);
 
 #endif

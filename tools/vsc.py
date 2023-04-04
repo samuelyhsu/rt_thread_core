@@ -58,7 +58,8 @@ def GenerateCFiles(env):
         includePath = []
         for i in info['CPPPATH']:
             if i[0] == '\"' and i[len(i) - 2:len(i)] == '\",':
-                includePath.append(_make_path_relative(os.getcwd(), i[1:len(i) - 2]))
+                includePath.append(_make_path_relative(
+                    os.getcwd(), i[1:len(i) - 2]))
             else:
                 includePath.append(_make_path_relative(os.getcwd(), i))
         config_obj['includePath'] = includePath
@@ -70,6 +71,7 @@ def GenerateCFiles(env):
         vsc_file.close()
 
     return
+
 
 def GenerateVSCode(env):
     print('Update setting files for VSCode...')

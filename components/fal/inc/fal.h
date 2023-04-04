@@ -11,9 +11,9 @@
 #ifndef _FAL_H_
 #define _FAL_H_
 
-#include <rtconfig.h>
-#include <fal_cfg.h>
 #include "fal_def.h"
+#include <fal_cfg.h>
+#include <rtconfig.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,7 +60,8 @@ const struct fal_partition *fal_get_partition_table(size_t *len);
 
 /**
  * set partition table temporarily
- * This setting will modify the partition table temporarily, the setting will be lost after restart.
+ * This setting will modify the partition table temporarily, the setting will be
+ * lost after restart.
  *
  * @param table partition table
  * @param len partition table length
@@ -78,7 +79,8 @@ void fal_set_partition_table_temp(struct fal_partition *table, size_t len);
  * @return >= 0: successful read data size
  *           -1: error
  */
-int fal_partition_read(const struct fal_partition *part, uint32_t addr, uint8_t *buf, size_t size);
+int fal_partition_read(const struct fal_partition *part, uint32_t addr,
+                       uint8_t *buf, size_t size);
 
 /**
  * write data to partition
@@ -91,7 +93,8 @@ int fal_partition_read(const struct fal_partition *part, uint32_t addr, uint8_t 
  * @return >= 0: successful write data size
  *           -1: error
  */
-int fal_partition_write(const struct fal_partition *part, uint32_t addr, const uint8_t *buf, size_t size);
+int fal_partition_write(const struct fal_partition *part, uint32_t addr,
+                        const uint8_t *buf, size_t size);
 
 /**
  * erase partition data
@@ -103,7 +106,8 @@ int fal_partition_write(const struct fal_partition *part, uint32_t addr, const u
  * @return >= 0: successful erased data size
  *           -1: error
  */
-int fal_partition_erase(const struct fal_partition *part, uint32_t addr, size_t size);
+int fal_partition_erase(const struct fal_partition *part, uint32_t addr,
+                        size_t size);
 
 /**
  * erase partition all data

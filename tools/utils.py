@@ -26,6 +26,7 @@ import sys
 import os
 import re
 
+
 def splitall(loc):
     """
     Return a list of the path components in loc. (Used by relpath_).
@@ -47,6 +48,7 @@ def splitall(loc):
     parts.append(loc)
     parts.reverse()
     return parts
+
 
 def _make_path_relative(origin, dest):
     """
@@ -90,6 +92,7 @@ def _make_path_relative(origin, dest):
         # return os.path.join(*segments).replace('\\', '/')
         return os.path.join(*segments)
 
+
 def xml_indent(elem, level=0):
     i = "\n" + level*"  "
     if len(elem):
@@ -109,16 +112,17 @@ def xml_indent(elem, level=0):
 source_ext = ["c", "h", "s", "S", "cpp", "xpm"]
 source_list = []
 
+
 def walk_children(child):
     global source_list
     global source_ext
 
     # print child
     full_path = child.rfile().abspath
-    file_type_list  = full_path.rsplit('.',1)
-    #print file_type
+    file_type_list = full_path.rsplit('.', 1)
+    # print file_type
     if (len(file_type_list) > 1):
-        file_type = full_path.rsplit('.',1)[1]
+        file_type = full_path.rsplit('.', 1)[1]
 
         if file_type in source_ext:
             if full_path not in source_list:
@@ -128,6 +132,7 @@ def walk_children(child):
     if children != []:
         for item in children:
             walk_children(item)
+
 
 def PrefixPath(prefix, path):
     path = os.path.abspath(path)
@@ -141,6 +146,7 @@ def PrefixPath(prefix, path):
         return True
 
     return False
+
 
 def ListMap(l):
     ret_list = []
@@ -156,6 +162,7 @@ def ListMap(l):
 
     return ret_list
 
+
 def TargetGetList(env, postfix):
     global source_ext
     global source_list
@@ -170,17 +177,18 @@ def TargetGetList(env, postfix):
 
     return source_list
 
+
 def ProjectInfo(env):
 
-    project  = env['project']
+    project = env['project']
     RTT_ROOT = env['RTT_ROOT']
     BSP_ROOT = env['BSP_ROOT']
 
-    FILES       = []
-    DIRS        = []
-    HEADERS     = []
-    CPPPATH     = []
-    CPPDEFINES  = []
+    FILES = []
+    DIRS = []
+    HEADERS = []
+    CPPPATH = []
+    CPPDEFINES = []
 
     for group in project:
         # get each files
@@ -239,16 +247,17 @@ def ProjectInfo(env):
         CPPDEFINES.sort()
 
     proj = {}
-    proj['FILES']       = FILES
-    proj['DIRS']        = DIRS
-    proj['HEADERS']     = HEADERS
-    proj['CPPPATH']     = CPPPATH
-    proj['CPPDEFINES']  = CPPDEFINES
+    proj['FILES'] = FILES
+    proj['DIRS'] = DIRS
+    proj['HEADERS'] = HEADERS
+    proj['CPPPATH'] = CPPPATH
+    proj['CPPDEFINES'] = CPPDEFINES
 
     return proj
 
+
 def VersionCmp(ver1, ver2):
-    la=[]
+    la = []
     if ver1:
         la = re.split("[. ]", ver1)
     lb = re.split("[. ]", ver2)
@@ -273,6 +282,7 @@ def VersionCmp(ver1, ver2):
                 return -1
     return 0
 
+
 def GCCC99Patch(cflags):
     import building
     gcc_version = building.GetDepend('GCC_VERSION_STR')
@@ -283,6 +293,7 @@ def GCCC99Patch(cflags):
         cflags = cflags.replace('-std=c99', '')
 
     return cflags
+
 
 def ReloadModule(module):
     import sys

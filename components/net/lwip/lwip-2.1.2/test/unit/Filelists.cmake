@@ -5,7 +5,7 @@
 #
 # This file is NOT designed (on purpose) to be used as cmake
 # subdir via add_subdirectory()
-# The intention is to provide greater flexibility to users to 
+# The intention is to provide greater flexibility to users to
 # create their own targets using the *_SRCS variables.
 
 set(LWIP_TESTDIR ${LWIP_DIR}/test/unit)

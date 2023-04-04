@@ -3,11 +3,13 @@
 在`examples`文件夹中存放`bcm2711-rpi-4-b.dtb`和`vexpress-v2p-ca9.dtb`可供测试，如果系统可以从bootloader或其他方式获取到bsp本身的dtb，也可以通过修改示例程序进行测试
 
 ## fdt_dump
+
 ```bash
 fdt_dump vexpress-v2p-ca9.dtb
 ```
 
-####  示例结果 ####
+#### 示例结果 ####
+
 ```bash
 /dts-v1/;
 
@@ -47,11 +49,13 @@ fdt_dump vexpress-v2p-ca9.dtb
 ```
 
 ## fdt_test
+
 ```bash
 fdt_test
 ```
 
-####  示例结果 ####
+#### 示例结果 ####
+
 ```bash
 name = uart@9000
 reg = <0x9000,0x1000>;

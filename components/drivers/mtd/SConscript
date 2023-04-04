@@ -16,6 +16,6 @@ if GetDepend(['RT_USING_MTD_NAND']):
     depend += ['RT_USING_MTD_NAND']
 
 if src:
-    group = DefineGroup('DeviceDrivers', src, depend = depend, CPPPATH = CPPPATH)
+    group = DefineGroup('DeviceDrivers', src, depend=depend, CPPPATH=CPPPATH)
 
 Return('group')

@@ -2,7 +2,7 @@
 
 ## 软件包地址
 
-- https://gitee.com/GuEe_GUI/fdt
+- <https://gitee.com/GuEe_GUI/fdt>
 
 ## 文档列表
 

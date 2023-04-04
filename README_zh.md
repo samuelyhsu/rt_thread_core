@@ -25,16 +25,11 @@ RT-Thread是一个集实时操作系统（RTOS）内核、中间件组件的物�
 
 ![architecturezh](./documentation/figures/architecturezh.png)
 
-
-
 - 内核层：RT-Thread内核，是 RT-Thread的核心部分，包括了内核系统中对象的实现，例如多线程及其调度、信号量、邮箱、消息队列、内存管理、定时器等；libcpu/BSP（芯片移植相关文件 / 板级支持包）与硬件密切相关，由外设驱动和 CPU 移植构成。
 
 - 组件与服务层：组件是基于 RT-Thread内核之上的上层软件，例如虚拟文件系统、FinSH命令行界面、网络框架、设备框架等。采用模块化设计，做到组件内部高内聚，组件之间低耦合。
 
-
 - RT-Thread软件包：运行于 RT-Thread物联网操作系统平台上，面向不同应用领域的通用软件组件，由描述信息、源代码或库文件组成。RT-Thread提供了开放的软件包平台，这里存放了官方提供或开发者提供的软件包，该平台为开发者提供了众多可重用软件包的选择，这也是 RT-Thread生态的重要组成部分。软件包生态对于一个操作系统的选择至关重要，因为这些软件包具有很强的可重用性，模块化程度很高，极大的方便应用开发者在最短时间内，打造出自己想要的系统。RT-Thread已经支持的软件包数量已经达到450+。
-
-
 
 ## RT-Thread的特点
 
@@ -49,7 +44,6 @@ RT-Thread是一个集实时操作系统（RTOS）内核、中间件组件的物�
 - 强大，支持高性能应用。
 
 - 跨平台、芯片支持广泛。
-
 
 ## **代码目录**
 
@@ -73,7 +67,6 @@ Env 是RT-Thread推出的开发辅助工具，针对基于RT-Thread操作系统�
 [下载 Env 工具](https://www.rt-thread.org/page/download.html)
 
 [Env 用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
-
 
 # 资源文档
 
@@ -99,7 +92,6 @@ RT-Thread RTOS 支持许多架构，并且已经涵盖了当前应用中的主�
 - C-Sky
 - x86
 
-
 ## **支持的 IDE 和编译器**
 
 RT-Thread主要支持的IDE/编译器包括：
@@ -116,9 +108,7 @@ RT-Thread主要支持的IDE/编译器包括：
 
 RT-Thread Studio演示：
 
-
 ![studiozh](./documentation/figures/studiozh.gif)
-
 
 ## **快速上手**
 
@@ -127,7 +117,6 @@ RT-Thread BSP可以直接编译并下载到相应的开发板使用。此外，R
 [QEMU 入门指南(Windows)](documentation/quick-start/quick_start_qemu/quick_start_qemu.md)
 
 [QEMU 入门指南(Ubuntu)](documentation/quick-start/quick_start_qemu/quick_start_qemu_linux.md)
-
 
 ## 文档
 
@@ -171,12 +160,11 @@ RT-Thread微信公众号：
 
 ![qrcode](./documentation/figures/qrcode.jpg)
 
-
 # 贡献代码
 
 如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/githubd)。
 
-## 感谢以下小伙伴对本仓库的贡献！
+## 感谢以下小伙伴对本仓库的贡献
 
 <a href="https://github.com/RT-Thread/rt-thread/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=RT-Thread/rt-thread" />

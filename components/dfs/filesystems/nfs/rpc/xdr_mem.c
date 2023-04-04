@@ -50,123 +50,106 @@ static char sccsid[] = "@(#)xdr_mem.c 1.19 87/08/11 Copyr 1984 Sun Micro";
  *
  */
 
+#include <limits.h>
 #include <rpc/types.h>
 #include <rpc/xdr.h>
 #include <string.h>
-#include <limits.h>
 
-static bool_t xdrmem_getlong (XDR *, long *);
-static bool_t xdrmem_putlong (XDR *, const long *);
-static bool_t xdrmem_getbytes (XDR *, char *, unsigned int);
-static bool_t xdrmem_putbytes (XDR *, const char *, unsigned int);
-static unsigned int xdrmem_getpos (const XDR *);
-static bool_t xdrmem_setpos (XDR *, unsigned int);
-static int32_t *xdrmem_inline (XDR *, unsigned int);
-static void xdrmem_destroy (XDR *);
+static bool_t xdrmem_getlong(XDR *, long *);
+static bool_t xdrmem_putlong(XDR *, const long *);
+static bool_t xdrmem_getbytes(XDR *, char *, unsigned int);
+static bool_t xdrmem_putbytes(XDR *, const char *, unsigned int);
+static unsigned int xdrmem_getpos(const XDR *);
+static bool_t xdrmem_setpos(XDR *, unsigned int);
+static int32_t *xdrmem_inline(XDR *, unsigned int);
+static void xdrmem_destroy(XDR *);
 
-static struct xdr_ops xdrmem_ops = {
-    xdrmem_getlong,
-    xdrmem_putlong,
-    xdrmem_getbytes,
-    xdrmem_putbytes,
-    xdrmem_getpos,
-    xdrmem_setpos,
-    xdrmem_inline,
-    xdrmem_destroy,
-    NULL,
-    NULL
-};
-
+static struct xdr_ops xdrmem_ops = {xdrmem_getlong,
+                                    xdrmem_putlong,
+                                    xdrmem_getbytes,
+                                    xdrmem_putbytes,
+                                    xdrmem_getpos,
+                                    xdrmem_setpos,
+                                    xdrmem_inline,
+                                    xdrmem_destroy,
+                                    NULL,
+                                    NULL};
 
 /*
  * The procedure xdrmem_create initializes a stream descriptor for a
  * memory buffer.
  */
-void
-xdrmem_create (XDR *xdrs, const char* addr, unsigned int size, enum xdr_op op)
-{
-    xdrs->x_op = op;
-    xdrs->x_ops = &xdrmem_ops;
-    xdrs->x_private = xdrs->x_base = (char*)addr;
-    xdrs->x_handy = size;
+void xdrmem_create(XDR *xdrs, const char *addr, unsigned int size,
+                   enum xdr_op op) {
+  xdrs->x_op = op;
+  xdrs->x_ops = &xdrmem_ops;
+  xdrs->x_private = xdrs->x_base = (char *)addr;
+  xdrs->x_handy = size;
 }
 
-static void
-xdrmem_destroy (XDR *xdrs)
-{
-}
+static void xdrmem_destroy(XDR *xdrs) {}
 
-static bool_t
-xdrmem_getlong (XDR *xdrs, long *lp)
-{
-  if (xdrs->x_handy < 4) return FALSE;
+static bool_t xdrmem_getlong(XDR *xdrs, long *lp) {
+  if (xdrs->x_handy < 4)
+    return FALSE;
   xdrs->x_handy -= 4;
 
-  *lp = (int32_t) ntohl((*((int32_t *) (xdrs->x_private))));
+  *lp = (int32_t)ntohl((*((int32_t *)(xdrs->x_private))));
   xdrs->x_private += 4;
   return TRUE;
 }
 
-static bool_t
-xdrmem_putlong (XDR *xdrs, const long *lp)
-{
-  if (xdrs->x_handy < 4) return FALSE;
+static bool_t xdrmem_putlong(XDR *xdrs, const long *lp) {
+  if (xdrs->x_handy < 4)
+    return FALSE;
   xdrs->x_handy -= 4;
 
-  *(int32_t *) xdrs->x_private = htonl(*lp);
+  *(int32_t *)xdrs->x_private = htonl(*lp);
   xdrs->x_private += 4;
   return (TRUE);
 }
 
-static bool_t
-xdrmem_getbytes (XDR *xdrs, char *addr, unsigned int len)
-{
-  if (xdrs->x_handy < len) return FALSE;
+static bool_t xdrmem_getbytes(XDR *xdrs, char *addr, unsigned int len) {
+  if (xdrs->x_handy < len)
+    return FALSE;
   xdrs->x_handy -= len;
   memmove(addr, xdrs->x_private, len);
   xdrs->x_private += len;
   return TRUE;
 }
 
-static bool_t
-xdrmem_putbytes (XDR *xdrs, const char *addr, unsigned int len)
-{
-  if (xdrs->x_handy < len) return FALSE;
+static bool_t xdrmem_putbytes(XDR *xdrs, const char *addr, unsigned int len) {
+  if (xdrs->x_handy < len)
+    return FALSE;
   xdrs->x_handy -= len;
   memmove(xdrs->x_private, addr, len);
   xdrs->x_private += len;
   return (TRUE);
 }
 
-static unsigned int xdrmem_getpos (const XDR *xdrs)
-{
-    return ((unsigned long) xdrs->x_private - (unsigned long) xdrs->x_base);
+static unsigned int xdrmem_getpos(const XDR *xdrs) {
+  return ((unsigned long)xdrs->x_private - (unsigned long)xdrs->x_base);
 }
 
-static bool_t xdrmem_setpos(XDR *xdrs, unsigned int pos)
-{
-  register char* newaddr = xdrs->x_base + pos;
-  register char* lastaddr = xdrs->x_private + xdrs->x_handy;
+static bool_t xdrmem_setpos(XDR *xdrs, unsigned int pos) {
+  register char *newaddr = xdrs->x_base + pos;
+  register char *lastaddr = xdrs->x_private + xdrs->x_handy;
 
-  if ((long) newaddr > (long) lastaddr
-      || (UINT_MAX < LONG_MAX
-          && (long) UINT_MAX < (long) lastaddr - (long) newaddr))
-      return (FALSE);
+  if ((long)newaddr > (long)lastaddr ||
+      (UINT_MAX < LONG_MAX && (long)UINT_MAX < (long)lastaddr - (long)newaddr))
+    return (FALSE);
   xdrs->x_private = newaddr;
-  xdrs->x_handy = (long) lastaddr - (long) newaddr;
+  xdrs->x_handy = (long)lastaddr - (long)newaddr;
   return (TRUE);
 }
 
-static int32_t *
-xdrmem_inline (XDR *xdrs, unsigned int len)
-{
-    int32_t *buf = 0;
+static int32_t *xdrmem_inline(XDR *xdrs, unsigned int len) {
+  int32_t *buf = 0;
 
-    if (xdrs->x_handy >= len) {
-        xdrs->x_handy -= len;
-        buf = (int32_t *) xdrs->x_private;
-        xdrs->x_private += len;
-    }
-    return (buf);
+  if (xdrs->x_handy >= len) {
+    xdrs->x_handy -= len;
+    buf = (int32_t *)xdrs->x_private;
+    xdrs->x_private += len;
+  }
+  return (buf);
 }
-

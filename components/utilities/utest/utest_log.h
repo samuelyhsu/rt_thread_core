@@ -18,15 +18,15 @@
 #undef DBG_TAG
 #undef DBG_LVL
 
-#define DBG_TAG              "testcase"
+#define DBG_TAG "testcase"
 #ifdef UTEST_DEBUG
-#define DBG_LVL              DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LVL              DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif
 #include <rtdbg.h>
 
-#define UTEST_LOG_ALL    (1u)
+#define UTEST_LOG_ALL (1u)
 #define UTEST_LOG_ASSERT (2u)
 
 void utest_log_lv_set(rt_uint8_t lv);

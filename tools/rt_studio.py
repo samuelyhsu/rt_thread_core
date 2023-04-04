@@ -275,7 +275,8 @@ def gen_org_eclipse_core_runtime_prefs(output_file_path):
 
 
 def gen_cproject_file(output_file_path):
-    template_file_path = os.path.join(os.path.dirname(output_file_path), "template.cproject")
+    template_file_path = os.path.join(
+        os.path.dirname(output_file_path), "template.cproject")
     if os.path.exists(template_file_path):
         try:
             shutil.copy(template_file_path, output_file_path)

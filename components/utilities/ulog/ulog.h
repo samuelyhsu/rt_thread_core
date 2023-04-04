@@ -11,8 +11,8 @@
 #ifndef _ULOG_H_
 #define _ULOG_H_
 
-#include <rtthread.h>
 #include "ulog_def.h"
+#include <rtthread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,7 +29,8 @@ void ulog_deinit(void);
 /*
  * output different level log by LOG_X API
  *
- * NOTE: The `LOG_TAG` and `LOG_LVL` must be defined before including the <ulog.h> when you want to use LOG_X API.
+ * NOTE: The `LOG_TAG` and `LOG_LVL` must be defined before including the
+ * <ulog.h> when you want to use LOG_X API.
  *
  * #define LOG_TAG              "example"
  * #define LOG_LVL              LOG_LVL_DBG
@@ -40,19 +41,21 @@ void ulog_deinit(void);
  * LOG_D("this is a debug log!");
  * LOG_E("this is a error log!");
  */
-#define LOG_E(...)                      ulog_e(LOG_TAG, __VA_ARGS__)
-#define LOG_W(...)                      ulog_w(LOG_TAG, __VA_ARGS__)
-#define LOG_I(...)                      ulog_i(LOG_TAG, __VA_ARGS__)
-#define LOG_D(...)                      ulog_d(LOG_TAG, __VA_ARGS__)
-#define LOG_RAW(...)                    ulog_raw(__VA_ARGS__)
+#define LOG_E(...) ulog_e(LOG_TAG, __VA_ARGS__)
+#define LOG_W(...) ulog_w(LOG_TAG, __VA_ARGS__)
+#define LOG_I(...) ulog_i(LOG_TAG, __VA_ARGS__)
+#define LOG_D(...) ulog_d(LOG_TAG, __VA_ARGS__)
+#define LOG_RAW(...) ulog_raw(__VA_ARGS__)
 #define LOG_HEX(name, width, buf, size) ulog_hex(name, width, buf, size)
 
 /*
  * backend register and unregister
  */
-rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool_t support_color);
+rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name,
+                               rt_bool_t support_color);
 rt_err_t ulog_backend_unregister(ulog_backend_t backend);
-rt_err_t ulog_backend_set_filter(ulog_backend_t backend, ulog_backend_filter_t filter);
+rt_err_t ulog_backend_set_filter(ulog_backend_t backend,
+                                 ulog_backend_filter_t filter);
 ulog_backend_t ulog_backend_find(const char *name);
 
 #ifdef ULOG_USING_FILTER
@@ -87,12 +90,14 @@ rt_err_t ulog_async_waiting_log(rt_int32_t time);
 /*
  * dump the hex format data to log
  */
-void ulog_hexdump(const char *tag, rt_size_t width, const rt_uint8_t *buf, rt_size_t size, ...);
+void ulog_hexdump(const char *tag, rt_size_t width, const rt_uint8_t *buf,
+                  rt_size_t size, ...);
 
 /*
  * Another log output API. This API is more difficult to use than LOG_X API.
  */
-void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *format, ...);
+void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline,
+                 const char *format, ...);
 void ulog_raw(const char *format, ...);
 
 #ifdef __cplusplus

@@ -15,14 +15,13 @@
 
 namespace rtthread {
 
-class Lock
-{
+class Lock {
 public:
-    Lock(Mutex& mutex) : m(mutex) {m.lock();}
-    ~Lock() {m.unlock();}
+  Lock(Mutex &mutex) : m(mutex) { m.lock(); }
+  ~Lock() { m.unlock(); }
 
 protected:
-    Mutex &m;
+  Mutex &m;
 };
 
-}
+} // namespace rtthread

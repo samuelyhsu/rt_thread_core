@@ -31,6 +31,7 @@ from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
 from utils import xml_indent
 
+
 def SDKAddGroup(ProjectFiles, parent, name, files, project_path):
     # don't add an empty group
     if len(files) == 0:
@@ -51,6 +52,7 @@ def SDKAddGroup(ProjectFiles, parent, name, files, project_path):
 
     return group
 
+
 def _CDKProject(tree, target, script):
 
     project_path = os.path.dirname(os.path.abspath(target))
@@ -70,7 +72,8 @@ def _CDKProject(tree, target, script):
             root.remove(child)
 
     for group in script:
-        group_tree = SDKAddGroup(ProjectFiles, root, group['name'], group['src'], project_path)
+        group_tree = SDKAddGroup(
+            ProjectFiles, root, group['name'], group['src'], project_path)
 
         # get each include path
         if 'CPPPATH' in group and group['CPPPATH']:
@@ -103,7 +106,8 @@ def _CDKProject(tree, target, script):
         # todo: cdk add lib
 
     # write include path, definitions and link flags
-    text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH])
+    text = ';'.join([_make_path_relative(
+        project_path, os.path.normpath(i)) for i in CPPPATH])
     IncludePath = tree.find('BuildConfigs/BuildConfig/Compiler/IncludePath')
     IncludePath.text = text
     IncludePath = tree.find('BuildConfigs/BuildConfig/Asm/IncludePath')
@@ -121,6 +125,7 @@ def _CDKProject(tree, target, script):
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8'))
     out.close()
+
 
 def CDKProject(target, script):
     template_tree = etree.parse('template.cdkproj')

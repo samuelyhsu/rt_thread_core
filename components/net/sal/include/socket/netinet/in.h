@@ -14,7 +14,7 @@
 #include <sys/socket.h>
 
 #ifndef IN6_IS_ADDR_MULTICAST
-#define IN6_IS_ADDR_MULTICAST(a) (((uint8_t *) (a))[0] == 0xff)
+#define IN6_IS_ADDR_MULTICAST(a) (((uint8_t *)(a))[0] == 0xff)
 #endif
 
 #endif

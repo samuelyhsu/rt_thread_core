@@ -10,6 +10,6 @@ if GetDepend('RT_USING_VMM_RFS'):
 
 CPPPATH = [cwd, os.path.join(cwd, 'share_hdr')]
 
-group = DefineGroup('VMM', src, depend = ['RT_USING_VMM'], CPPPATH = CPPPATH)
+group = DefineGroup('VMM', src, depend=['RT_USING_VMM'], CPPPATH=CPPPATH)
 
 Return('group')

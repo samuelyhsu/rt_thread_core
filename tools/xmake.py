@@ -38,7 +38,8 @@ class XmakeProject:
         for group in self.project:
             for f in group['src']:
                 # use relative path
-                path = _make_path_relative(os.getcwd(), os.path.normpath(f.rfile().abspath))
+                path = _make_path_relative(
+                    os.getcwd(), os.path.normpath(f.rfile().abspath))
                 self.src_path += "\t\"{0}\",\n".format(path.replace("\\", "/"))
         self.src_path = self.src_path[:-2]
         # 2. config dir path
@@ -51,7 +52,8 @@ class XmakeProject:
         self.cflags = rtconfig.CFLAGS.replace('\\', "/").replace('\"', "\\\"")
         # 4. config cxxflags
         if 'CXXFLAGS' in dir(rtconfig):
-            self.cxxflags = rtconfig.CXXFLAGS.replace('\\', "/").replace('\"', "\\\"")
+            self.cxxflags = rtconfig.CXXFLAGS.replace(
+                '\\', "/").replace('\"', "\\\"")
         else:
             self.cxxflags = self.cflags
         # 5. config asflags
@@ -80,7 +82,7 @@ class XmakeProject:
             f.write(data)
 
 
-def XMakeProject(env,project):
+def XMakeProject(env, project):
     print('Update setting files for xmake.lua...')
 
     xmake_project = XmakeProject(env, project)

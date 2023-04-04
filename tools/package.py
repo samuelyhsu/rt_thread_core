@@ -26,6 +26,7 @@
 import os
 from building import *
 
+
 def ExtendPackageVar(package, var):
     v = []
     if var not in package:
@@ -35,6 +36,7 @@ def ExtendPackageVar(package, var):
         v = v + [item]
 
     return v
+
 
 def BuildPackage(package):
     import json
@@ -69,6 +71,7 @@ def BuildPackage(package):
 
     CPPDEFINES = ExtendPackageVar(package, 'CPPDEFINES')
 
-    objs = DefineGroup(package['name'], src, depend = depend, CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+    objs = DefineGroup(package['name'], src, depend=depend,
+                       CPPPATH=CPPPATH, CPPDEFINES=CPPDEFINES)
 
     return objs

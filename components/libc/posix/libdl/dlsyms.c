@@ -8,12 +8,12 @@
  * 2017/10/15     bernard      the first version
  */
 
-#include <rtthread.h>
 #include <rtm.h>
+#include <rtthread.h>
 
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 RTM_EXPORT(strcpy);
 RTM_EXPORT(strncpy);

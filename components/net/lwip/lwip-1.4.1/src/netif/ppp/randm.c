@@ -1,35 +1,35 @@
 /*****************************************************************************
-* randm.c - Random number generator program file.
-*
-* Copyright (c) 2003 by Marc Boucher, Services Informatiques (MBSI) inc.
-* Copyright (c) 1998 by Global Election Systems Inc.
-*
-* The authors hereby grant permission to use, copy, modify, distribute,
-* and license this software and its documentation for any purpose, provided
-* that existing copyright notices are retained in all copies and that this
-* notice and the following disclaimer are included verbatim in any 
-* distributions. No written agreement, license, or royalty fee is required
-* for any of the authorized uses.
-*
-* THIS SOFTWARE IS PROVIDED BY THE CONTRIBUTORS *AS IS* AND ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-* IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-* INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-* NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-* THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-******************************************************************************
-* REVISION HISTORY
-*
-* 03-01-01 Marc Boucher <marc@mbsi.ca>
-*   Ported to lwIP.
-* 98-06-03 Guy Lancaster <lancasterg@acm.org>, Global Election Systems Inc.
-*   Extracted from avos.
-*****************************************************************************/
+ * randm.c - Random number generator program file.
+ *
+ * Copyright (c) 2003 by Marc Boucher, Services Informatiques (MBSI) inc.
+ * Copyright (c) 1998 by Global Election Systems Inc.
+ *
+ * The authors hereby grant permission to use, copy, modify, distribute,
+ * and license this software and its documentation for any purpose, provided
+ * that existing copyright notices are retained in all copies and that this
+ * notice and the following disclaimer are included verbatim in any
+ * distributions. No written agreement, license, or royalty fee is required
+ * for any of the authorized uses.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE CONTRIBUTORS *AS IS* AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ ******************************************************************************
+ * REVISION HISTORY
+ *
+ * 03-01-01 Marc Boucher <marc@mbsi.ca>
+ *   Ported to lwIP.
+ * 98-06-03 Guy Lancaster <lancasterg@acm.org>, Global Election Systems Inc.
+ *   Extracted from avos.
+ *****************************************************************************/
 
 #include "lwip/opt.h"
 
@@ -43,15 +43,14 @@
 
 #include <string.h>
 
-#if MD5_SUPPORT /* this module depends on MD5 */
-#define RANDPOOLSZ 16   /* Bytes stored in the pool of randomness. */
+#if MD5_SUPPORT       /* this module depends on MD5 */
+#define RANDPOOLSZ 16 /* Bytes stored in the pool of randomness. */
 
 /*****************************/
 /*** LOCAL DATA STRUCTURES ***/
 /*****************************/
-static char randPool[RANDPOOLSZ];   /* Pool of randomness. */
-static long randCount = 0;      /* Pseudo-random incrementer */
-
+static char randPool[RANDPOOLSZ]; /* Pool of randomness. */
+static long randCount = 0;        /* Pseudo-random incrementer */
 
 /***********************************/
 /*** PUBLIC FUNCTION DEFINITIONS ***/
@@ -64,11 +63,7 @@ static long randCount = 0;      /* Pseudo-random incrementer */
  *  real-time clock.  We'll accumulate more randomness as soon
  *  as things start happening.
  */
-void
-avRandomInit()
-{
-  avChurnRand(NULL, 0);
-}
+void avRandomInit() { avChurnRand(NULL, 0); }
 
 /*
  * Churn the randomness pool on a random event.  Call this early and often
@@ -80,9 +75,7 @@ avRandomInit()
  *
  * Ref: Applied Cryptography 2nd Ed. by Bruce Schneier p. 427
  */
-void
-avChurnRand(char *randData, u32_t randLen)
-{
+void avChurnRand(char *randData, u32_t randLen) {
   MD5_CTX md5;
 
   /* LWIP_DEBUGF(LOG_INFO, ("churnRand: %u@%P\n", randLen, randData)); */
@@ -100,7 +93,7 @@ avChurnRand(char *randData, u32_t randLen)
     MD5Update(&md5, (u_char *)&sysData, sizeof(sysData));
   }
   MD5Final((u_char *)randPool, &md5);
-/*  LWIP_DEBUGF(LOG_INFO, ("churnRand: -> 0\n")); */
+  /*  LWIP_DEBUGF(LOG_INFO, ("churnRand: -> 0\n")); */
 }
 
 /*
@@ -119,9 +112,7 @@ avChurnRand(char *randData, u32_t randLen)
  *  randCount each time?  Probably there is a weakness but I wish that
  *  it was documented.
  */
-void
-avGenRand(char *buf, u32_t bufLen)
-{
+void avGenRand(char *buf, u32_t bufLen) {
   MD5_CTX md5;
   u_char tmp[16];
   u32_t n;
@@ -142,9 +133,7 @@ avGenRand(char *buf, u32_t bufLen)
 /*
  * Return a new random number.
  */
-u32_t
-avRandom()
-{
+u32_t avRandom() {
   u32_t newRand;
 
   avGenRand((char *)&newRand, sizeof(newRand));
@@ -157,9 +146,8 @@ avRandom()
 /*****************************/
 /*** LOCAL DATA STRUCTURES ***/
 /*****************************/
-static int  avRandomized = 0;       /* Set when truely randomized. */
-static u32_t avRandomSeed = 0;      /* Seed used for random number generation. */
-
+static int avRandomized = 0;   /* Set when truely randomized. */
+static u32_t avRandomSeed = 0; /* Seed used for random number generation. */
 
 /***********************************/
 /*** PUBLIC FUNCTION DEFINITIONS ***/
@@ -178,9 +166,7 @@ static u32_t avRandomSeed = 0;      /* Seed used for random number generation. *
  * operational.  Thus we call it again on the first random
  * event.
  */
-void
-avRandomInit()
-{
+void avRandomInit() {
 #if 0
   /* Get a pointer into the last 4 bytes of clockBuf. */
   u32_t *lptr1 = (u32_t *)((char *)&clockBuf[3]);
@@ -213,9 +199,7 @@ avRandomInit()
  * value but we use the previous value to randomize the other 16
  * bits.
  */
-void
-avRandomize(void)
-{
+void avRandomize(void) {
   static u32_t last_jiffies;
 
   if (!avRandomized) {
@@ -233,16 +217,12 @@ avRandomize(void)
  * Return a new random number.
  * Here we use the Borland rand() function to supply a pseudo random
  * number which we make truely random by combining it with our own
- * seed which is randomized by truely random events. 
+ * seed which is randomized by truely random events.
  * Thus the numbers will be truely random unless there have been no
  * operator or network events in which case it will be pseudo random
  * seeded by the real time clock.
  */
-u32_t
-avRandom()
-{
-  return ((((u32_t)rand() << 16) + rand()) + avRandomSeed);
-}
+u32_t avRandom() { return ((((u32_t)rand() << 16) + rand()) + avRandomSeed); }
 
 #endif /* MD5_SUPPORT */
 

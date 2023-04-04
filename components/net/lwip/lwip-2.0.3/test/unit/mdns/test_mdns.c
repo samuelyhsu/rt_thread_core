@@ -2,8 +2,8 @@
  * Copyright (c) 2015 Verisure Innovation AB
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -15,14 +15,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -32,13 +32,13 @@
 
 #include "test_mdns.h"
 
-#include "lwip/pbuf.h"
 #include "lwip/apps/mdns.h"
 #include "lwip/apps/mdns_priv.h"
+#include "lwip/pbuf.h"
 
-START_TEST(readname_basic)
-{
-  static const u8_t data[] = { 0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0x00 };
+START_TEST(readname_basic) {
+  static const u8_t data[] = {0x05, 'm', 'u', 'l', 't', 'i',
+                              0x04, 'c', 'a', 's', 't', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -55,9 +55,9 @@ START_TEST(readname_basic)
 }
 END_TEST
 
-START_TEST(readname_anydata)
-{
-  static const u8_t data[] = { 0x05, 0x00, 0xFF, 0x08, 0xc0, 0x0f, 0x04, 0x7f, 0x80, 0x82, 0x88, 0x00 };
+START_TEST(readname_anydata) {
+  static const u8_t data[] = {0x05, 0x00, 0xFF, 0x08, 0xc0, 0x0f,
+                              0x04, 0x7f, 0x80, 0x82, 0x88, 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -74,9 +74,8 @@ START_TEST(readname_anydata)
 }
 END_TEST
 
-START_TEST(readname_short_buf)
-{
-  static const u8_t data[] = { 0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a' };
+START_TEST(readname_short_buf) {
+  static const u8_t data[] = {0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a'};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -91,17 +90,15 @@ START_TEST(readname_short_buf)
 }
 END_TEST
 
-START_TEST(readname_long_label)
-{
+START_TEST(readname_long_label) {
   static const u8_t data[] = {
-      0x05, 'm', 'u', 'l', 't', 'i',
-      0x52, 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a',
-      'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a',
-      'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a',
-      'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a',
-      'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a',
-      'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 0x00
-  };
+      0x05, 'm', 'u', 'l', 't', 'i', 0x52, 'a', 'a', 'a', 'a', 'a', 'a',
+      'a',  'a', 'a', 'a', 'a', 'a', 'a',  'a', 'a', 'a', 'a', 'a', 'a',
+      'a',  'a', 'a', 'a', 'a', 'a', 'a',  'a', 'a', 'a', 'a', 'a', 'a',
+      'a',  'a', 'a', 'a', 'a', 'a', 'a',  'a', 'a', 'a', 'a', 'a', 'a',
+      'a',  'a', 'a', 'a', 'a', 'a', 'a',  'a', 'a', 'a', 'a', 'a', 'a',
+      'a',  'a', 'a', 'a', 'a', 'a', 'a',  'a', 'a', 'a', 'a', 'a', 'a',
+      'a',  'a', 'a', 'a', 'a', 'a', 'a',  'a', 'a', 'a', 'a', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -116,48 +113,42 @@ START_TEST(readname_long_label)
 }
 END_TEST
 
-START_TEST(readname_overflow)
-{
+START_TEST(readname_overflow) {
   static const u8_t data[] = {
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x00
-  };
+      0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05,
+      'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',
+      'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',
+      'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',
+      't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',
+      'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',
+      0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04,
+      'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',
+      'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',
+      's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',
+      't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',
+      0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05,
+      'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',
+      'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',
+      'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',
+      't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',
+      'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',
+      0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04,
+      'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',
+      'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',
+      's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',
+      't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',
+      0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05,
+      'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',
+      'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',
+      'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',
+      't',  'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',
+      'i',  0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',
+      0x04, 'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04,
+      'c',  'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',
+      'a',  's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',
+      's',  't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',
+      't',  0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',
+      0x05, 'm',  'u',  'l',  't',  'i',  0x04, 'c',  'a',  's',  't',  0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -172,17 +163,19 @@ START_TEST(readname_overflow)
 }
 END_TEST
 
-START_TEST(readname_jump_earlier)
-{
-  static const u8_t data[] = {
-      /* Some padding needed, not supported to jump to bytes containing dns header */
-      /*  0 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      /* 10 */ 0x0f, 0x0e, 0x05, 'l', 'o', 'c', 'a', 'l', 0x00, 0xab,
-      /* 20 */ 0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0xc0, 0x0c
-  };
-  static const u8_t fullname[] = {
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0x05, 'l', 'o', 'c', 'a', 'l', 0x00
-  };
+START_TEST(readname_jump_earlier) {
+  static const u8_t data[] = {/* Some padding needed, not supported to jump to
+                                 bytes containing dns header */
+                              /*  0 */ 0x00, 0x00, 0x00, 0x00, 0x00,
+                              0x00,          0x00, 0x00, 0x00, 0x00,
+                              /* 10 */ 0x0f, 0x0e, 0x05, 'l',  'o',
+                              'c',           'a',  'l',  0x00, 0xab,
+                              /* 20 */ 0x05, 'm',  'u',  'l',  't',
+                              'i',           0x04, 'c',  'a',  's',
+                              't',           0xc0, 0x0c};
+  static const u8_t fullname[] = {0x05, 'm', 'u', 'l', 't', 'i',
+                                  0x04, 'c', 'a', 's', 't', 0x05,
+                                  'l',  'o', 'c', 'a', 'l', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -200,18 +193,16 @@ START_TEST(readname_jump_earlier)
 }
 END_TEST
 
-START_TEST(readname_jump_earlier_jump)
-{
+START_TEST(readname_jump_earlier_jump) {
   static const u8_t data[] = {
-      /* Some padding needed, not supported to jump to bytes containing dns header */
+      /* Some padding needed, not supported to jump to bytes containing dns
+         header */
       /* 0x00 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       /* 0x08 */ 0x00, 0x00, 0x00, 0x00, 0x03, 0x0b, 0x0a, 0xf2,
-      /* 0x10 */ 0x04, 'c', 'a', 's', 't', 0x00, 0xc0, 0x10,
-      /* 0x18 */ 0x05, 'm', 'u', 'l', 't', 'i', 0xc0, 0x16
-  };
-  static const u8_t fullname[] = {
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0x00
-  };
+      /* 0x10 */ 0x04, 'c',  'a',  's',  't',  0x00, 0xc0, 0x10,
+      /* 0x18 */ 0x05, 'm',  'u',  'l',  't',  'i',  0xc0, 0x16};
+  static const u8_t fullname[] = {0x05, 'm', 'u', 'l', 't', 'i',
+                                  0x04, 'c', 'a', 's', 't', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -229,23 +220,20 @@ START_TEST(readname_jump_earlier_jump)
 }
 END_TEST
 
-START_TEST(readname_jump_maxdepth)
-{
+START_TEST(readname_jump_maxdepth) {
   static const u8_t data[] = {
-      /* Some padding needed, not supported to jump to bytes containing dns header */
+      /* Some padding needed, not supported to jump to bytes containing dns
+         header */
       /* 0x00 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       /* 0x08 */ 0x00, 0x00, 0x00, 0x00, 0x03, 0x0b, 0x0a, 0xf2,
-      /* 0x10 */ 0x04, 'n', 'a', 'm', 'e', 0xc0, 0x27, 0x03,
-      /* 0x18 */ 0x03, 'd', 'n', 's', 0xc0, 0x10, 0xc0, 0x10,
-      /* 0x20 */ 0x04, 'd', 'e', 'e', 'p', 0xc0, 0x18, 0x00,
-      /* 0x28 */ 0x04, 'c', 'a', 's', 't', 0xc0, 0x20, 0xb0,
-      /* 0x30 */ 0x05, 'm', 'u', 'l', 't', 'i', 0xc0, 0x28
-  };
+      /* 0x10 */ 0x04, 'n',  'a',  'm',  'e',  0xc0, 0x27, 0x03,
+      /* 0x18 */ 0x03, 'd',  'n',  's',  0xc0, 0x10, 0xc0, 0x10,
+      /* 0x20 */ 0x04, 'd',  'e',  'e',  'p',  0xc0, 0x18, 0x00,
+      /* 0x28 */ 0x04, 'c',  'a',  's',  't',  0xc0, 0x20, 0xb0,
+      /* 0x30 */ 0x05, 'm',  'u',  'l',  't',  'i',  0xc0, 0x28};
   static const u8_t fullname[] = {
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't',
-      0x04, 'd', 'e', 'e', 'p', 0x03, 'd', 'n', 's',
-      0x04, 'n', 'a', 'm', 'e', 0x00
-  };
+      0x05, 'm', 'u', 'l',  't', 'i', 0x04, 'c',  'a', 's', 't', 0x04, 'd',
+      'e',  'e', 'p', 0x03, 'd', 'n', 's',  0x04, 'n', 'a', 'm', 'e',  0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -263,15 +251,34 @@ START_TEST(readname_jump_maxdepth)
 }
 END_TEST
 
-START_TEST(readname_jump_later)
-{
-  static const u8_t data[] = {
-      /* 0x00 */ 0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0xc0, 0x10, 0x00, 0x01, 0x40,
-      /* 0x10 */ 0x05, 'l', 'o', 'c', 'a', 'l', 0x00, 0xab
-  };
-  static const u8_t fullname[] = {
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0x05, 'l', 'o', 'c', 'a', 'l', 0x00
-  };
+START_TEST(readname_jump_later) {
+  static const u8_t data[] = {/* 0x00 */ 0x05,
+                              'm',
+                              'u',
+                              'l',
+                              't',
+                              'i',
+                              0x04,
+                              'c',
+                              'a',
+                              's',
+                              't',
+                              0xc0,
+                              0x10,
+                              0x00,
+                              0x01,
+                              0x40,
+                              /* 0x10 */ 0x05,
+                              'l',
+                              'o',
+                              'c',
+                              'a',
+                              'l',
+                              0x00,
+                              0xab};
+  static const u8_t fullname[] = {0x05, 'm', 'u', 'l', 't', 'i',
+                                  0x04, 'c', 'a', 's', 't', 0x05,
+                                  'l',  'o', 'c', 'a', 'l', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -289,11 +296,9 @@ START_TEST(readname_jump_later)
 }
 END_TEST
 
-START_TEST(readname_half_jump)
-{
-  static const u8_t data[] = {
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0xc0
-  };
+START_TEST(readname_half_jump) {
+  static const u8_t data[] = {0x05, 'm', 'u', 'l', 't', 'i',
+                              0x04, 'c', 'a', 's', 't', 0xc0};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -308,11 +313,9 @@ START_TEST(readname_half_jump)
 }
 END_TEST
 
-START_TEST(readname_jump_toolong)
-{
-  static const u8_t data[] = {
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0xc2, 0x10, 0x00, 0x01, 0x40
-  };
+START_TEST(readname_jump_toolong) {
+  static const u8_t data[] = {0x05, 'm', 'u', 'l',  't',  'i',  0x04, 'c',
+                              'a',  's', 't', 0xc2, 0x10, 0x00, 0x01, 0x40};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -327,12 +330,12 @@ START_TEST(readname_jump_toolong)
 }
 END_TEST
 
-START_TEST(readname_jump_loop_label)
-{
-  static const u8_t data[] = {
-      /*  0 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      /* 10 */ 0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0xc0, 0x10
-  };
+START_TEST(readname_jump_loop_label) {
+  static const u8_t data[] = {/*  0 */ 0x00, 0x00, 0x00, 0x00, 0x00,
+                              0x00,          0x00, 0x00, 0x00, 0x00,
+                              /* 10 */ 0x05, 'm',  'u',  'l',  't',
+                              'i',           0x04, 'c',  'a',  's',
+                              't',           0xc0, 0x10};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -347,12 +350,12 @@ START_TEST(readname_jump_loop_label)
 }
 END_TEST
 
-START_TEST(readname_jump_loop_jump)
-{
-  static const u8_t data[] = {
-      /*  0 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      /* 10 */ 0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0xc0, 0x15
-  };
+START_TEST(readname_jump_loop_jump) {
+  static const u8_t data[] = {/*  0 */ 0x00, 0x00, 0x00, 0x00, 0x00,
+                              0x00,          0x00, 0x00, 0x00, 0x00,
+                              /* 10 */ 0x05, 'm',  'u',  'l',  't',
+                              'i',           0x04, 'c',  'a',  's',
+                              't',           0xc0, 0x15};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -367,9 +370,9 @@ START_TEST(readname_jump_loop_jump)
 }
 END_TEST
 
-START_TEST(add_label_basic)
-{
-  static const u8_t data[] = { 0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0x00 };
+START_TEST(add_label_basic) {
+  static const u8_t data[] = {0x05, 'm', 'u', 'l', 't', 'i',
+                              0x04, 'c', 'a', 's', 't', 0x00};
   struct mdns_domain domain;
   err_t res;
   LWIP_UNUSED_ARG(_i);
@@ -386,9 +389,10 @@ START_TEST(add_label_basic)
 }
 END_TEST
 
-START_TEST(add_label_long_label)
-{
-  static const char *toolong = "abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-";
+START_TEST(add_label_long_label) {
+  static const char *toolong = "abcdefghijklmnopqrstuvwxyz0123456789-"
+                               "abcdefghijklmnopqrstuvwxyz0123456789-"
+                               "abcdefghijklmnopqrstuvwxyz0123456789-";
   struct mdns_domain domain;
   err_t res;
   LWIP_UNUSED_ARG(_i);
@@ -401,8 +405,7 @@ START_TEST(add_label_long_label)
 }
 END_TEST
 
-START_TEST(add_label_full)
-{
+START_TEST(add_label_full) {
   static const char *label = "0123456789abcdef0123456789abcdef";
   struct mdns_domain domain;
   err_t res;
@@ -451,11 +454,9 @@ START_TEST(add_label_full)
 }
 END_TEST
 
-START_TEST(domain_eq_basic)
-{
-  static const u8_t data[] = {
-      0x05, 'm', 'u', 'l', 't', 'i', 0x04, 'c', 'a', 's', 't', 0x00
-  };
+START_TEST(domain_eq_basic) {
+  static const u8_t data[] = {0x05, 'm', 'u', 'l', 't', 'i',
+                              0x04, 'c', 'a', 's', 't', 0x00};
   struct mdns_domain domain1, domain2;
   err_t res;
   LWIP_UNUSED_ARG(_i);
@@ -481,8 +482,7 @@ START_TEST(domain_eq_basic)
 }
 END_TEST
 
-START_TEST(domain_eq_diff)
-{
+START_TEST(domain_eq_diff) {
   struct mdns_domain domain1, domain2;
   err_t res;
   LWIP_UNUSED_ARG(_i);
@@ -507,8 +507,7 @@ START_TEST(domain_eq_diff)
 }
 END_TEST
 
-START_TEST(domain_eq_case)
-{
+START_TEST(domain_eq_case) {
   struct mdns_domain domain1, domain2;
   err_t res;
   LWIP_UNUSED_ARG(_i);
@@ -533,30 +532,29 @@ START_TEST(domain_eq_case)
 }
 END_TEST
 
-START_TEST(domain_eq_anydata)
-{
-  static const u8_t data1[] = { 0x05, 0xcc, 0xdc, 0x00, 0xa0 };
-  static const u8_t data2[] = { 0x7f, 0x8c, 0x01, 0xff, 0xcf };
+START_TEST(domain_eq_anydata) {
+  static const u8_t data1[] = {0x05, 0xcc, 0xdc, 0x00, 0xa0};
+  static const u8_t data2[] = {0x7f, 0x8c, 0x01, 0xff, 0xcf};
   struct mdns_domain domain1, domain2;
   err_t res;
   LWIP_UNUSED_ARG(_i);
 
   memset(&domain1, 0, sizeof(domain1));
-  res = mdns_domain_add_label(&domain1, (const char*)data1, sizeof(data1));
+  res = mdns_domain_add_label(&domain1, (const char *)data1, sizeof(data1));
   fail_unless(res == ERR_OK);
   res = mdns_domain_add_label(&domain1, "cast", 4);
   fail_unless(res == ERR_OK);
-  res = mdns_domain_add_label(&domain1, (const char*)data2, sizeof(data2));
+  res = mdns_domain_add_label(&domain1, (const char *)data2, sizeof(data2));
   fail_unless(res == ERR_OK);
   res = mdns_domain_add_label(&domain1, NULL, 0);
   fail_unless(res == ERR_OK);
 
   memset(&domain2, 0, sizeof(domain2));
-  res = mdns_domain_add_label(&domain2, (const char*)data1, sizeof(data1));
+  res = mdns_domain_add_label(&domain2, (const char *)data1, sizeof(data1));
   fail_unless(res == ERR_OK);
   res = mdns_domain_add_label(&domain2, "casT", 4);
   fail_unless(res == ERR_OK);
-  res = mdns_domain_add_label(&domain2, (const char*)data2, sizeof(data2));
+  res = mdns_domain_add_label(&domain2, (const char *)data2, sizeof(data2));
   fail_unless(res == ERR_OK);
   res = mdns_domain_add_label(&domain2, NULL, 0);
   fail_unless(res == ERR_OK);
@@ -565,8 +563,7 @@ START_TEST(domain_eq_anydata)
 }
 END_TEST
 
-START_TEST(domain_eq_length)
-{
+START_TEST(domain_eq_length) {
   struct mdns_domain domain1, domain2;
   err_t res;
   LWIP_UNUSED_ARG(_i);
@@ -589,12 +586,9 @@ START_TEST(domain_eq_length)
 }
 END_TEST
 
-START_TEST(compress_full_match)
-{
-  static const u8_t data[] = {
-      0x00, 0x00,
-      0x06, 'f', 'o', 'o', 'b', 'a', 'r', 0x05, 'l', 'o', 'c', 'a', 'l', 0x00
-  };
+START_TEST(compress_full_match) {
+  static const u8_t data[] = {0x00, 0x00, 0x06, 'f', 'o', 'o', 'b', 'a',
+                              'r',  0x05, 'l',  'o', 'c', 'a', 'l', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -624,12 +618,10 @@ START_TEST(compress_full_match)
 }
 END_TEST
 
-START_TEST(compress_full_match_subset)
-{
-  static const u8_t data[] = {
-      0x00, 0x00,
-      0x02, 'g', 'o', 0x06, 'f', 'o', 'o', 'b', 'a', 'r', 0x05, 'l', 'o', 'c', 'a', 'l', 0x00
-  };
+START_TEST(compress_full_match_subset) {
+  static const u8_t data[] = {0x00, 0x00, 0x02, 'g', 'o', 0x06, 'f',
+                              'o',  'o',  'b',  'a', 'r', 0x05, 'l',
+                              'o',  'c',  'a',  'l', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -659,14 +651,48 @@ START_TEST(compress_full_match_subset)
 }
 END_TEST
 
-START_TEST(compress_full_match_jump)
-{
-  static const u8_t data[] = {
-    /* 0x00 */ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-               0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-    /* 0x10 */ 0x04, 'l', 'w', 'i', 'p', 0x05, 'l', 'o', 'c', 'a', 'l', 0x00, 0xc0, 0x00, 0x02, 0x00,
-    /* 0x20 */ 0x06, 'f', 'o', 'o', 'b', 'a', 'r', 0xc0, 0x15
-  };
+START_TEST(compress_full_match_jump) {
+  static const u8_t data[] = {/* 0x00 */ 0x00,
+                              0x01,
+                              0x02,
+                              0x03,
+                              0x04,
+                              0x05,
+                              0x06,
+                              0x07,
+                              0x08,
+                              0x09,
+                              0x0a,
+                              0x0b,
+                              0x0c,
+                              0x0d,
+                              0x0e,
+                              0x0f,
+                              /* 0x10 */ 0x04,
+                              'l',
+                              'w',
+                              'i',
+                              'p',
+                              0x05,
+                              'l',
+                              'o',
+                              'c',
+                              'a',
+                              'l',
+                              0x00,
+                              0xc0,
+                              0x00,
+                              0x02,
+                              0x00,
+                              /* 0x20 */ 0x06,
+                              'f',
+                              'o',
+                              'o',
+                              'b',
+                              'a',
+                              'r',
+                              0xc0,
+                              0x15};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -696,12 +722,10 @@ START_TEST(compress_full_match_jump)
 }
 END_TEST
 
-START_TEST(compress_no_match)
-{
-  static const u8_t data[] = {
-      0x00, 0x00,
-      0x04, 'l', 'w', 'i', 'p', 0x05, 'w', 'i', 'k', 'i', 'a', 0x03, 'c', 'o', 'm', 0x00
-  };
+START_TEST(compress_no_match) {
+  static const u8_t data[] = {0x00, 0x00, 0x04, 'l', 'w', 'i',
+                              'p',  0x05, 'w',  'i', 'k', 'i',
+                              'a',  0x03, 'c',  'o', 'm', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -730,12 +754,9 @@ START_TEST(compress_no_match)
 }
 END_TEST
 
-START_TEST(compress_2nd_label)
-{
-  static const u8_t data[] = {
-      0x00, 0x00,
-      0x06, 'f', 'o', 'o', 'b', 'a', 'r', 0x05, 'l', 'o', 'c', 'a', 'l', 0x00
-  };
+START_TEST(compress_2nd_label) {
+  static const u8_t data[] = {0x00, 0x00, 0x06, 'f', 'o', 'o', 'b', 'a',
+                              'r',  0x05, 'l',  'o', 'c', 'a', 'l', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -765,12 +786,9 @@ START_TEST(compress_2nd_label)
 }
 END_TEST
 
-START_TEST(compress_2nd_label_short)
-{
-  static const u8_t data[] = {
-      0x00, 0x00,
-      0x04, 'l', 'w', 'i', 'p', 0x05, 'l', 'o', 'c', 'a', 'l', 0x00
-  };
+START_TEST(compress_2nd_label_short) {
+  static const u8_t data[] = {0x00, 0x00, 0x04, 'l', 'w', 'i', 'p',
+                              0x05, 'l',  'o',  'c', 'a', 'l', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -800,14 +818,49 @@ START_TEST(compress_2nd_label_short)
 }
 END_TEST
 
-START_TEST(compress_jump_to_jump)
-{
-  static const u8_t data[] = {
-      /* 0x00 */ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-      /* 0x10 */ 0x04, 'l', 'w', 'i', 'p', 0x05, 'l', 'o', 'c', 'a', 'l', 0x00, 0xc0, 0x00, 0x02, 0x00,
-      /* 0x20 */ 0x07, 'b', 'a', 'n', 'a', 'n', 'a', 's', 0xc0, 0x15
-  };
+START_TEST(compress_jump_to_jump) {
+  static const u8_t data[] = {/* 0x00 */ 0x00,
+                              0x01,
+                              0x02,
+                              0x03,
+                              0x04,
+                              0x05,
+                              0x06,
+                              0x07,
+                              0x08,
+                              0x09,
+                              0x0a,
+                              0x0b,
+                              0x0c,
+                              0x0d,
+                              0x0e,
+                              0x0f,
+                              /* 0x10 */ 0x04,
+                              'l',
+                              'w',
+                              'i',
+                              'p',
+                              0x05,
+                              'l',
+                              'o',
+                              'c',
+                              'a',
+                              'l',
+                              0x00,
+                              0xc0,
+                              0x00,
+                              0x02,
+                              0x00,
+                              /* 0x20 */ 0x07,
+                              'b',
+                              'a',
+                              'n',
+                              'a',
+                              'n',
+                              'a',
+                              's',
+                              0xc0,
+                              0x15};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -842,12 +895,10 @@ START_TEST(compress_jump_to_jump)
 }
 END_TEST
 
-START_TEST(compress_long_match)
-{
-  static const u8_t data[] = {
-      0x00, 0x00,
-      0x06, 'f', 'o', 'o', 'b', 'a', 'r', 0x05, 'l', 'o', 'c', 'a', 'l', 0x03, 'c', 'o', 'm', 0x00
-  };
+START_TEST(compress_long_match) {
+  static const u8_t data[] = {0x00, 0x00, 0x06, 'f', 'o', 'o', 'b',
+                              'a',  'r',  0x05, 'l', 'o', 'c', 'a',
+                              'l',  0x03, 'c',  'o', 'm', 0x00};
   struct pbuf *p;
   struct mdns_domain domain;
   u16_t offset;
@@ -875,41 +926,41 @@ START_TEST(compress_long_match)
 }
 END_TEST
 
-Suite* mdns_suite(void)
-{
+Suite *mdns_suite(void) {
   testfunc tests[] = {
-    TESTFUNC(readname_basic),
-    TESTFUNC(readname_anydata),
-    TESTFUNC(readname_short_buf),
-    TESTFUNC(readname_long_label),
-    TESTFUNC(readname_overflow),
-    TESTFUNC(readname_jump_earlier),
-    TESTFUNC(readname_jump_earlier_jump),
-    TESTFUNC(readname_jump_maxdepth),
-    TESTFUNC(readname_jump_later),
-    TESTFUNC(readname_half_jump),
-    TESTFUNC(readname_jump_toolong),
-    TESTFUNC(readname_jump_loop_label),
-    TESTFUNC(readname_jump_loop_jump),
+      TESTFUNC(readname_basic),
+      TESTFUNC(readname_anydata),
+      TESTFUNC(readname_short_buf),
+      TESTFUNC(readname_long_label),
+      TESTFUNC(readname_overflow),
+      TESTFUNC(readname_jump_earlier),
+      TESTFUNC(readname_jump_earlier_jump),
+      TESTFUNC(readname_jump_maxdepth),
+      TESTFUNC(readname_jump_later),
+      TESTFUNC(readname_half_jump),
+      TESTFUNC(readname_jump_toolong),
+      TESTFUNC(readname_jump_loop_label),
+      TESTFUNC(readname_jump_loop_jump),
 
-    TESTFUNC(add_label_basic),
-    TESTFUNC(add_label_long_label),
-    TESTFUNC(add_label_full),
+      TESTFUNC(add_label_basic),
+      TESTFUNC(add_label_long_label),
+      TESTFUNC(add_label_full),
 
-    TESTFUNC(domain_eq_basic),
-    TESTFUNC(domain_eq_diff),
-    TESTFUNC(domain_eq_case),
-    TESTFUNC(domain_eq_anydata),
-    TESTFUNC(domain_eq_length),
+      TESTFUNC(domain_eq_basic),
+      TESTFUNC(domain_eq_diff),
+      TESTFUNC(domain_eq_case),
+      TESTFUNC(domain_eq_anydata),
+      TESTFUNC(domain_eq_length),
 
-    TESTFUNC(compress_full_match),
-    TESTFUNC(compress_full_match_subset),
-    TESTFUNC(compress_full_match_jump),
-    TESTFUNC(compress_no_match),
-    TESTFUNC(compress_2nd_label),
-    TESTFUNC(compress_2nd_label_short),
-    TESTFUNC(compress_jump_to_jump),
-    TESTFUNC(compress_long_match),
+      TESTFUNC(compress_full_match),
+      TESTFUNC(compress_full_match_subset),
+      TESTFUNC(compress_full_match_jump),
+      TESTFUNC(compress_no_match),
+      TESTFUNC(compress_2nd_label),
+      TESTFUNC(compress_2nd_label_short),
+      TESTFUNC(compress_jump_to_jump),
+      TESTFUNC(compress_long_match),
   };
-  return create_suite("MDNS", tests, sizeof(tests)/sizeof(testfunc), NULL, NULL);
+  return create_suite("MDNS", tests, sizeof(tests) / sizeof(testfunc), NULL,
+                      NULL);
 }

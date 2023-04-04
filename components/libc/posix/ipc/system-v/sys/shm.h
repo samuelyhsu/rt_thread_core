@@ -11,6 +11,4 @@
 #ifndef __SYS_SHM_H__
 #define __SYS_SHM_H__
 
-
-
 #endif

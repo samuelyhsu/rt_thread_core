@@ -22,8 +22,8 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * Function: It is an head file for this library. You can see all of the functions which can be called by user.
- * Created on: 2016-04-23
+ * Function: It is an head file for this library. You can see all of the
+ * functions which can be called by user. Created on: 2016-04-23
  */
 
 #ifndef _SFUD_H_
@@ -62,7 +62,8 @@ sfud_err sfud_device_init(sfud_flash *flash);
 sfud_flash *sfud_get_device(size_t index);
 
 /**
- * get flash device total number on flash device information table  @see flash_table
+ * get flash device total number on flash device information table  @see
+ * flash_table
  *
  * @return flash device total number
  */
@@ -77,15 +78,18 @@ const sfud_flash *sfud_get_device_table(void);
 
 #ifdef SFUD_USING_QSPI
 /**
- * Enbale the fast read mode in QSPI flash mode. Default read mode is normal SPI mode.
+ * Enbale the fast read mode in QSPI flash mode. Default read mode is normal SPI
+ * mode.
  *
- * it will find the appropriate fast-read instruction to replace the read instruction(0x03)
- * fast-read instruction @see SFUD_FLASH_EXT_INFO_TABLE
+ * it will find the appropriate fast-read instruction to replace the read
+ * instruction(0x03) fast-read instruction @see SFUD_FLASH_EXT_INFO_TABLE
  *
- * @note When Flash is in QSPI mode, the method must be called after sfud_device_init().
+ * @note When Flash is in QSPI mode, the method must be called after
+ * sfud_device_init().
  *
  * @param flash flash device
- * @param data_line_width the data lines max width which QSPI bus supported, such as 1, 2, 4
+ * @param data_line_width the data lines max width which QSPI bus supported,
+ * such as 1, 2, 4
  *
  * @return result
  */
@@ -102,7 +106,8 @@ sfud_err sfud_qspi_fast_read_enable(sfud_flash *flash, uint8_t data_line_width);
  *
  * @return result
  */
-sfud_err sfud_read(const sfud_flash *flash, uint32_t addr, size_t size, uint8_t *data);
+sfud_err sfud_read(const sfud_flash *flash, uint32_t addr, size_t size,
+                   uint8_t *data);
 
 /**
  * erase flash data
@@ -127,7 +132,8 @@ sfud_err sfud_erase(const sfud_flash *flash, uint32_t addr, size_t size);
  *
  * @return result
  */
-sfud_err sfud_write(const sfud_flash *flash, uint32_t addr, size_t size, const uint8_t *data);
+sfud_err sfud_write(const sfud_flash *flash, uint32_t addr, size_t size,
+                    const uint8_t *data);
 
 /**
  * erase and write flash data
@@ -139,7 +145,8 @@ sfud_err sfud_write(const sfud_flash *flash, uint32_t addr, size_t size, const u
  *
  * @return result
  */
-sfud_err sfud_erase_write(const sfud_flash *flash, uint32_t addr, size_t size, const uint8_t *data);
+sfud_err sfud_erase_write(const sfud_flash *flash, uint32_t addr, size_t size,
+                          const uint8_t *data);
 
 /**
  * erase all flash data
@@ -169,7 +176,8 @@ sfud_err sfud_read_status(const sfud_flash *flash, uint8_t *status);
  *
  * @return result
  */
-sfud_err sfud_write_status(const sfud_flash *flash, bool is_volatile, uint8_t status);
+sfud_err sfud_write_status(const sfud_flash *flash, bool is_volatile,
+                           uint8_t status);
 
 #ifdef __cplusplus
 }

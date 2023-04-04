@@ -7,8 +7,8 @@
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -20,14 +20,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * Author: Dirk Ziegelmeier <dziegel@gmx.de>
  */
@@ -36,18 +36,16 @@
 
 #if LWIP_SNMP && SNMP_USE_NETCONN
 
-#include <string.h>
 #include "lwip/api.h"
 #include "lwip/ip.h"
+#include "lwip/prot/iana.h"
+#include "lwip/sys.h"
 #include "lwip/udp.h"
 #include "snmp_msg.h"
-#include "lwip/sys.h"
-#include "lwip/prot/iana.h"
+#include <string.h>
 
 /** SNMP netconn API worker thread */
-static void
-snmp_netconn_thread(void *arg)
-{
+static void snmp_netconn_thread(void *arg) {
   struct netconn *conn;
   struct netbuf *buf;
   err_t err;
@@ -57,7 +55,7 @@ snmp_netconn_thread(void *arg)
 #if LWIP_IPV6
   conn = netconn_new(NETCONN_UDP_IPV6);
   netconn_bind(conn, IP6_ADDR_ANY, LWIP_IANA_PORT_SNMP);
-#else /* LWIP_IPV6 */
+#else  /* LWIP_IPV6 */
   conn = netconn_new(NETCONN_UDP);
   netconn_bind(conn, IP4_ADDR_ANY, LWIP_IANA_PORT_SNMP);
 #endif /* LWIP_IPV6 */
@@ -78,9 +76,8 @@ snmp_netconn_thread(void *arg)
   } while (1);
 }
 
-err_t
-snmp_sendto(void *handle, struct pbuf *p, const ip_addr_t *dst, u16_t port)
-{
+err_t snmp_sendto(void *handle, struct pbuf *p, const ip_addr_t *dst,
+                  u16_t port) {
   err_t result;
   struct netbuf buf;
 
@@ -91,9 +88,8 @@ snmp_sendto(void *handle, struct pbuf *p, const ip_addr_t *dst, u16_t port)
   return result;
 }
 
-u8_t
-snmp_get_local_ip_for_dst(void *handle, const ip_addr_t *dst, ip_addr_t *result)
-{
+u8_t snmp_get_local_ip_for_dst(void *handle, const ip_addr_t *dst,
+                               ip_addr_t *result) {
   struct netconn *conn = (struct netconn *)handle;
   struct netif *dst_if;
   const ip_addr_t *dst_ip;
@@ -113,11 +109,10 @@ snmp_get_local_ip_for_dst(void *handle, const ip_addr_t *dst, ip_addr_t *result)
 /**
  * Starts SNMP Agent.
  */
-void
-snmp_init(void)
-{
+void snmp_init(void) {
   LWIP_ASSERT_CORE_LOCKED();
-  sys_thread_new("snmp_netconn", snmp_netconn_thread, NULL, SNMP_STACK_SIZE, SNMP_THREAD_PRIO);
+  sys_thread_new("snmp_netconn", snmp_netconn_thread, NULL, SNMP_STACK_SIZE,
+                 SNMP_THREAD_PRIO);
 }
 
 #endif /* LWIP_SNMP && SNMP_USE_NETCONN */

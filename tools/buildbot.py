@@ -1,16 +1,20 @@
 import os
 import sys
 
+
 def usage():
     print('%s all     -- build all bsp' % os.path.basename(sys.argv[0]))
     print('%s clean   -- clean all bsp' % os.path.basename(sys.argv[0]))
-    print('%s project -- update all prject files' % os.path.basename(sys.argv[0]))
+    print('%s project -- update all prject files' %
+          os.path.basename(sys.argv[0]))
+
 
 BSP_ROOT = os.path.join("..", "bsp")
 
 if len(sys.argv) != 2:
     usage()
     sys.exit(0)
+
 
 def update_project_file(project_dir):
     if os.path.isfile(os.path.join(project_dir, 'template.Uv2')):
@@ -49,7 +53,8 @@ def update_all_project_files(root_path):
                         os.system("menuconfig --silent")
                         os.chdir(retval)
                     else:
-                        os.system('scons --pyconfig-silent -C {0}'.format(root_path))
+                        os.system(
+                            'scons --pyconfig-silent -C {0}'.format(root_path))
                 update_project_file(root_path)
             except Exception as e:
                 print("error message: {}".format(e))
@@ -58,6 +63,7 @@ def update_all_project_files(root_path):
             for i in projects:
                 new_root_path = os.path.join(root_path, i)
                 update_all_project_files(new_root_path)
+
 
 # get command options
 command = ''

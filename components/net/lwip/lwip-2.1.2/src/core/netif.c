@@ -21,8 +21,8 @@
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -34,14 +34,14 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
  *
@@ -50,22 +50,23 @@
 
 #include "lwip/opt.h"
 
-#include <string.h> /* memset */
 #include <stdlib.h> /* atoi */
+#include <string.h> /* memset */
 
 #include "lwip/def.h"
-#include "lwip/ip_addr.h"
-#include "lwip/ip6_addr.h"
-#include "lwip/netif.h"
-#include "lwip/priv/tcp_priv.h"
-#include "lwip/udp.h"
-#include "lwip/priv/raw_priv.h"
-#include "lwip/snmp.h"
-#include "lwip/igmp.h"
 #include "lwip/etharp.h"
+#include "lwip/igmp.h"
+#include "lwip/ip.h"
+#include "lwip/ip6_addr.h"
+#include "lwip/ip_addr.h"
+#include "lwip/netif.h"
+#include "lwip/priv/raw_priv.h"
+#include "lwip/priv/tcp_priv.h"
+#include "lwip/snmp.h"
 #include "lwip/stats.h"
 #include "lwip/sys.h"
-#include "lwip/ip.h"
+#include "lwip/udp.h"
+
 #if ENABLE_LOOPBACK
 #if LWIP_NETIF_LOOPBACK_MULTITHREADING
 #include "lwip/tcpip.h"
@@ -98,13 +99,23 @@
 #endif /* RT_USING_NETDEV */
 
 #if LWIP_NETIF_STATUS_CALLBACK
-#define NETIF_STATUS_CALLBACK(n) do{ if (n->status_callback) { (n->status_callback)(n); }}while(0)
+#define NETIF_STATUS_CALLBACK(n)                                               \
+  do {                                                                         \
+    if (n->status_callback) {                                                  \
+      (n->status_callback)(n);                                                 \
+    }                                                                          \
+  } while (0)
 #else
 #define NETIF_STATUS_CALLBACK(n)
 #endif /* LWIP_NETIF_STATUS_CALLBACK */
 
 #if LWIP_NETIF_LINK_CALLBACK
-#define NETIF_LINK_CALLBACK(n) do{ if (n->link_callback) { (n->link_callback)(n); }}while(0)
+#define NETIF_LINK_CALLBACK(n)                                                 \
+  do {                                                                         \
+    if (n->link_callback) {                                                    \
+      (n->link_callback)(n);                                                   \
+    }                                                                          \
+  } while (0)
 #else
 #define NETIF_LINK_CALLBACK(n)
 #endif /* LWIP_NETIF_LINK_CALLBACK */
@@ -118,32 +129,35 @@ struct netif *netif_list;
 #endif /* !LWIP_SINGLE_NETIF */
 struct netif *netif_default;
 
-#define netif_index_to_num(index)   ((index) - 1)
+#define netif_index_to_num(index) ((index)-1)
 static u8_t netif_num;
 
 #if LWIP_NUM_NETIF_CLIENT_DATA > 0
 static u8_t netif_client_id;
 #endif
 
-#define NETIF_REPORT_TYPE_IPV4  0x01
-#define NETIF_REPORT_TYPE_IPV6  0x02
+#define NETIF_REPORT_TYPE_IPV4 0x01
+#define NETIF_REPORT_TYPE_IPV6 0x02
 static void netif_issue_reports(struct netif *netif, u8_t report_type);
 
 #if LWIP_IPV6
-static err_t netif_null_output_ip6(struct netif *netif, struct pbuf *p, const ip6_addr_t *ipaddr);
+static err_t netif_null_output_ip6(struct netif *netif, struct pbuf *p,
+                                   const ip6_addr_t *ipaddr);
 #endif /* LWIP_IPV6 */
 #if LWIP_IPV4
-static err_t netif_null_output_ip4(struct netif *netif, struct pbuf *p, const ip4_addr_t *ipaddr);
+static err_t netif_null_output_ip4(struct netif *netif, struct pbuf *p,
+                                   const ip4_addr_t *ipaddr);
 #endif /* LWIP_IPV4 */
 
 #if LWIP_HAVE_LOOPIF
 #if LWIP_IPV4
-static err_t netif_loop_output_ipv4(struct netif *netif, struct pbuf *p, const ip4_addr_t *addr);
+static err_t netif_loop_output_ipv4(struct netif *netif, struct pbuf *p,
+                                    const ip4_addr_t *addr);
 #endif
 #if LWIP_IPV6
-static err_t netif_loop_output_ipv6(struct netif *netif, struct pbuf *p, const ip6_addr_t *addr);
+static err_t netif_loop_output_ipv6(struct netif *netif, struct pbuf *p,
+                                    const ip6_addr_t *addr);
 #endif
-
 
 static struct netif loop_netif;
 
@@ -154,9 +168,7 @@ static struct netif loop_netif;
  * @return ERR_OK if the loopif is initialized
  *         ERR_MEM if private data couldn't be allocated
  */
-static err_t
-netif_loopif_init(struct netif *netif)
-{
+static err_t netif_loopif_init(struct netif *netif) {
   LWIP_ASSERT("netif_loopif_init: invalid netif", netif != NULL);
 
   /* initialize the snmp variables and counters inside the struct netif
@@ -180,9 +192,7 @@ netif_loopif_init(struct netif *netif)
 }
 #endif /* LWIP_HAVE_LOOPIF */
 
-void
-netif_init(void)
-{
+void netif_init(void) {
 #if LWIP_HAVE_LOOPIF
 #if LWIP_IPV4
 #define LOOPIF_ADDRINIT &loop_ipaddr, &loop_netmask, &loop_gw,
@@ -220,9 +230,7 @@ netif_init(void)
  * Only works if the netif driver correctly sets
  * NETIF_FLAG_ETHARP and/or NETIF_FLAG_ETHERNET flag!
  */
-err_t
-netif_input(struct pbuf *p, struct netif *inp)
-{
+err_t netif_input(struct pbuf *p, struct netif *inp) {
   LWIP_ASSERT_CORE_LOCKED();
 
   LWIP_ASSERT("netif_input: invalid pbuf", p != NULL);
@@ -242,9 +250,8 @@ netif_input(struct pbuf *p, struct netif *inp)
  *
  * Same as @ref netif_add but without IPv4 addresses
  */
-struct netif *
-netif_add_noaddr(struct netif *netif, void *state, netif_init_fn init, netif_input_fn input)
-{
+struct netif *netif_add_noaddr(struct netif *netif, void *state,
+                               netif_init_fn init, netif_input_fn input) {
   return netif_add(netif,
 #if LWIP_IPV4
                    NULL, NULL, NULL,
@@ -279,13 +286,12 @@ netif_add_noaddr(struct netif *netif, void *state, netif_init_fn init, netif_inp
  *
  * @return netif, or NULL if failed.
  */
-struct netif *
-netif_add(struct netif *netif,
+struct netif *netif_add(struct netif *netif,
 #if LWIP_IPV4
-          const ip4_addr_t *ipaddr, const ip4_addr_t *netmask, const ip4_addr_t *gw,
+                        const ip4_addr_t *ipaddr, const ip4_addr_t *netmask,
+                        const ip4_addr_t *gw,
 #endif /* LWIP_IPV4 */
-          void *state, netif_init_fn init, netif_input_fn input)
-{
+                        void *state, netif_init_fn init, netif_input_fn input) {
 #if LWIP_IPV6
   s8_t i;
 #endif
@@ -401,7 +407,8 @@ netif_add(struct netif *netif,
       for (netif2 = netif_list; netif2 != NULL; netif2 = netif2->next) {
         LWIP_ASSERT("netif already added", netif2 != netif);
         num_netifs++;
-        LWIP_ASSERT("too many netifs, max. supported number is 255", num_netifs <= 255);
+        LWIP_ASSERT("too many netifs, max. supported number is 255",
+                    num_netifs <= 255);
         if (netif2->num == netif->num) {
           netif->num++;
           break;
@@ -428,8 +435,8 @@ netif_add(struct netif *netif,
   }
 #endif /* LWIP_IGMP */
 
-  LWIP_DEBUGF(NETIF_DEBUG, ("netif: added interface %c%c IP",
-                            netif->name[0], netif->name[1]));
+  LWIP_DEBUGF(NETIF_DEBUG, ("netif: added interface %c%c IP", netif->name[0],
+                            netif->name[1]));
 #if LWIP_IPV4
   LWIP_DEBUGF(NETIF_DEBUG, (" addr "));
   ip4_addr_debug_print(NETIF_DEBUG, ipaddr);
@@ -445,9 +452,8 @@ netif_add(struct netif *netif,
   return netif;
 }
 
-static void
-netif_do_ip_addr_changed(const ip_addr_t *old_addr, const ip_addr_t *new_addr)
-{
+static void netif_do_ip_addr_changed(const ip_addr_t *old_addr,
+                                     const ip_addr_t *new_addr) {
 #if LWIP_TCP
   tcp_netif_ip_addr_changed(old_addr, new_addr);
 #endif /* LWIP_TCP */
@@ -460,9 +466,8 @@ netif_do_ip_addr_changed(const ip_addr_t *old_addr, const ip_addr_t *new_addr)
 }
 
 #if LWIP_IPV4
-static int
-netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr, ip_addr_t *old_addr)
-{
+static int netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr,
+                               ip_addr_t *old_addr) {
   LWIP_ASSERT("invalid pointer", ipaddr != NULL);
   LWIP_ASSERT("invalid pointer", old_addr != NULL);
 
@@ -474,7 +479,8 @@ netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr, ip_addr_t *ol
 
     ip_addr_copy(*old_addr, *netif_ip_addr4(netif));
 
-    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_STATE, ("netif_set_ipaddr: netif address being changed\n"));
+    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_STATE,
+                ("netif_set_ipaddr: netif address being changed\n"));
     netif_do_ip_addr_changed(old_addr, &new_addr);
 
     mib2_remove_ip4(netif);
@@ -490,8 +496,9 @@ netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr, ip_addr_t *ol
     NETIF_STATUS_CALLBACK(netif);
 
 #ifdef RT_USING_NETDEV
-  /* rt-thread sal network interface device set IP address operations */
-  netdev_low_level_set_ipaddr(netdev_get_by_name(netif->name), &netif->ip_addr);
+    /* rt-thread sal network interface device set IP address operations */
+    netdev_low_level_set_ipaddr(netdev_get_by_name(netif->name),
+                                &netif->ip_addr);
 #endif /* RT_USING_NETDEV */
 
     return 1; /* address changed */
@@ -509,9 +516,7 @@ netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr, ip_addr_t *ol
  * @note call netif_set_addr() if you also want to change netmask and
  * default gateway
  */
-void
-netif_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr)
-{
+void netif_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr) {
   ip_addr_t old_addr;
 
   LWIP_ERROR("netif_set_ipaddr: invalid netif", netif != NULL, return);
@@ -532,9 +537,8 @@ netif_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr)
   }
 }
 
-static int
-netif_do_set_netmask(struct netif *netif, const ip4_addr_t *netmask, ip_addr_t *old_nm)
-{
+static int netif_do_set_netmask(struct netif *netif, const ip4_addr_t *netmask,
+                                ip_addr_t *old_nm) {
   /* address is actually being changed? */
   if (ip4_addr_cmp(netmask, netif_ip4_netmask(netif)) == 0) {
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
@@ -548,16 +552,19 @@ netif_do_set_netmask(struct netif *netif, const ip4_addr_t *netmask, ip_addr_t *
     ip4_addr_set(ip_2_ip4(&netif->netmask), netmask);
     IP_SET_TYPE_VAL(netif->netmask, IPADDR_TYPE_V4);
     mib2_add_route_ip4(0, netif);
-    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("netif: netmask of interface %c%c set to %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
-                netif->name[0], netif->name[1],
-                ip4_addr1_16(netif_ip4_netmask(netif)),
-                ip4_addr2_16(netif_ip4_netmask(netif)),
-                ip4_addr3_16(netif_ip4_netmask(netif)),
-                ip4_addr4_16(netif_ip4_netmask(netif))));
+    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE,
+                ("netif: netmask of interface %c%c set to %" U16_F ".%" U16_F
+                 ".%" U16_F ".%" U16_F "\n",
+                 netif->name[0], netif->name[1],
+                 ip4_addr1_16(netif_ip4_netmask(netif)),
+                 ip4_addr2_16(netif_ip4_netmask(netif)),
+                 ip4_addr3_16(netif_ip4_netmask(netif)),
+                 ip4_addr4_16(netif_ip4_netmask(netif))));
 
 #ifdef RT_USING_NETDEV
-  /* rt-thread network interface device set netmask address */
-  netdev_low_level_set_netmask(netdev_get_by_name(netif->name), &netif->netmask);
+    /* rt-thread network interface device set netmask address */
+    netdev_low_level_set_netmask(netdev_get_by_name(netif->name),
+                                 &netif->netmask);
 #endif /* RT_USING_NETDEV */
 
     return 1; /* netmask changed */
@@ -575,9 +582,7 @@ netif_do_set_netmask(struct netif *netif, const ip4_addr_t *netmask, ip_addr_t *
  * @note call netif_set_addr() if you also want to change ip address and
  * default gateway
  */
-void
-netif_set_netmask(struct netif *netif, const ip4_addr_t *netmask)
-{
+void netif_set_netmask(struct netif *netif, const ip4_addr_t *netmask) {
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
   ip_addr_t old_nm_val;
   ip_addr_t *old_nm = &old_nm_val;
@@ -602,9 +607,8 @@ netif_set_netmask(struct netif *netif, const ip4_addr_t *netmask)
   }
 }
 
-static int
-netif_do_set_gw(struct netif *netif, const ip4_addr_t *gw, ip_addr_t *old_gw)
-{
+static int netif_do_set_gw(struct netif *netif, const ip4_addr_t *gw,
+                           ip_addr_t *old_gw) {
   /* address is actually being changed? */
   if (ip4_addr_cmp(gw, netif_ip4_gw(netif)) == 0) {
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
@@ -616,12 +620,13 @@ netif_do_set_gw(struct netif *netif, const ip4_addr_t *gw, ip_addr_t *old_gw)
 
     ip4_addr_set(ip_2_ip4(&netif->gw), gw);
     IP_SET_TYPE_VAL(netif->gw, IPADDR_TYPE_V4);
-    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("netif: GW address of interface %c%c set to %"U16_F".%"U16_F".%"U16_F".%"U16_F"\n",
-                netif->name[0], netif->name[1],
-                ip4_addr1_16(netif_ip4_gw(netif)),
-                ip4_addr2_16(netif_ip4_gw(netif)),
-                ip4_addr3_16(netif_ip4_gw(netif)),
-                ip4_addr4_16(netif_ip4_gw(netif))));
+    LWIP_DEBUGF(
+        NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE,
+        ("netif: GW address of interface %c%c set to %" U16_F ".%" U16_F
+         ".%" U16_F ".%" U16_F "\n",
+         netif->name[0], netif->name[1], ip4_addr1_16(netif_ip4_gw(netif)),
+         ip4_addr2_16(netif_ip4_gw(netif)), ip4_addr3_16(netif_ip4_gw(netif)),
+         ip4_addr4_16(netif_ip4_gw(netif))));
 
 #ifdef RT_USING_NETDEV
     /* rt_thread network interface device set gateway address */
@@ -642,9 +647,7 @@ netif_do_set_gw(struct netif *netif, const ip4_addr_t *gw, ip_addr_t *old_gw)
  *
  * @note call netif_set_addr() if you also want to change ip address and netmask
  */
-void
-netif_set_gw(struct netif *netif, const ip4_addr_t *gw)
-{
+void netif_set_gw(struct netif *netif, const ip4_addr_t *gw) {
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
   ip_addr_t old_gw_val;
   ip_addr_t *old_gw = &old_gw_val;
@@ -679,10 +682,8 @@ netif_set_gw(struct netif *netif, const ip4_addr_t *gw)
  * @param netmask the new netmask
  * @param gw the new default gateway
  */
-void
-netif_set_addr(struct netif *netif, const ip4_addr_t *ipaddr, const ip4_addr_t *netmask,
-               const ip4_addr_t *gw)
-{
+void netif_set_addr(struct netif *netif, const ip4_addr_t *ipaddr,
+                    const ip4_addr_t *netmask, const ip4_addr_t *gw) {
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
   netif_nsc_reason_t change_reason = LWIP_NSC_NONE;
   netif_ext_callback_args_t cb_args;
@@ -712,8 +713,8 @@ netif_set_addr(struct netif *netif, const ip4_addr_t *ipaddr, const ip4_addr_t *
 
   remove = ip4_addr_isany(ipaddr);
   if (remove) {
-    /* when removing an address, we have to remove it *before* changing netmask/gw
-       to ensure that tcp RST segment can be sent correctly */
+    /* when removing an address, we have to remove it *before* changing
+       netmask/gw to ensure that tcp RST segment can be sent correctly */
     if (netif_do_set_ipaddr(netif, ipaddr, &old_addr)) {
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
       change_reason |= LWIP_NSC_IPV4_ADDRESS_CHANGED;
@@ -734,7 +735,8 @@ netif_set_addr(struct netif *netif, const ip4_addr_t *ipaddr, const ip4_addr_t *
 #endif
   }
   if (!remove) {
-    /* set ipaddr last to ensure netmask/gw have been set when status callback is called */
+    /* set ipaddr last to ensure netmask/gw have been set when status callback
+     * is called */
     if (netif_do_set_ipaddr(netif, ipaddr, &old_addr)) {
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
       change_reason |= LWIP_NSC_IPV4_ADDRESS_CHANGED;
@@ -758,9 +760,7 @@ netif_set_addr(struct netif *netif, const ip4_addr_t *ipaddr, const ip4_addr_t *
  *
  * @param netif the network interface to remove
  */
-void
-netif_remove(struct netif *netif)
-{
+void netif_remove(struct netif *netif) {
 #if LWIP_IPV6
   int i;
 #endif
@@ -833,7 +833,7 @@ netif_remove(struct netif *netif)
     netif->remove_callback(netif);
   }
 #endif /* LWIP_NETIF_REMOVE_CALLBACK */
-  LWIP_DEBUGF( NETIF_DEBUG, ("netif_remove: removed netif\n") );
+  LWIP_DEBUGF(NETIF_DEBUG, ("netif_remove: removed netif\n"));
 }
 
 /**
@@ -843,9 +843,7 @@ netif_remove(struct netif *netif)
  *
  * @param netif the default network interface
  */
-void
-netif_set_default(struct netif *netif)
-{
+void netif_set_default(struct netif *netif) {
   LWIP_ASSERT_CORE_LOCKED();
 
   if (netif == NULL) {
@@ -856,8 +854,9 @@ netif_set_default(struct netif *netif)
     mib2_add_route_ip4(1, netif);
   }
   netif_default = netif;
-  LWIP_DEBUGF(NETIF_DEBUG, ("netif: setting default interface %c%c\n",
-                            netif ? netif->name[0] : '\'', netif ? netif->name[1] : '\''));
+  LWIP_DEBUGF(NETIF_DEBUG,
+              ("netif: setting default interface %c%c\n",
+               netif ? netif->name[0] : '\'', netif ? netif->name[1] : '\''));
 }
 
 /**
@@ -865,9 +864,7 @@ netif_set_default(struct netif *netif)
  * Bring an interface up, available for processing
  * traffic.
  */
-void
-netif_set_up(struct netif *netif)
-{
+void netif_set_up(struct netif *netif) {
   LWIP_ASSERT_CORE_LOCKED();
 
   LWIP_ERROR("netif_set_up: invalid netif", netif != NULL, return);
@@ -901,14 +898,11 @@ netif_set_up(struct netif *netif)
 
 /** Send ARP/IGMP/MLD/RS events, e.g. on link-up/netif-up or addr-change
  */
-static void
-netif_issue_reports(struct netif *netif, u8_t report_type)
-{
+static void netif_issue_reports(struct netif *netif, u8_t report_type) {
   LWIP_ASSERT("netif_issue_reports: invalid netif", netif != NULL);
 
   /* Only send reports when both link and admin states are up */
-  if (!(netif->flags & NETIF_FLAG_LINK_UP) ||
-      !(netif->flags & NETIF_FLAG_UP)) {
+  if (!(netif->flags & NETIF_FLAG_LINK_UP) || !(netif->flags & NETIF_FLAG_UP)) {
     return;
   }
 
@@ -916,7 +910,8 @@ netif_issue_reports(struct netif *netif, u8_t report_type)
   if ((report_type & NETIF_REPORT_TYPE_IPV4) &&
       !ip4_addr_isany_val(*netif_ip4_addr(netif))) {
 #if LWIP_ARP
-    /* For Ethernet network interfaces, we would like to send a "gratuitous ARP" */
+    /* For Ethernet network interfaces, we would like to send a "gratuitous ARP"
+     */
     if (netif->flags & (NETIF_FLAG_ETHARP)) {
       etharp_gratuitous(netif);
     }
@@ -945,9 +940,7 @@ netif_issue_reports(struct netif *netif, u8_t report_type)
  * @ingroup netif
  * Bring an interface down, disabling any traffic processing.
  */
-void
-netif_set_down(struct netif *netif)
-{
+void netif_set_down(struct netif *netif) {
   LWIP_ASSERT_CORE_LOCKED();
 
   LWIP_ERROR("netif_set_down: invalid netif", netif != NULL, return);
@@ -986,11 +979,11 @@ netif_set_down(struct netif *netif)
 #if LWIP_NETIF_STATUS_CALLBACK
 /**
  * @ingroup netif
- * Set callback to be called when interface is brought up/down or address is changed while up
+ * Set callback to be called when interface is brought up/down or address is
+ * changed while up
  */
-void
-netif_set_status_callback(struct netif *netif, netif_status_callback_fn status_callback)
-{
+void netif_set_status_callback(struct netif *netif,
+                               netif_status_callback_fn status_callback) {
   LWIP_ASSERT_CORE_LOCKED();
 
   if (netif) {
@@ -1004,9 +997,8 @@ netif_set_status_callback(struct netif *netif, netif_status_callback_fn status_c
  * @ingroup netif
  * Set callback to be called when the interface has been removed
  */
-void
-netif_set_remove_callback(struct netif *netif, netif_status_callback_fn remove_callback)
-{
+void netif_set_remove_callback(struct netif *netif,
+                               netif_status_callback_fn remove_callback) {
   LWIP_ASSERT_CORE_LOCKED();
 
   if (netif) {
@@ -1019,9 +1011,7 @@ netif_set_remove_callback(struct netif *netif, netif_status_callback_fn remove_c
  * @ingroup netif
  * Called by a driver when its link goes up
  */
-void
-netif_set_link_up(struct netif *netif)
-{
+void netif_set_link_up(struct netif *netif) {
   LWIP_ASSERT_CORE_LOCKED();
 
   LWIP_ERROR("netif_set_link_up: invalid netif", netif != NULL, return);
@@ -1062,9 +1052,7 @@ netif_set_link_up(struct netif *netif)
  * @ingroup netif
  * Called by a driver when its link goes down
  */
-void
-netif_set_link_down(struct netif *netif)
-{
+void netif_set_link_down(struct netif *netif) {
   LWIP_ASSERT_CORE_LOCKED();
 
   LWIP_ERROR("netif_set_link_down: invalid netif", netif != NULL, return);
@@ -1092,9 +1080,8 @@ netif_set_link_down(struct netif *netif)
  * @ingroup netif
  * Set callback to be called when link is brought up/down
  */
-void
-netif_set_link_callback(struct netif *netif, netif_status_callback_fn link_callback)
-{
+void netif_set_link_callback(struct netif *netif,
+                             netif_status_callback_fn link_callback) {
   LWIP_ASSERT_CORE_LOCKED();
 
   if (netif) {
@@ -1118,9 +1105,7 @@ netif_set_link_callback(struct netif *netif, netif_status_callback_fn link_callb
  * @return ERR_OK if the packet has been sent
  *         ERR_MEM if the pbuf used to copy the packet couldn't be allocated
  */
-err_t
-netif_loop_output(struct netif *netif, struct pbuf *p)
-{
+err_t netif_loop_output(struct netif *netif, struct pbuf *p) {
   struct pbuf *r;
   err_t err;
   struct pbuf *last;
@@ -1132,7 +1117,7 @@ netif_loop_output(struct netif *netif, struct pbuf *p)
 #if MIB2_STATS
 #if LWIP_HAVE_LOOPIF
   struct netif *stats_if = &loop_netif;
-#else /* LWIP_HAVE_LOOPIF */
+#else  /* LWIP_HAVE_LOOPIF */
   struct netif *stats_if = netif;
 #endif /* LWIP_HAVE_LOOPIF */
 #endif /* MIB2_STATS */
@@ -1156,7 +1141,8 @@ netif_loop_output(struct netif *netif, struct pbuf *p)
   clen = pbuf_clen(r);
   /* check for overflow or too many pbuf on queue */
   if (((netif->loop_cnt_current + clen) < netif->loop_cnt_current) ||
-      ((netif->loop_cnt_current + clen) > LWIP_MIN(LWIP_LOOPBACK_MAX_PBUFS, 0xFFFF))) {
+      ((netif->loop_cnt_current + clen) >
+       LWIP_MIN(LWIP_LOOPBACK_MAX_PBUFS, 0xFFFF))) {
     pbuf_free(r);
     LINK_STATS_INC(link.memerr);
     LINK_STATS_INC(link.drop);
@@ -1185,7 +1171,8 @@ netif_loop_output(struct netif *netif, struct pbuf *p)
 
   SYS_ARCH_PROTECT(lev);
   if (netif->loop_first != NULL) {
-    LWIP_ASSERT("if first != NULL, last must also be != NULL", netif->loop_last != NULL);
+    LWIP_ASSERT("if first != NULL, last must also be != NULL",
+                netif->loop_last != NULL);
     netif->loop_last->next = r;
     netif->loop_last = last;
   } else {
@@ -1214,24 +1201,21 @@ netif_loop_output(struct netif *netif, struct pbuf *p)
 
 #if LWIP_HAVE_LOOPIF
 #if LWIP_IPV4
-static err_t
-netif_loop_output_ipv4(struct netif *netif, struct pbuf *p, const ip4_addr_t *addr)
-{
+static err_t netif_loop_output_ipv4(struct netif *netif, struct pbuf *p,
+                                    const ip4_addr_t *addr) {
   LWIP_UNUSED_ARG(addr);
   return netif_loop_output(netif, p);
 }
 #endif /* LWIP_IPV4 */
 
 #if LWIP_IPV6
-static err_t
-netif_loop_output_ipv6(struct netif *netif, struct pbuf *p, const ip6_addr_t *addr)
-{
+static err_t netif_loop_output_ipv6(struct netif *netif, struct pbuf *p,
+                                    const ip6_addr_t *addr) {
   LWIP_UNUSED_ARG(addr);
   return netif_loop_output(netif, p);
 }
 #endif /* LWIP_IPV6 */
 #endif /* LWIP_HAVE_LOOPIF */
-
 
 /**
  * Call netif_poll() in the main loop of your application. This is to prevent
@@ -1239,15 +1223,13 @@ netif_loop_output_ipv6(struct netif *netif, struct pbuf *p, const ip6_addr_t *ad
  * netif_loop_output() are put on a list that is passed to netif->input() by
  * netif_poll().
  */
-void
-netif_poll(struct netif *netif)
-{
+void netif_poll(struct netif *netif) {
   /* If we have a loopif, SNMP counters are adjusted for it,
    * if not they are adjusted for 'netif'. */
 #if MIB2_STATS
 #if LWIP_HAVE_LOOPIF
   struct netif *stats_if = &loop_netif;
-#else /* LWIP_HAVE_LOOPIF */
+#else  /* LWIP_HAVE_LOOPIF */
   struct netif *stats_if = netif;
 #endif /* LWIP_HAVE_LOOPIF */
 #endif /* MIB2_STATS */
@@ -1255,7 +1237,8 @@ netif_poll(struct netif *netif)
 
   LWIP_ASSERT("netif_poll: invalid netif", netif != NULL);
 
-  /* Get a packet from the list. With SYS_LIGHTWEIGHT_PROT=1, this is protected */
+  /* Get a packet from the list. With SYS_LIGHTWEIGHT_PROT=1, this is protected
+   */
   SYS_ARCH_PROTECT(lev);
   while (netif->loop_first != NULL) {
     struct pbuf *in, *in_end;
@@ -1265,7 +1248,8 @@ netif_poll(struct netif *netif)
 
     in = in_end = netif->loop_first;
     while (in_end->len != in_end->tot_len) {
-      LWIP_ASSERT("bogus pbuf: len != tot_len but next == NULL!", in_end->next != NULL);
+      LWIP_ASSERT("bogus pbuf: len != tot_len but next == NULL!",
+                  in_end->next != NULL);
       in_end = in_end->next;
 #if LWIP_LOOPBACK_MAX_PBUFS
       clen++;
@@ -1285,7 +1269,8 @@ netif_poll(struct netif *netif)
     } else {
       /* pop the pbuf off the list */
       netif->loop_first = in_end->next;
-      LWIP_ASSERT("should not be null since first != last!", netif->loop_first != NULL);
+      LWIP_ASSERT("should not be null since first != last!",
+                  netif->loop_first != NULL);
     }
     /* De-queue the pbuf from its successors on the 'loop_' list. */
     in_end->next = NULL;
@@ -1309,14 +1294,10 @@ netif_poll(struct netif *netif)
 /**
  * Calls netif_poll() for every netif on the netif_list.
  */
-void
-netif_poll_all(void)
-{
+void netif_poll_all(void) {
   struct netif *netif;
   /* loop through netifs */
-  NETIF_FOREACH(netif) {
-    netif_poll(netif);
-  }
+  NETIF_FOREACH(netif) { netif_poll(netif); }
 }
 #endif /* !LWIP_NETIF_LOOPBACK_MULTITHREADING */
 #endif /* ENABLE_LOOPBACK */
@@ -1328,9 +1309,7 @@ netif_poll_all(void)
  * Returned value is an index in mentioned array.
  * @see LWIP_NUM_NETIF_CLIENT_DATA
  */
-u8_t
-netif_alloc_client_data_id(void)
-{
+u8_t netif_alloc_client_data_id(void) {
   u8_t result = netif_client_id;
   netif_client_id++;
 
@@ -1339,7 +1318,8 @@ netif_alloc_client_data_id(void)
 #if LWIP_NUM_NETIF_CLIENT_DATA > 256
 #error LWIP_NUM_NETIF_CLIENT_DATA must be <= 256
 #endif
-  LWIP_ASSERT("Increase LWIP_NUM_NETIF_CLIENT_DATA in lwipopts.h", result < LWIP_NUM_NETIF_CLIENT_DATA);
+  LWIP_ASSERT("Increase LWIP_NUM_NETIF_CLIENT_DATA in lwipopts.h",
+              result < LWIP_NUM_NETIF_CLIENT_DATA);
   return (u8_t)(result + LWIP_NETIF_CLIENT_DATA_INDEX_MAX);
 }
 #endif
@@ -1355,9 +1335,8 @@ netif_alloc_client_data_id(void)
  *
  * @note call netif_ip6_addr_set_state() to set the address valid/temptative
  */
-void
-netif_ip6_addr_set(struct netif *netif, s8_t addr_idx, const ip6_addr_t *addr6)
-{
+void netif_ip6_addr_set(struct netif *netif, s8_t addr_idx,
+                        const ip6_addr_t *addr6) {
   LWIP_ASSERT_CORE_LOCKED();
 
   LWIP_ASSERT("netif_ip6_addr_set: invalid netif", netif != NULL);
@@ -1368,7 +1347,8 @@ netif_ip6_addr_set(struct netif *netif, s8_t addr_idx, const ip6_addr_t *addr6)
 }
 
 /*
- * Change an IPv6 address of a network interface (internal version taking 4 * u32_t)
+ * Change an IPv6 address of a network interface (internal version taking 4 *
+ * u32_t)
  *
  * @param netif the network interface to change
  * @param addr_idx index of the IPv6 address
@@ -1377,9 +1357,8 @@ netif_ip6_addr_set(struct netif *netif, s8_t addr_idx, const ip6_addr_t *addr6)
  * @param i2 word2 of the new IPv6 address
  * @param i3 word3 of the new IPv6 address
  */
-void
-netif_ip6_addr_set_parts(struct netif *netif, s8_t addr_idx, u32_t i0, u32_t i1, u32_t i2, u32_t i3)
-{
+void netif_ip6_addr_set_parts(struct netif *netif, s8_t addr_idx, u32_t i0,
+                              u32_t i1, u32_t i2, u32_t i3) {
   ip_addr_t old_addr;
   ip_addr_t new_ipaddr;
   LWIP_ASSERT_CORE_LOCKED();
@@ -1390,9 +1369,12 @@ netif_ip6_addr_set_parts(struct netif *netif, s8_t addr_idx, u32_t i0, u32_t i1,
   IP_SET_TYPE_VAL(old_addr, IPADDR_TYPE_V6);
 
   /* address is actually being changed? */
-  if ((ip_2_ip6(&old_addr)->addr[0] != i0) || (ip_2_ip6(&old_addr)->addr[1] != i1) ||
-      (ip_2_ip6(&old_addr)->addr[2] != i2) || (ip_2_ip6(&old_addr)->addr[3] != i3)) {
-    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_STATE, ("netif_ip6_addr_set: netif address being changed\n"));
+  if ((ip_2_ip6(&old_addr)->addr[0] != i0) ||
+      (ip_2_ip6(&old_addr)->addr[1] != i1) ||
+      (ip_2_ip6(&old_addr)->addr[2] != i2) ||
+      (ip_2_ip6(&old_addr)->addr[3] != i3)) {
+    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_STATE,
+                ("netif_ip6_addr_set: netif address being changed\n"));
 
     IP_ADDR6(&new_ipaddr, i0, i1, i2, i3);
     ip6_addr_assign_zone(ip_2_ip6(&new_ipaddr), IP6_UNICAST, netif);
@@ -1412,16 +1394,19 @@ netif_ip6_addr_set_parts(struct netif *netif, s8_t addr_idx, u32_t i0, u32_t i1,
 #if LWIP_NETIF_EXT_STATUS_CALLBACK
     {
       netif_ext_callback_args_t args;
-      args.ipv6_set.addr_index  = addr_idx;
+      args.ipv6_set.addr_index = addr_idx;
       args.ipv6_set.old_address = &old_addr;
       netif_invoke_ext_callback(netif, LWIP_NSC_IPV6_SET, &args);
     }
 #endif
   }
 
-  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("netif: IPv6 address %d of interface %c%c set to %s/0x%"X8_F"\n",
-              addr_idx, netif->name[0], netif->name[1], ip6addr_ntoa(netif_ip6_addr(netif, addr_idx)),
-              netif_ip6_addr_state(netif, addr_idx)));
+  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE,
+              ("netif: IPv6 address %d of interface %c%c set to %s/0x%" X8_F
+               "\n",
+               addr_idx, netif->name[0], netif->name[1],
+               ip6addr_ntoa(netif_ip6_addr(netif, addr_idx)),
+               netif_ip6_addr_state(netif, addr_idx)));
 }
 
 /**
@@ -1434,9 +1419,7 @@ netif_ip6_addr_set_parts(struct netif *netif, s8_t addr_idx, u32_t i0, u32_t i1,
  * @param addr_idx index of the IPv6 address
  * @param state the new IPv6 address state
  */
-void
-netif_ip6_addr_set_state(struct netif *netif, s8_t addr_idx, u8_t state)
-{
+void netif_ip6_addr_set_state(struct netif *netif, s8_t addr_idx, u8_t state) {
   u8_t old_state;
   LWIP_ASSERT_CORE_LOCKED();
   LWIP_ASSERT("netif != NULL", netif != NULL);
@@ -1447,7 +1430,9 @@ netif_ip6_addr_set_state(struct netif *netif, s8_t addr_idx, u8_t state)
   if (old_state != state) {
     u8_t old_valid = old_state & IP6_ADDR_VALID;
     u8_t new_valid = state & IP6_ADDR_VALID;
-    LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_STATE, ("netif_ip6_addr_set_state: netif address state being changed\n"));
+    LWIP_DEBUGF(
+        NETIF_DEBUG | LWIP_DBG_STATE,
+        ("netif_ip6_addr_set_state: netif address state being changed\n"));
 
 #if LWIP_IPV6_MLD
     /* Reevaluate solicited-node multicast group membership. */
@@ -1471,7 +1456,7 @@ netif_ip6_addr_set_state(struct netif *netif, s8_t addr_idx, u8_t state)
       netif_issue_reports(netif, NETIF_REPORT_TYPE_IPV6);
     }
     if ((old_state & ~IP6_ADDR_TENTATIVE_COUNT_MASK) !=
-        (state     & ~IP6_ADDR_TENTATIVE_COUNT_MASK)) {
+        (state & ~IP6_ADDR_TENTATIVE_COUNT_MASK)) {
       /* address state has changed -> call the callback function */
       NETIF_STATUS_CALLBACK(netif);
     }
@@ -1480,15 +1465,18 @@ netif_ip6_addr_set_state(struct netif *netif, s8_t addr_idx, u8_t state)
     {
       netif_ext_callback_args_t args;
       args.ipv6_addr_state_changed.addr_index = addr_idx;
-      args.ipv6_addr_state_changed.old_state  = old_state;
-      args.ipv6_addr_state_changed.address    = netif_ip_addr6(netif, addr_idx);
+      args.ipv6_addr_state_changed.old_state = old_state;
+      args.ipv6_addr_state_changed.address = netif_ip_addr6(netif, addr_idx);
       netif_invoke_ext_callback(netif, LWIP_NSC_IPV6_ADDR_STATE_CHANGED, &args);
     }
 #endif
   }
-  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE, ("netif: IPv6 address %d of interface %c%c set to %s/0x%"X8_F"\n",
-              addr_idx, netif->name[0], netif->name[1], ip6addr_ntoa(netif_ip6_addr(netif, addr_idx)),
-              netif_ip6_addr_state(netif, addr_idx)));
+  LWIP_DEBUGF(NETIF_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_STATE,
+              ("netif: IPv6 address %d of interface %c%c set to %s/0x%" X8_F
+               "\n",
+               addr_idx, netif->name[0], netif->name[1],
+               ip6addr_ntoa(netif_ip6_addr(netif, addr_idx)),
+               netif_ip6_addr_state(netif, addr_idx)));
 }
 
 /**
@@ -1505,9 +1493,7 @@ netif_ip6_addr_set_state(struct netif *netif, s8_t addr_idx, u8_t state)
  * @return >= 0: address found, this is its index
  *         -1: address not found on this netif
  */
-s8_t
-netif_get_ip6_addr_match(struct netif *netif, const ip6_addr_t *ip6addr)
-{
+s8_t netif_get_ip6_addr_match(struct netif *netif, const ip6_addr_t *ip6addr) {
   s8_t i;
 
   LWIP_ASSERT_CORE_LOCKED();
@@ -1535,17 +1521,17 @@ netif_get_ip6_addr_match(struct netif *netif, const ip6_addr_t *ip6addr)
  * Create a link-local IPv6 address on a netif (stored in slot 0)
  *
  * @param netif the netif to create the address on
- * @param from_mac_48bit if != 0, assume hwadr is a 48-bit MAC address (std conversion)
- *                       if == 0, use hwaddr directly as interface ID
+ * @param from_mac_48bit if != 0, assume hwadr is a 48-bit MAC address (std
+ * conversion) if == 0, use hwaddr directly as interface ID
  */
-void
-netif_create_ip6_linklocal_address(struct netif *netif, u8_t from_mac_48bit)
-{
+void netif_create_ip6_linklocal_address(struct netif *netif,
+                                        u8_t from_mac_48bit) {
   u8_t i, addr_index;
 
   LWIP_ASSERT_CORE_LOCKED();
 
-  LWIP_ASSERT("netif_create_ip6_linklocal_address: invalid netif", netif != NULL);
+  LWIP_ASSERT("netif_create_ip6_linklocal_address: invalid netif",
+              netif != NULL);
 
   /* Link-local prefix. */
   ip_2_ip6(&netif->ip6_addr[0])->addr[0] = PP_HTONL(0xfe800000ul);
@@ -1553,15 +1539,15 @@ netif_create_ip6_linklocal_address(struct netif *netif, u8_t from_mac_48bit)
 
   /* Generate interface ID. */
   if (from_mac_48bit) {
-    /* Assume hwaddr is a 48-bit IEEE 802 MAC. Convert to EUI-64 address. Complement Group bit. */
-    ip_2_ip6(&netif->ip6_addr[0])->addr[2] = lwip_htonl((((u32_t)(netif->hwaddr[0] ^ 0x02)) << 24) |
-        ((u32_t)(netif->hwaddr[1]) << 16) |
-        ((u32_t)(netif->hwaddr[2]) << 8) |
-        (0xff));
-    ip_2_ip6(&netif->ip6_addr[0])->addr[3] = lwip_htonl((u32_t)(0xfeul << 24) |
-        ((u32_t)(netif->hwaddr[3]) << 16) |
-        ((u32_t)(netif->hwaddr[4]) << 8) |
-        (netif->hwaddr[5]));
+    /* Assume hwaddr is a 48-bit IEEE 802 MAC. Convert to EUI-64 address.
+     * Complement Group bit. */
+    ip_2_ip6(&netif->ip6_addr[0])->addr[2] =
+        lwip_htonl((((u32_t)(netif->hwaddr[0] ^ 0x02)) << 24) |
+                   ((u32_t)(netif->hwaddr[1]) << 16) |
+                   ((u32_t)(netif->hwaddr[2]) << 8) | (0xff));
+    ip_2_ip6(&netif->ip6_addr[0])->addr[3] =
+        lwip_htonl((u32_t)(0xfeul << 24) | ((u32_t)(netif->hwaddr[3]) << 16) |
+                   ((u32_t)(netif->hwaddr[4]) << 8) | (netif->hwaddr[5]));
   } else {
     /* Use hwaddr directly as interface ID. */
     ip_2_ip6(&netif->ip6_addr[0])->addr[2] = 0;
@@ -1572,7 +1558,9 @@ netif_create_ip6_linklocal_address(struct netif *netif, u8_t from_mac_48bit)
       if (i == 4) {
         addr_index--;
       }
-      ip_2_ip6(&netif->ip6_addr[0])->addr[addr_index] |= lwip_htonl(((u32_t)(netif->hwaddr[netif->hwaddr_len - i - 1])) << (8 * (i & 0x03)));
+      ip_2_ip6(&netif->ip6_addr[0])->addr[addr_index] |=
+          lwip_htonl(((u32_t)(netif->hwaddr[netif->hwaddr_len - i - 1]))
+                     << (8 * (i & 0x03)));
     }
   }
 
@@ -1587,8 +1575,9 @@ netif_create_ip6_linklocal_address(struct netif *netif, u8_t from_mac_48bit)
   ip6_addr_assign_zone(ip_2_ip6(&netif->ip6_addr[0]), IP6_UNICAST, netif);
 
 #ifdef RT_USING_NETDEV
-    /* rt-thread network interface device set ipv6 address */
-    ip_addr_copy(netdev_get_by_name(netif->name)->ip6_addr[0], netif->ip6_addr[0]);
+  /* rt-thread network interface device set ipv6 address */
+  ip_addr_copy(netdev_get_by_name(netif->name)->ip6_addr[0],
+               netif->ip6_addr[0]);
 #endif /* RT_USING_NETDEV */
 
   /* Set address state. */
@@ -1603,17 +1592,17 @@ netif_create_ip6_linklocal_address(struct netif *netif, u8_t from_mac_48bit)
 
 /**
  * @ingroup netif_ip6
- * This function allows for the easy addition of a new IPv6 address to an interface.
- * It takes care of finding an empty slot and then sets the address tentative
- * (to make sure that all the subsequent processing happens).
+ * This function allows for the easy addition of a new IPv6 address to an
+ * interface. It takes care of finding an empty slot and then sets the address
+ * tentative (to make sure that all the subsequent processing happens).
  *
  * @param netif netif to add the address on
  * @param ip6addr address to add
- * @param chosen_idx if != NULL, the chosen IPv6 address index will be stored here
+ * @param chosen_idx if != NULL, the chosen IPv6 address index will be stored
+ * here
  */
-err_t
-netif_add_ip6_address(struct netif *netif, const ip6_addr_t *ip6addr, s8_t *chosen_idx)
-{
+err_t netif_add_ip6_address(struct netif *netif, const ip6_addr_t *ip6addr,
+                            s8_t *chosen_idx) {
   s8_t i;
 
   LWIP_ASSERT_CORE_LOCKED();
@@ -1631,12 +1620,14 @@ netif_add_ip6_address(struct netif *netif, const ip6_addr_t *ip6addr, s8_t *chos
   }
 
   /* Find a free slot. The first one is reserved for link-local addresses. */
-  for (i = ip6_addr_islinklocal(ip6addr) ? 0 : 1; i < LWIP_IPV6_NUM_ADDRESSES; i++) {
+  for (i = ip6_addr_islinklocal(ip6addr) ? 0 : 1; i < LWIP_IPV6_NUM_ADDRESSES;
+       i++) {
     if (ip6_addr_isinvalid(netif_ip6_addr_state(netif, i))) {
       ip_addr_copy_from_ip6(netif->ip6_addr[i], *ip6addr);
 #ifdef RT_USING_NETDEV
       /* rt-thread network interface device set ipv6 address */
-      ip_addr_copy(netdev_get_by_name(netif->name)->ip6_addr[i], netif->ip6_addr[i]);
+      ip_addr_copy(netdev_get_by_name(netif->name)->ip6_addr[i],
+                   netif->ip6_addr[i]);
 #endif /* RT_USING_NETDEV */
       ip6_addr_assign_zone(ip_2_ip6(&netif->ip6_addr[i]), IP6_UNICAST, netif);
       netif_ip6_addr_set_state(netif, i, IP6_ADDR_TENTATIVE);
@@ -1655,9 +1646,8 @@ netif_add_ip6_address(struct netif *netif, const ip6_addr_t *ip6addr, s8_t *chos
 
 /** Dummy IPv6 output function for netifs not supporting IPv6
  */
-static err_t
-netif_null_output_ip6(struct netif *netif, struct pbuf *p, const ip6_addr_t *ipaddr)
-{
+static err_t netif_null_output_ip6(struct netif *netif, struct pbuf *p,
+                                   const ip6_addr_t *ipaddr) {
   LWIP_UNUSED_ARG(netif);
   LWIP_UNUSED_ARG(p);
   LWIP_UNUSED_ARG(ipaddr);
@@ -1669,9 +1659,8 @@ netif_null_output_ip6(struct netif *netif, struct pbuf *p, const ip6_addr_t *ipa
 #if LWIP_IPV4
 /** Dummy IPv4 output function for netifs not supporting IPv4
  */
-static err_t
-netif_null_output_ip4(struct netif *netif, struct pbuf *p, const ip4_addr_t *ipaddr)
-{
+static err_t netif_null_output_ip4(struct netif *netif, struct pbuf *p,
+                                   const ip4_addr_t *ipaddr) {
   LWIP_UNUSED_ARG(netif);
   LWIP_UNUSED_ARG(p);
   LWIP_UNUSED_ARG(ipaddr);
@@ -1681,15 +1670,13 @@ netif_null_output_ip4(struct netif *netif, struct pbuf *p, const ip4_addr_t *ipa
 #endif /* LWIP_IPV4 */
 
 /**
-* @ingroup netif
-* Return the interface index for the netif with name
-* or NETIF_NO_INDEX if not found/on error
-*
-* @param name the name of the netif
-*/
-u8_t
-netif_name_to_index(const char *name)
-{
+ * @ingroup netif
+ * Return the interface index for the netif with name
+ * or NETIF_NO_INDEX if not found/on error
+ *
+ * @param name the name of the netif
+ */
+u8_t netif_name_to_index(const char *name) {
   struct netif *netif = netif_find(name);
   if (netif != NULL) {
     return netif_get_index(netif);
@@ -1699,16 +1686,14 @@ netif_name_to_index(const char *name)
 }
 
 /**
-* @ingroup netif
-* Return the interface name for the netif matching index
-* or NULL if not found/on error
-*
-* @param idx the interface index of the netif
-* @param name char buffer of at least NETIF_NAMESIZE bytes
-*/
-char *
-netif_index_to_name(u8_t idx, char *name)
-{
+ * @ingroup netif
+ * Return the interface name for the netif matching index
+ * or NULL if not found/on error
+ *
+ * @param idx the interface index of the netif
+ * @param name char buffer of at least NETIF_NAMESIZE bytes
+ */
+char *netif_index_to_name(u8_t idx, char *name) {
   struct netif *netif = netif_get_by_index(idx);
 
   if (netif != NULL) {
@@ -1721,14 +1706,12 @@ netif_index_to_name(u8_t idx, char *name)
 }
 
 /**
-* @ingroup netif
-* Return the interface for the netif index
-*
-* @param idx index of netif to find
-*/
-struct netif *
-netif_get_by_index(u8_t idx)
-{
+ * @ingroup netif
+ * Return the interface for the netif index
+ *
+ * @param idx index of netif to find
+ */
+struct netif *netif_get_by_index(u8_t idx) {
   struct netif *netif;
 
   LWIP_ASSERT_CORE_LOCKED();
@@ -1751,9 +1734,7 @@ netif_get_by_index(u8_t idx)
  * @param name the name of the netif (like netif->name) plus concatenated number
  * in ascii representation (e.g. 'en0')
  */
-struct netif *
-netif_find(const char *name)
-{
+struct netif *netif_find(const char *name) {
   struct netif *netif;
   u8_t num;
 
@@ -1766,14 +1747,14 @@ netif_find(const char *name)
   num = (u8_t)atoi(&name[2]);
 
   NETIF_FOREACH(netif) {
-    if (num == netif->num &&
-        name[0] == netif->name[0] &&
+    if (num == netif->num && name[0] == netif->name[0] &&
         name[1] == netif->name[1]) {
       LWIP_DEBUGF(NETIF_DEBUG, ("netif_find: found %c%c\n", name[0], name[1]));
       return netif;
     }
   }
-  LWIP_DEBUGF(NETIF_DEBUG, ("netif_find: didn't find %c%c\n", name[0], name[1]));
+  LWIP_DEBUGF(NETIF_DEBUG,
+              ("netif_find: didn't find %c%c\n", name[0], name[1]));
   return NULL;
 }
 
@@ -1784,16 +1765,15 @@ netif_find(const char *name)
  * @param callback pointer to listener structure
  * @param fn callback function
  */
-void
-netif_add_ext_callback(netif_ext_callback_t *callback, netif_ext_callback_fn fn)
-{
+void netif_add_ext_callback(netif_ext_callback_t *callback,
+                            netif_ext_callback_fn fn) {
   LWIP_ASSERT_CORE_LOCKED();
   LWIP_ASSERT("callback must be != NULL", callback != NULL);
   LWIP_ASSERT("fn must be != NULL", fn != NULL);
 
   callback->callback_fn = fn;
-  callback->next        = ext_callback;
-  ext_callback          = callback;
+  callback->next = ext_callback;
+  ext_callback = callback;
 }
 
 /**
@@ -1801,9 +1781,7 @@ netif_add_ext_callback(netif_ext_callback_t *callback, netif_ext_callback_fn fn)
  * Remove extended netif events listener
  * @param callback pointer to listener structure
  */
-void
-netif_remove_ext_callback(netif_ext_callback_t* callback)
-{
+void netif_remove_ext_callback(netif_ext_callback_t *callback) {
   netif_ext_callback_t *last, *iter;
 
   LWIP_ASSERT_CORE_LOCKED();
@@ -1817,7 +1795,8 @@ netif_remove_ext_callback(netif_ext_callback_t* callback)
     ext_callback = ext_callback->next;
   } else {
     last = ext_callback;
-    for (iter = ext_callback->next; iter != NULL; last = iter, iter = iter->next) {
+    for (iter = ext_callback->next; iter != NULL;
+         last = iter, iter = iter->next) {
       if (iter == callback) {
         LWIP_ASSERT("last != NULL", last != NULL);
         last->next = callback->next;
@@ -1834,9 +1813,8 @@ netif_remove_ext_callback(netif_ext_callback_t* callback)
  * @param reason change reason
  * @param args depends on reason, see reason description
  */
-void
-netif_invoke_ext_callback(struct netif *netif, netif_nsc_reason_t reason, const netif_ext_callback_args_t *args)
-{
+void netif_invoke_ext_callback(struct netif *netif, netif_nsc_reason_t reason,
+                               const netif_ext_callback_args_t *args) {
   netif_ext_callback_t *callback = ext_callback;
 
   LWIP_ASSERT("netif must be != NULL", netif != NULL);

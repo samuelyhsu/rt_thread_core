@@ -16,28 +16,32 @@
 #include <rtthread.h>
 #include <stdint.h>
 
-#define GET_FLOOR(type) \
-    (1ul << (8 * sizeof(rt_size_t) - __builtin_clzl(2 * sizeof(type) - 1) - 1))
-#define DEF_PAGE_T(fields) \
-    typedef struct rt_page {\
-        union {struct {fields}; char _padding[GET_FLOOR(struct {fields})];};\
-    } *rt_page_t
+#define GET_FLOOR(type)                                                        \
+  (1ul << (8 * sizeof(rt_size_t) - __builtin_clzl(2 * sizeof(type) - 1) - 1))
+#define DEF_PAGE_T(fields)                                                     \
+  typedef struct rt_page {                                                     \
+    union {                                                                    \
+      struct {                                                                 \
+        fields                                                                 \
+      };                                                                       \
+      char _padding[GET_FLOOR(struct {fields})];                               \
+    };                                                                         \
+  } *rt_page_t
 
 DEF_PAGE_T(
-    struct rt_page *next;   /* same level next */
-    struct rt_page *pre;    /* same level pre  */
+    struct rt_page *next; /* same level next */
+    struct rt_page * pre; /* same level pre  */
 
-    rt_uint32_t size_bits;     /* if is ARCH_ADDRESS_WIDTH_BITS, means not free */
-    rt_uint32_t ref_cnt;       /* page group ref count */
+    rt_uint32_t size_bits; /* if is ARCH_ADDRESS_WIDTH_BITS, means not free */
+    rt_uint32_t ref_cnt;   /* page group ref count */
 );
 
 #undef GET_FLOOR
 #undef DEF_PAGE_T
 
-typedef struct tag_region
-{
-    rt_size_t start;
-    rt_size_t end;
+typedef struct tag_region {
+  rt_size_t start;
+  rt_size_t end;
 } rt_region_t;
 
 extern const rt_size_t rt_mpr_size;

@@ -7,10 +7,10 @@
  * Date           Author       Notes
  */
 
-#ifndef  __LWP_MM_H__
-#define  __LWP_MM_H__
+#ifndef __LWP_MM_H__
+#define __LWP_MM_H__
 
 void rt_mm_lock(void);
 void rt_mm_unlock(void);
 
-#endif  /*__LWP_MM_H__*/
+#endif /*__LWP_MM_H__*/

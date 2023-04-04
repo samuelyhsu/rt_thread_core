@@ -19,18 +19,19 @@ extern "C" {
 
 struct hwcrypto_rng;
 
-struct hwcrypto_rng_ops
-{
-    rt_uint32_t (*update)(struct hwcrypto_rng *ctx);    /**< Return a random number */
+struct hwcrypto_rng_ops {
+  rt_uint32_t (*update)(
+      struct hwcrypto_rng *ctx); /**< Return a random number */
 };
 
 /**
  * @brief           random context. Hardware driver usage
  */
-struct hwcrypto_rng
-{
-    struct rt_hwcrypto_ctx parent;          /**< Inheritance from hardware crypto context */
-    const struct hwcrypto_rng_ops *ops;     /**< !! Hardware initializes this value when creating context !! */
+struct hwcrypto_rng {
+  struct rt_hwcrypto_ctx
+      parent; /**< Inheritance from hardware crypto context */
+  const struct hwcrypto_rng_ops
+      *ops; /**< !! Hardware initializes this value when creating context !! */
 };
 
 /**
@@ -40,7 +41,8 @@ struct hwcrypto_rng
  *
  * @return          RNG context
  */
-struct rt_hwcrypto_ctx *rt_hwcrypto_rng_create(struct rt_hwcrypto_device *device);
+struct rt_hwcrypto_ctx *
+rt_hwcrypto_rng_create(struct rt_hwcrypto_device *device);
 
 /**
  * @brief           Destroy RNG Context

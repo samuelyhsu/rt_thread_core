@@ -17,16 +17,16 @@
 /* rtdef.h */
 
 /* legacy version macros (<5.0.0) */
-#define RT_VERSION              RT_VERSION_MAJOR        /**< major version number */
-#define RT_SUBVERSION           RT_VERSION_MINOR        /**< minor version number */
-#define RT_REVISION             RT_VERSION_PATCH        /**< revise version number */
+#define RT_VERSION RT_VERSION_MAJOR    /**< major version number */
+#define RT_SUBVERSION RT_VERSION_MINOR /**< minor version number */
+#define RT_REVISION RT_VERSION_PATCH   /**< revise version number */
 
 /* legacy attributes define (<5.0.0) */
 #define RT_SECTION rt_section
-#define RT_WEAK    rt_weak
-#define RT_USED    rt_used
+#define RT_WEAK rt_weak
+#define RT_USED rt_used
 #ifndef ALIGN
-#define ALIGN      rt_align
+#define ALIGN rt_align
 #endif
 
 /* IPC */

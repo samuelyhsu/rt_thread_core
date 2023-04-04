@@ -35,10 +35,10 @@
 #ifndef __ARCH_PERF_H__
 #define __ARCH_PERF_H__
 
-//#include <sys/times.h>
+// #include <sys/times.h>
 
-#define PERF_START    /* null definition */
-#define PERF_STOP(x)  /* null definition */
+#define PERF_START   /* null definition */
+#define PERF_STOP(x) /* null definition */
 
 /*
 void perf_print(unsigned long c1l, unsigned long c1h,

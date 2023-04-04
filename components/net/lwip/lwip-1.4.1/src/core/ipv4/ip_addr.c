@@ -6,10 +6,10 @@
 
 /*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved. 
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
- * are permitted provided that the following conditions are met:
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -17,63 +17,60 @@
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission. 
+ *    derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
- * OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file is part of the lwIP TCP/IP stack.
- * 
+ *
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
 
-#include "lwip/opt.h"
 #include "lwip/ip_addr.h"
 #include "lwip/netif.h"
+#include "lwip/opt.h"
 
 /* used by IP_ADDR_ANY and IP_ADDR_BROADCAST in ip_addr.h */
-const ip_addr_t ip_addr_any = { IPADDR_ANY };
-const ip_addr_t ip_addr_broadcast = { IPADDR_BROADCAST };
+const ip_addr_t ip_addr_any = {IPADDR_ANY};
+const ip_addr_t ip_addr_broadcast = {IPADDR_BROADCAST};
 
 /**
- * Determine if an address is a broadcast address on a network interface 
- * 
+ * Determine if an address is a broadcast address on a network interface
+ *
  * @param addr address to be checked
  * @param netif the network interface against which the address is checked
  * @return returns non-zero if the address is a broadcast address
  */
-u8_t
-ip4_addr_isbroadcast(u32_t addr, const struct netif *netif)
-{
+u8_t ip4_addr_isbroadcast(u32_t addr, const struct netif *netif) {
   ip_addr_t ipaddr;
   ip4_addr_set_u32(&ipaddr, addr);
 
   /* all ones (broadcast) or all zeroes (old skool broadcast) */
-  if ((~addr == IPADDR_ANY) ||
-      (addr == IPADDR_ANY)) {
+  if ((~addr == IPADDR_ANY) || (addr == IPADDR_ANY)) {
     return 1;
-  /* no broadcast support on this network interface? */
+    /* no broadcast support on this network interface? */
   } else if ((netif->flags & NETIF_FLAG_BROADCAST) == 0) {
     /* the given address cannot be a broadcast address
      * nor can we check against any broadcast addresses */
     return 0;
-  /* address matches network interface address exactly? => no broadcast */
+    /* address matches network interface address exactly? => no broadcast */
   } else if (addr == ip4_addr_get_u32(&netif->ip_addr)) {
     return 0;
-  /*  on the same (sub) network... */
+    /*  on the same (sub) network... */
   } else if (ip_addr_netcmp(&ipaddr, &(netif->ip_addr), &(netif->netmask))
-         /* ...and host identifier bits are all ones? =>... */
-          && ((addr & ~ip4_addr_get_u32(&netif->netmask)) ==
-           (IPADDR_BROADCAST & ~ip4_addr_get_u32(&netif->netmask)))) {
+             /* ...and host identifier bits are all ones? =>... */
+             && ((addr & ~ip4_addr_get_u32(&netif->netmask)) ==
+                 (IPADDR_BROADCAST & ~ip4_addr_get_u32(&netif->netmask)))) {
     /* => network broadcast address */
     return 1;
   } else {
@@ -86,14 +83,12 @@ ip4_addr_isbroadcast(u32_t addr, const struct netif *netif)
  * @param netmask the IPv4 netmask to check (in network byte order!)
  * @return 1 if the netmask is valid, 0 if it is not
  */
-u8_t
-ip4_addr_netmask_valid(u32_t netmask)
-{
+u8_t ip4_addr_netmask_valid(u32_t netmask) {
   u32_t mask;
   u32_t nm_hostorder = lwip_htonl(netmask);
 
   /* first, check for the first zero */
-  for (mask = 1UL << 31 ; mask != 0; mask >>= 1) {
+  for (mask = 1UL << 31; mask != 0; mask >>= 1) {
     if ((nm_hostorder & mask) == 0) {
       break;
     }
@@ -111,12 +106,14 @@ ip4_addr_netmask_valid(u32_t netmask)
 
 /* Here for now until needed in other places in lwIP */
 #ifndef isprint
-#define in_range(c, lo, up)  ((u8_t)c >= lo && (u8_t)c <= up)
-#define isprint(c)           in_range(c, 0x20, 0x7f)
-#define isdigit(c)           in_range(c, '0', '9')
-#define isxdigit(c)          (isdigit(c) || in_range(c, 'a', 'f') || in_range(c, 'A', 'F'))
-#define islower(c)           in_range(c, 'a', 'z')
-#define isspace(c)           (c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v')
+#define in_range(c, lo, up) ((u8_t)c >= lo && (u8_t)c <= up)
+#define isprint(c) in_range(c, 0x20, 0x7f)
+#define isdigit(c) in_range(c, '0', '9')
+#define isxdigit(c)                                                            \
+  (isdigit(c) || in_range(c, 'a', 'f') || in_range(c, 'A', 'F'))
+#define islower(c) in_range(c, 'a', 'z')
+#define isspace(c)                                                             \
+  (c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v')
 #endif
 
 /**
@@ -126,9 +123,7 @@ ip4_addr_netmask_valid(u32_t netmask)
  * @param cp IP address in ascii represenation (e.g. "127.0.0.1")
  * @return ip address in network order
  */
-u32_t
-ipaddr_addr(const char *cp)
-{
+u32_t ipaddr_addr(const char *cp) {
   ip_addr_t val;
 
   if (ipaddr_aton(cp, &val)) {
@@ -148,9 +143,7 @@ ipaddr_addr(const char *cp)
  * @param addr pointer to which to save the ip address in network order
  * @return 1 if cp could be converted to addr, 0 on failure
  */
-int
-ipaddr_aton(const char *cp, ip_addr_t *addr)
-{
+int ipaddr_aton(const char *cp, ip_addr_t *addr) {
   u32_t val;
   u8_t base;
   char c;
@@ -214,26 +207,26 @@ ipaddr_aton(const char *cp, ip_addr_t *addr)
   switch (pp - parts + 1) {
 
   case 0:
-    return (0);       /* initial nondigit */
+    return (0); /* initial nondigit */
 
-  case 1:             /* a -- 32 bits */
+  case 1: /* a -- 32 bits */
     break;
 
-  case 2:             /* a.b -- 8.24 bits */
+  case 2: /* a.b -- 8.24 bits */
     if (val > 0xffffffUL) {
       return (0);
     }
     val |= parts[0] << 24;
     break;
 
-  case 3:             /* a.b.c -- 8.8.16 bits */
+  case 3: /* a.b.c -- 8.8.16 bits */
     if (val > 0xffff) {
       return (0);
     }
     val |= (parts[0] << 24) | (parts[1] << 16);
     break;
 
-  case 4:             /* a.b.c.d -- 8.8.8.8 bits */
+  case 4: /* a.b.c.d -- 8.8.8.8 bits */
     if (val > 0xff) {
       return (0);
     }
@@ -257,9 +250,7 @@ ipaddr_aton(const char *cp, ip_addr_t *addr)
  * @return pointer to a global static (!) buffer that holds the ASCII
  *         represenation of addr
  */
-char *
-ipaddr_ntoa(const ip_addr_t *addr)
-{
+char *ipaddr_ntoa(const ip_addr_t *addr) {
   static char str[16];
   return ipaddr_ntoa_r(addr, str, 16);
 }
@@ -273,8 +264,7 @@ ipaddr_ntoa(const ip_addr_t *addr)
  * @return either pointer to buf which now holds the ASCII
  *         representation of addr or NULL if buf was too small
  */
-char *ipaddr_ntoa_r(const ip_addr_t *addr, char *buf, int buflen)
-{
+char *ipaddr_ntoa_r(const ip_addr_t *addr, char *buf, int buflen) {
   u32_t s_addr;
   char inv[3];
   char *rp;
@@ -288,14 +278,14 @@ char *ipaddr_ntoa_r(const ip_addr_t *addr, char *buf, int buflen)
 
   rp = buf;
   ap = (u8_t *)&s_addr;
-  for(n = 0; n < 4; n++) {
+  for (n = 0; n < 4; n++) {
     i = 0;
     do {
       rem = *ap % (u8_t)10;
       *ap /= (u8_t)10;
       inv[i++] = '0' + rem;
-    } while(*ap);
-    while(i--) {
+    } while (*ap);
+    while (i--) {
       if (len++ >= buflen) {
         return NULL;
       }

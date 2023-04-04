@@ -11,8 +11,8 @@
 #ifndef __GIC_H__
 #define __GIC_H__
 
-#include <rthw.h>
 #include <board.h>
+#include <rthw.h>
 
 int arm_gic_get_active_irq(rt_uint32_t index);
 void arm_gic_ack(rt_uint32_t index, int irq);
@@ -43,7 +43,8 @@ rt_uint32_t arm_gic_get_binary_point(rt_uint32_t index);
 
 rt_uint32_t arm_gic_get_irq_status(rt_uint32_t index, int irq);
 
-void arm_gic_send_sgi(rt_uint32_t index, int irq, rt_uint32_t target_list, rt_uint32_t filter_list);
+void arm_gic_send_sgi(rt_uint32_t index, int irq, rt_uint32_t target_list,
+                      rt_uint32_t filter_list);
 
 rt_uint32_t arm_gic_get_high_pending_irq(rt_uint32_t index);
 
@@ -59,4 +60,3 @@ void arm_gic_dump_type(rt_uint32_t index);
 void arm_gic_dump(rt_uint32_t index);
 
 #endif
-

@@ -3,8 +3,8 @@
 # If you need to exclude a file, add the path to the file in file_path.
 
 file_path:
-- diskio.h
-- ff.c
-- ff.h
-- ffconf.h
-- ffunicode.c
+  - diskio.h
+  - ff.c
+  - ff.h
+  - ffconf.h
+  - ffunicode.c

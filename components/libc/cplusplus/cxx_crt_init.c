@@ -16,53 +16,46 @@
 #if defined(__ARMCC_VERSION)
 extern void $Super$$__cpp_initialize__aeabi_(void);
 /* we need to change the cpp_initialize order */
-rt_weak void $Sub$$__cpp_initialize__aeabi_(void)
-{
-    /* empty */
+rt_weak void $Sub$$__cpp_initialize__aeabi_(void) { /* empty */
 }
 #elif defined(__GNUC__) && !defined(__CS_SOURCERYGXX_MAJ__)
 /* The _init()/_fini() routines has been defined in codesourcery g++ lite */
-rt_weak void _init()
-{
-}
+rt_weak void _init() {}
 
-rt_weak void _fini()
-{
-}
+rt_weak void _fini() {}
 
 rt_weak void *__dso_handle = 0;
 
 #endif
 
-rt_weak int cplusplus_system_init(void)
-{
+rt_weak int cplusplus_system_init(void) {
 #if defined(__ARMCC_VERSION)
-    /* If there is no SHT$$INIT_ARRAY, calling
-     * $Super$$__cpp_initialize__aeabi_() will cause fault. At least until Keil5.12
-     * the problem still exists. So we have to initialize the C++ runtime by ourself.
-     */
-    typedef void PROC();
-    extern const unsigned long SHT$$INIT_ARRAY$$Base[];
-    extern const unsigned long SHT$$INIT_ARRAY$$Limit[];
+  /* If there is no SHT$$INIT_ARRAY, calling
+   * $Super$$__cpp_initialize__aeabi_() will cause fault. At least until
+   * Keil5.12 the problem still exists. So we have to initialize the C++ runtime
+   * by ourself.
+   */
+  typedef void PROC();
+  extern const unsigned long SHT$$INIT_ARRAY$$Base[];
+  extern const unsigned long SHT$$INIT_ARRAY$$Limit[];
 
-    const unsigned long *base = SHT$$INIT_ARRAY$$Base;
-    const unsigned long *lim  = SHT$$INIT_ARRAY$$Limit;
+  const unsigned long *base = SHT$$INIT_ARRAY$$Base;
+  const unsigned long *lim = SHT$$INIT_ARRAY$$Limit;
 
-    for (; base != lim; base++)
-    {
-        PROC *proc = (PROC *)((const char *)base + *base);
-        (*proc)();
-    }
+  for (; base != lim; base++) {
+    PROC *proc = (PROC *)((const char *)base + *base);
+    (*proc)();
+  }
 #elif defined(__GNUC__)
-    typedef void(*pfunc)();
-    extern pfunc __ctors_start__[];
-    extern pfunc __ctors_end__[];
-    pfunc *p;
+  typedef void (*pfunc)();
+  extern pfunc __ctors_start__[];
+  extern pfunc __ctors_end__[];
+  pfunc *p;
 
-    for (p = __ctors_start__; p < __ctors_end__; p++)
-        (*p)();
+  for (p = __ctors_start__; p < __ctors_end__; p++)
+    (*p)();
 #endif
 
-    return 0;
+  return 0;
 }
 INIT_COMPONENT_EXPORT(cplusplus_system_init);

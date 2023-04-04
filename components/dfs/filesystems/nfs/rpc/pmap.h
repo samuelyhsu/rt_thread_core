@@ -32,35 +32,35 @@
  *
  * PMAPPROC_CALLIT(unsigned, unsigned, unsigned, string<>)
  *  RETURNS (port, string<>);
- * usage: encapsulatedresults = PMAPPROC_CALLIT(prog, vers, proc, encapsulatedargs);
- *  Calls the procedure on the local machine.  If it is not registered,
- *  this procedure is quite; ie it does not return error information!!!
- *  This procedure only is supported on rpc/udp and calls via
+ * usage: encapsulatedresults = PMAPPROC_CALLIT(prog, vers, proc,
+ * encapsulatedargs); Calls the procedure on the local machine.  If it is not
+ * registered, this procedure is quite; ie it does not return error
+ * information!!! This procedure only is supported on rpc/udp and calls via
  *  rpc/udp.  This routine only passes null authentication parameters.
  *  This file has no interface to xdr routines for PMAPPROC_CALLIT.
  *
  * The service supports remote procedure calls on udp/ip or tcp/ip socket 111.
  */
 
-#define PMAPPORT        ((unsigned short)111)
-#define PMAPPROG        ((unsigned long)100000)
-#define PMAPVERS        ((unsigned long)2)
-#define PMAPVERS_PROTO      ((unsigned long)2)
-#define PMAPVERS_ORIG       ((unsigned long)1)
-#define PMAPPROC_NULL       ((unsigned long)0)
-#define PMAPPROC_SET        ((unsigned long)1)
-#define PMAPPROC_UNSET      ((unsigned long)2)
-#define PMAPPROC_GETPORT    ((unsigned long)3)
-#define PMAPPROC_DUMP       ((unsigned long)4)
-#define PMAPPROC_CALLIT     ((unsigned long)5)
+#define PMAPPORT ((unsigned short)111)
+#define PMAPPROG ((unsigned long)100000)
+#define PMAPVERS ((unsigned long)2)
+#define PMAPVERS_PROTO ((unsigned long)2)
+#define PMAPVERS_ORIG ((unsigned long)1)
+#define PMAPPROC_NULL ((unsigned long)0)
+#define PMAPPROC_SET ((unsigned long)1)
+#define PMAPPROC_UNSET ((unsigned long)2)
+#define PMAPPROC_GETPORT ((unsigned long)3)
+#define PMAPPROC_DUMP ((unsigned long)4)
+#define PMAPPROC_CALLIT ((unsigned long)5)
 
 struct pmap {
-    long unsigned pm_prog;
-    long unsigned pm_vers;
-    long unsigned pm_prot;
-    long unsigned pm_port;
+  long unsigned pm_prog;
+  long unsigned pm_vers;
+  long unsigned pm_prot;
+  long unsigned pm_port;
 };
 
-extern bool_t xdr_pmap (XDR *__xdrs, struct pmap *__regs);
+extern bool_t xdr_pmap(XDR *__xdrs, struct pmap *__regs);
 
 #endif

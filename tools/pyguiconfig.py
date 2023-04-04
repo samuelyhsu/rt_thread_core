@@ -52,6 +52,13 @@ $srctree is supported through Kconfiglib.
 # helper script, but OTOH it's pretty nice to have things standalone and
 # customizable.
 
+from kconfiglib import Symbol, Choice, MENU, COMMENT, MenuNode, \
+    BOOL, TRISTATE, STRING, INT, HEX, \
+    AND, OR, \
+    expr_str, expr_value, split_expr, \
+    standard_sc_expr_str, \
+    TRI_TO_STR, TYPE_TO_STR, \
+    standard_kconfig, standard_config_filename
 import errno
 import os
 import sys
@@ -71,14 +78,6 @@ else:
     import tkinter.ttk as ttk
     import tkinter.font as font
     from tkinter import filedialog, messagebox
-
-from kconfiglib import Symbol, Choice, MENU, COMMENT, MenuNode, \
-                       BOOL, TRISTATE, STRING, INT, HEX, \
-                       AND, OR, \
-                       expr_str, expr_value, split_expr, \
-                       standard_sc_expr_str, \
-                       TRI_TO_STR, TYPE_TO_STR, \
-                       standard_kconfig, standard_config_filename
 
 
 # If True, use GIF image data embedded in this file instead of separate GIF
@@ -466,7 +465,8 @@ def _create_top_widgets():
 
     _backbutton = ttk.Button(topframe, text="<--", command=_leave_menu,
                              state="disabled")
-    _backbutton.grid(column=0, row=4, sticky="nsew", padx=".05c", pady="0 .05c")
+    _backbutton.grid(column=0, row=4, sticky="nsew",
+                     padx=".05c", pady="0 .05c")
 
     def tree_mode_updated(*_):
         global _single_menu
@@ -783,7 +783,7 @@ def _add_to_tree(node, top):
         # are shown outside show-all mode if an invisible symbol has visible
         # children in an implicit menu.
         tags=_img_tag(node) if _visible(node) or not _show_all else
-            _img_tag(node) + " invisible")
+        _img_tag(node) + " invisible")
 
 
 def _node_str(node):
@@ -802,7 +802,7 @@ def _node_str(node):
             # .config), but skip it for choice symbols in choices in y mode,
             # and for symbols of UNKNOWN type (which generate a warning though)
             if sym.user_value is None and sym.type and not \
-                (sym.choice and sym.choice.tri_value == 2):
+                    (sym.choice and sym.choice.tri_value == 2):
 
                 s += " (NEW)"
 
@@ -814,7 +814,6 @@ def _node_str(node):
         # Choice without prompt. Use standard_sc_expr_str() so that it shows up
         # as '<choice (name if any)>'.
         s = standard_sc_expr_str(node.item)
-
 
     if isinstance(node.item, Symbol):
         sym = node.item
@@ -987,7 +986,7 @@ def _single_menu_mode_menu(node, tree):
     # menu that can be entered
 
     return _single_menu and tree is _tree and node.is_menuconfig and \
-           _shown_menu_nodes(node)
+        _shown_menu_nodes(node)
 
 
 def _changeable(node):
@@ -1005,7 +1004,7 @@ def _changeable(node):
         return False
 
     return sc.orig_type in (STRING, INT, HEX) or len(sc.assignable) > 1 \
-           or _is_y_mode_choice_sym(sc)
+        or _is_y_mode_choice_sym(sc)
 
 
 def _tree_toggle_open(item):
@@ -1768,7 +1767,6 @@ def _jump_to_dialog(_=None):
     def tree_select(_):
         jumpto_button["state"] = "normal" if tree.selection() else "disabled"
 
-
     dialog = Toplevel(_root)
     dialog.geometry("+{}+{}".format(
         _root.winfo_rootx() + 50, _root.winfo_rooty() + 50))
@@ -1916,7 +1914,7 @@ def _update_jump_to_display():
         item(id_(node),
              text=node_str(node),
              tags=img_tag(node) if visible(node) else
-                 img_tag(node) + " invisible")
+             img_tag(node) + " invisible")
 
     _jump_to_tree.set_children("", *map(id, _jump_to_matches))
 
@@ -1954,7 +1952,7 @@ def _sorted_sc_nodes(cached_nodes=[]):
         cached_nodes += sorted(
             [node
              for choice in choices
-                 for node in choice.nodes],
+             for node in choice.nodes],
             key=lambda node: node.prompt[0] if node.prompt else "")
 
     return cached_nodes

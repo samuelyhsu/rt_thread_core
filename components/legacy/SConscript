@@ -9,10 +9,10 @@ cwd = GetCurrentDir()
 CPPPATH = [cwd]
 
 if GetDepend('RT_USING_DFS'):
-    dfs_cwd = os.path.join(cwd,'dfs')
+    dfs_cwd = os.path.join(cwd, 'dfs')
     CPPPATH += [dfs_cwd]
 
-group = DefineGroup('Legacy', src, depend = ['RT_USING_LEGACY'], CPPPATH = CPPPATH)
+group = DefineGroup('Legacy', src, depend=['RT_USING_LEGACY'], CPPPATH=CPPPATH)
 
 list = os.listdir(cwd)
 for item in list:

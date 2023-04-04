@@ -16,18 +16,16 @@
 extern "C" {
 #endif
 
-#include <stddef.h>
 #include <sal_netdb.h>
+#include <stddef.h>
 
 struct hostent *gethostbyname(const char *name);
 
 int gethostbyname_r(const char *name, struct hostent *ret, char *buf,
-                size_t buflen, struct hostent **result, int *h_errnop);
+                    size_t buflen, struct hostent **result, int *h_errnop);
 void freeaddrinfo(struct addrinfo *ai);
-int getaddrinfo(const char *nodename,
-       const char *servname,
-       const struct addrinfo *hints,
-       struct addrinfo **res);
+int getaddrinfo(const char *nodename, const char *servname,
+                const struct addrinfo *hints, struct addrinfo **res);
 
 #ifdef __cplusplus
 }

@@ -24,4 +24,3 @@ void gtimer_set_control(rt_uint32_t value);
 rt_uint32_t gtimer_get_control(void);
 
 #endif
-

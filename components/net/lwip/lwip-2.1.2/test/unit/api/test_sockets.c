@@ -2,23 +2,20 @@
 
 #include "lwip/mem.h"
 #include "lwip/opt.h"
-#include "lwip/sockets.h"
 #include "lwip/priv/sockets_priv.h"
+#include "lwip/sockets.h"
 #include "lwip/stats.h"
 
-#include "lwip/tcpip.h"
-#include "lwip/priv/tcp_priv.h"
 #include "lwip/api.h"
+#include "lwip/priv/tcp_priv.h"
+#include "lwip/tcpip.h"
 
-
-static int
-test_sockets_get_used_count(void)
-{
+static int test_sockets_get_used_count(void) {
   int used = 0;
   int i;
 
   for (i = 0; i < NUM_SOCKETS; i++) {
-    struct lwip_sock* s = lwip_socket_dbg_get_socket(i);
+    struct lwip_sock *s = lwip_socket_dbg_get_socket(i);
     if (s != NULL) {
       if (s->fd_used) {
         used++;
@@ -28,19 +25,14 @@ test_sockets_get_used_count(void)
   return used;
 }
 
-
 /* Setups/teardown functions */
 
-static void
-sockets_setup(void)
-{
+static void sockets_setup(void) {
   /* expect full free heap */
   lwip_check_ensure_no_alloc(SKIP_POOL(MEMP_SYS_TIMEOUT));
 }
 
-static void
-sockets_teardown(void)
-{
+static void sockets_teardown(void) {
   fail_unless(test_sockets_get_used_count() == 0);
   /* poll until all memory is released... */
   tcpip_thread_poll_one();
@@ -58,9 +50,7 @@ sockets_teardown(void)
 #endif
 
 #if LWIP_SOCKET
-static int
-test_sockets_alloc_socket_nonblocking(int domain, int type)
-{
+static int test_sockets_alloc_socket_nonblocking(int domain, int type) {
   int s = lwip_socket(domain, type, 0);
   if (s >= 0) {
     int ret = lwip_fcntl(s, F_SETFL, O_NONBLOCK);
@@ -71,8 +61,7 @@ test_sockets_alloc_socket_nonblocking(int domain, int type)
 
 /* Verify basic sockets functionality
  */
-START_TEST(test_sockets_basics)
-{
+START_TEST(test_sockets_basics) {
   int s, i, ret;
   int s2[NUM_SOCKETS];
   LWIP_UNUSED_ARG(_i);
@@ -104,8 +93,7 @@ START_TEST(test_sockets_basics)
 }
 END_TEST
 
-static void test_sockets_allfunctions_basic_domain(int domain)
-{
+static void test_sockets_allfunctions_basic_domain(int domain) {
   int s, s2, s3, ret;
   struct sockaddr_storage addr, addr2;
   socklen_t addrlen, addr2len;
@@ -118,7 +106,7 @@ static void test_sockets_allfunctions_basic_domain(int domain)
   fail_unless(ret == 0);
 
   addrlen = sizeof(addr);
-  ret = lwip_getsockname(s, (struct sockaddr*)&addr, &addrlen);
+  ret = lwip_getsockname(s, (struct sockaddr *)&addr, &addrlen);
   fail_unless(ret == 0);
 
   s2 = test_sockets_alloc_socket_nonblocking(domain, SOCK_STREAM);
@@ -136,19 +124,20 @@ static void test_sockets_allfunctions_basic_domain(int domain)
     addr6->sin6_addr = lo6;
 #endif
   }
-  ret = lwip_connect(s2, (struct sockaddr*)&addr, addrlen);
+  ret = lwip_connect(s2, (struct sockaddr *)&addr, addrlen);
   fail_unless(ret == -1);
   fail_unless(errno == EINPROGRESS);
-  ret = lwip_connect(s2, (struct sockaddr*)&addr, addrlen);
+  ret = lwip_connect(s2, (struct sockaddr *)&addr, addrlen);
   fail_unless(ret == -1);
   fail_unless(errno == EALREADY);
 
-  while(tcpip_thread_poll_one());
+  while (tcpip_thread_poll_one())
+    ;
 
-  s3 = lwip_accept(s, (struct sockaddr*)&addr2, &addr2len);
+  s3 = lwip_accept(s, (struct sockaddr *)&addr2, &addr2len);
   fail_unless(s3 >= 0);
 
-  ret = lwip_connect(s2, (struct sockaddr*)&addr, addrlen);
+  ret = lwip_connect(s2, (struct sockaddr *)&addr, addrlen);
   fail_unless(ret == -1);
   fail_unless(errno == EISCONN);
 
@@ -159,7 +148,8 @@ static void test_sockets_allfunctions_basic_domain(int domain)
   ret = lwip_shutdown(s3, SHUT_WR);
   fail_unless(ret == 0);
 
-  while(tcpip_thread_poll_one());
+  while (tcpip_thread_poll_one())
+    ;
 
   ret = lwip_recv(s2, buf, 3, MSG_PEEK);
   fail_unless(ret == 3);
@@ -182,7 +172,8 @@ static void test_sockets_allfunctions_basic_domain(int domain)
   ret = lwip_close(s2);
   fail_unless(ret == 0);
 
-  while(tcpip_thread_poll_one());
+  while (tcpip_thread_poll_one())
+    ;
 
   /* read one byte more than available to check handling FIN */
   ret = lwip_read(s3, buf, 4);
@@ -194,7 +185,8 @@ static void test_sockets_allfunctions_basic_domain(int domain)
   ret = lwip_read(s3, buf, 1);
   fail_unless(ret == -1);
 
-  while(tcpip_thread_poll_one());
+  while (tcpip_thread_poll_one())
+    ;
 
   ret = lwip_close(s);
   fail_unless(ret == 0);
@@ -204,8 +196,7 @@ static void test_sockets_allfunctions_basic_domain(int domain)
 
 /* Try to step through all sockets functions once...
  */
-START_TEST(test_sockets_allfunctions_basic)
-{
+START_TEST(test_sockets_allfunctions_basic) {
   LWIP_UNUSED_ARG(_i);
 #if LWIP_IPV4
   test_sockets_allfunctions_basic_domain(AF_INET);
@@ -216,46 +207,44 @@ START_TEST(test_sockets_allfunctions_basic)
 }
 END_TEST
 
-static void test_sockets_init_loopback_addr(int domain, struct sockaddr_storage *addr_st, socklen_t *sz)
-{
+static void test_sockets_init_loopback_addr(int domain,
+                                            struct sockaddr_storage *addr_st,
+                                            socklen_t *sz) {
   memset(addr_st, 0, sizeof(*addr_st));
-  switch(domain) {
+  switch (domain) {
 #if LWIP_IPV6
-    case AF_INET6: {
-      struct sockaddr_in6 *addr = (struct sockaddr_in6*)addr_st;
-      struct in6_addr lo6 = IN6ADDR_LOOPBACK_INIT;
-      addr->sin6_family = AF_INET6;
-      addr->sin6_port = 0; /* use ephemeral port */
-      addr->sin6_addr = lo6;
-      *sz = sizeof(*addr);
-   }
-      break;
+  case AF_INET6: {
+    struct sockaddr_in6 *addr = (struct sockaddr_in6 *)addr_st;
+    struct in6_addr lo6 = IN6ADDR_LOOPBACK_INIT;
+    addr->sin6_family = AF_INET6;
+    addr->sin6_port = 0; /* use ephemeral port */
+    addr->sin6_addr = lo6;
+    *sz = sizeof(*addr);
+  } break;
 #endif /* LWIP_IPV6 */
 #if LWIP_IPV4
-    case AF_INET: {
-      struct sockaddr_in *addr = (struct sockaddr_in*)addr_st;
-      addr->sin_family = AF_INET;
-      addr->sin_port = 0; /* use ephemeral port */
-      addr->sin_addr.s_addr = PP_HTONL(INADDR_LOOPBACK);
-      *sz = sizeof(*addr);
-    }
-      break;
+  case AF_INET: {
+    struct sockaddr_in *addr = (struct sockaddr_in *)addr_st;
+    addr->sin_family = AF_INET;
+    addr->sin_port = 0; /* use ephemeral port */
+    addr->sin_addr.s_addr = PP_HTONL(INADDR_LOOPBACK);
+    *sz = sizeof(*addr);
+  } break;
 #endif /* LWIP_IPV4 */
-    default:
-      *sz = 0;
-      fail();
-      break;
+  default:
+    *sz = 0;
+    fail();
+    break;
   }
 }
 
-static void test_sockets_msgapi_update_iovs(struct msghdr *msg, size_t bytes)
-{
+static void test_sockets_msgapi_update_iovs(struct msghdr *msg, size_t bytes) {
   int i;
 
   /* note: this modifies the underyling iov_base and iov_len for a partial
      read for an individual vector. This updates the msg->msg_iov pointer
      to skip fully consumed vecotrs */
-  
+
   /* process fully consumed vectors */
   for (i = 0; i < msg->msg_iovlen; i++) {
     if (msg->msg_iov[i].iov_len <= bytes) {
@@ -275,24 +264,24 @@ static void test_sockets_msgapi_update_iovs(struct msghdr *msg, size_t bytes)
   msg->msg_iov[0].iov_len -= bytes;
 }
 
-static void test_sockets_msgapi_tcp(int domain)
-{
-  #define BUF_SZ          (TCP_SND_BUF/4)
-  #define TOTAL_DATA_SZ   (BUF_SZ*8) /* ~(TCP_SND_BUF*2) that accounts for integer rounding */
-  #define NEED_TRAILER    (BUF_SZ % 4 != 0)
+static void test_sockets_msgapi_tcp(int domain) {
+#define BUF_SZ (TCP_SND_BUF / 4)
+#define TOTAL_DATA_SZ                                                          \
+  (BUF_SZ * 8) /* ~(TCP_SND_BUF*2) that accounts for integer rounding */
+#define NEED_TRAILER (BUF_SZ % 4 != 0)
   int listnr, s1, s2, i, ret, opt;
   int bytes_written, bytes_read;
   struct sockaddr_storage addr_storage;
   socklen_t addr_size;
   struct iovec siovs[8];
   struct msghdr smsg;
-  u8_t * snd_buf;
+  u8_t *snd_buf;
   struct iovec riovs[5];
   struct iovec riovs_tmp[5];
   struct msghdr rmsg;
-  u8_t * rcv_buf;
-  int    rcv_off;
-  int    rcv_trailer = 0;
+  u8_t *rcv_buf;
+  int rcv_off;
+  int rcv_trailer = 0;
   u8_t val;
 
   test_sockets_init_loopback_addr(domain, &addr_storage, &addr_size);
@@ -303,28 +292,29 @@ static void test_sockets_msgapi_tcp(int domain)
   fail_unless(s1 >= 0);
 
   /* setup a listener socket on loopback with ephemeral port */
-  ret = lwip_bind(listnr, (struct sockaddr*)&addr_storage, addr_size);
+  ret = lwip_bind(listnr, (struct sockaddr *)&addr_storage, addr_size);
   fail_unless(ret == 0);
   ret = lwip_listen(listnr, 0);
   fail_unless(ret == 0);
 
   /* update address with ephemeral port */
-  ret = lwip_getsockname(listnr, (struct sockaddr*)&addr_storage, &addr_size);
+  ret = lwip_getsockname(listnr, (struct sockaddr *)&addr_storage, &addr_size);
   fail_unless(ret == 0);
 
   /* connect, won't complete until we accept it */
-  ret = lwip_connect(s1, (struct sockaddr*)&addr_storage, addr_size);
+  ret = lwip_connect(s1, (struct sockaddr *)&addr_storage, addr_size);
   fail_unless(ret == -1);
   fail_unless(errno == EINPROGRESS);
 
-  while (tcpip_thread_poll_one());
+  while (tcpip_thread_poll_one())
+    ;
 
   /* accept, creating the other side of the connection */
   s2 = lwip_accept(listnr, NULL, NULL);
   fail_unless(s2 >= 0);
 
   /* double check s1 is connected */
-  ret = lwip_connect(s1, (struct sockaddr*)&addr_storage, addr_size);
+  ret = lwip_connect(s1, (struct sockaddr *)&addr_storage, addr_size);
   fail_unless(ret == -1);
   fail_unless(errno == EISCONN);
 
@@ -339,13 +329,13 @@ static void test_sockets_msgapi_tcp(int domain)
   ret = lwip_close(listnr);
   fail_unless(ret == 0);
 
-  /* allocate a buffer for a stream of incrementing hex (0x00..0xFF) which we will use
-     to create an input vector set that is larger than the TCP's send buffer. This will
-     force execution of the partial IO vector send case */
-  snd_buf = (u8_t*)mem_malloc(BUF_SZ);
+  /* allocate a buffer for a stream of incrementing hex (0x00..0xFF) which we
+     will use to create an input vector set that is larger than the TCP's send
+     buffer. This will force execution of the partial IO vector send case */
+  snd_buf = (u8_t *)mem_malloc(BUF_SZ);
   val = 0x00;
   fail_unless(snd_buf != NULL);
-  for (i = 0; i < BUF_SZ; i++,val++) {
+  for (i = 0; i < BUF_SZ; i++, val++) {
     snd_buf[i] = val;
   }
 
@@ -356,18 +346,18 @@ static void test_sockets_msgapi_tcp(int domain)
   }
 
   /* allocate a receive buffer, same size as snd_buf for easy verification */
-  rcv_buf = (u8_t*)mem_calloc(1, BUF_SZ);
+  rcv_buf = (u8_t *)mem_calloc(1, BUF_SZ);
   fail_unless(rcv_buf != NULL);
   /* split across iovs */
   for (i = 0; i < 4; i++) {
-    riovs[i].iov_base = &rcv_buf[i*(BUF_SZ/4)];
-    riovs[i].iov_len = BUF_SZ/4;
+    riovs[i].iov_base = &rcv_buf[i * (BUF_SZ / 4)];
+    riovs[i].iov_len = BUF_SZ / 4;
   }
   /* handling trailing bytes if buffer doesn't evenly divide by 4 */
 #if NEED_TRAILER
   if ((BUF_SZ % 4) != 0) {
-    riovs[5].iov_base = &rcv_buf[4*(BUF_SZ/4)];
-    riovs[5].iov_len = BUF_SZ - (4*(BUF_SZ/4));
+    riovs[5].iov_base = &rcv_buf[4 * (BUF_SZ / 4)];
+    riovs[5].iov_len = BUF_SZ - (4 * (BUF_SZ / 4));
     rcv_trailer = 1;
   }
 #endif /* NEED_TRAILER */
@@ -395,14 +385,15 @@ static void test_sockets_msgapi_tcp(int domain)
       /* note: since we always receive after sending, there will be open
          space in the send buffer */
       fail_unless(ret > 0);
-    
+
       bytes_written += ret;
       if (bytes_written < TOTAL_DATA_SZ) {
         test_sockets_msgapi_update_iovs(&smsg, (size_t)ret);
       }
     }
 
-    while (tcpip_thread_poll_one());
+    while (tcpip_thread_poll_one())
+      ;
 
     /* receive and verify data */
     do {
@@ -430,9 +421,9 @@ static void test_sockets_msgapi_tcp(int domain)
       } else {
         break;
       }
-    } while(ret > 0);
+    } while (ret > 0);
   }
-  
+
   ret = lwip_close(s1);
   fail_unless(ret == 0);
   ret = lwip_close(s2);
@@ -441,8 +432,8 @@ static void test_sockets_msgapi_tcp(int domain)
   mem_free(rcv_buf);
 }
 
-static void test_sockets_msgapi_udp_send_recv_loop(int s, struct msghdr *smsg, struct msghdr *rmsg)
-{
+static void test_sockets_msgapi_udp_send_recv_loop(int s, struct msghdr *smsg,
+                                                   struct msghdr *rmsg) {
   int i, ret;
 
   /* send/receive our datagram of IO vectors 10 times */
@@ -450,28 +441,28 @@ static void test_sockets_msgapi_udp_send_recv_loop(int s, struct msghdr *smsg, s
     ret = lwip_sendmsg(s, smsg, 0);
     fail_unless(ret == 4);
 
-    while (tcpip_thread_poll_one());
+    while (tcpip_thread_poll_one())
+      ;
 
     /* receive the datagram split across 4 buffers */
     ret = lwip_recvmsg(s, rmsg, 0);
     fail_unless(ret == 4);
 
     /* verify data */
-    fail_unless(*((u8_t*)rmsg->msg_iov[0].iov_base) == 0xDE);
-    fail_unless(*((u8_t*)rmsg->msg_iov[1].iov_base) == 0xAD);
-    fail_unless(*((u8_t*)rmsg->msg_iov[2].iov_base) == 0xBE);
-    fail_unless(*((u8_t*)rmsg->msg_iov[3].iov_base) == 0xEF);
+    fail_unless(*((u8_t *)rmsg->msg_iov[0].iov_base) == 0xDE);
+    fail_unless(*((u8_t *)rmsg->msg_iov[1].iov_base) == 0xAD);
+    fail_unless(*((u8_t *)rmsg->msg_iov[2].iov_base) == 0xBE);
+    fail_unless(*((u8_t *)rmsg->msg_iov[3].iov_base) == 0xEF);
 
     /* clear rcv_buf to ensure no data is being skipped */
-    *((u8_t*)rmsg->msg_iov[0].iov_base) = 0x00;
-    *((u8_t*)rmsg->msg_iov[1].iov_base) = 0x00;
-    *((u8_t*)rmsg->msg_iov[2].iov_base) = 0x00;
-    *((u8_t*)rmsg->msg_iov[3].iov_base) = 0x00;
+    *((u8_t *)rmsg->msg_iov[0].iov_base) = 0x00;
+    *((u8_t *)rmsg->msg_iov[1].iov_base) = 0x00;
+    *((u8_t *)rmsg->msg_iov[2].iov_base) = 0x00;
+    *((u8_t *)rmsg->msg_iov[3].iov_base) = 0x00;
   }
 }
 
-static void test_sockets_msgapi_udp(int domain)
-{
+static void test_sockets_msgapi_udp(int domain) {
   int s, i, ret;
   struct sockaddr_storage addr_storage;
   socklen_t addr_size;
@@ -495,26 +486,26 @@ static void test_sockets_msgapi_udp(int domain)
   s = test_sockets_alloc_socket_nonblocking(domain, SOCK_DGRAM);
   fail_unless(s >= 0);
 
-  ret = lwip_bind(s, (struct sockaddr*)&addr_storage, addr_size);
+  ret = lwip_bind(s, (struct sockaddr *)&addr_storage, addr_size);
   fail_unless(ret == 0);
 
   /* Update addr with epehermal port */
-  ret = lwip_getsockname(s, (struct sockaddr*)&addr_storage, &addr_size);
+  ret = lwip_getsockname(s, (struct sockaddr *)&addr_storage, &addr_size);
   fail_unless(ret == 0);
-  switch(domain) {
+  switch (domain) {
 #if LWIP_IPV6
-    case AF_INET6:
-      fail_unless(addr_size == sizeof(struct sockaddr_in6));
-      break;
+  case AF_INET6:
+    fail_unless(addr_size == sizeof(struct sockaddr_in6));
+    break;
 #endif /* LWIP_IPV6 */
 #if LWIP_IPV4
-    case AF_INET:
-        fail_unless(addr_size == sizeof(struct sockaddr_in));
-        break;
+  case AF_INET:
+    fail_unless(addr_size == sizeof(struct sockaddr_in));
+    break;
 #endif /* LWIP_IPV6 */
-    default:
-      fail();
-      break;
+  default:
+    fail();
+    break;
   }
 
   /* send and receive the datagram in 4 pieces */
@@ -532,7 +523,7 @@ static void test_sockets_msgapi_udp(int domain)
   test_sockets_msgapi_udp_send_recv_loop(s, &smsg, &rmsg);
 
   /* Connect to self, allowing us to not pass message name */
-  ret = lwip_connect(s, (struct sockaddr*)&addr_storage, addr_size);
+  ret = lwip_connect(s, (struct sockaddr *)&addr_storage, addr_size);
   fail_unless(ret == 0);
 
   smsg.msg_name = NULL;
@@ -545,8 +536,7 @@ static void test_sockets_msgapi_udp(int domain)
 }
 
 #if LWIP_IPV4
-static void test_sockets_msgapi_cmsg(int domain)
-{
+static void test_sockets_msgapi_cmsg(int domain) {
   int s, ret, enable;
   struct sockaddr_storage addr_storage;
   socklen_t addr_size;
@@ -563,11 +553,11 @@ static void test_sockets_msgapi_cmsg(int domain)
   s = test_sockets_alloc_socket_nonblocking(domain, SOCK_DGRAM);
   fail_unless(s >= 0);
 
-  ret = lwip_bind(s, (struct sockaddr*)&addr_storage, addr_size);
+  ret = lwip_bind(s, (struct sockaddr *)&addr_storage, addr_size);
   fail_unless(ret == 0);
 
   /* Update addr with epehermal port */
-  ret = lwip_getsockname(s, (struct sockaddr*)&addr_storage, &addr_size);
+  ret = lwip_getsockname(s, (struct sockaddr *)&addr_storage, &addr_size);
   fail_unless(ret == 0);
 
   enable = 1;
@@ -586,15 +576,16 @@ static void test_sockets_msgapi_cmsg(int domain)
   msg.msg_namelen = 0;
 
   memset(rcv_buf, 0, sizeof(rcv_buf));
-  ret = lwip_sendto(s, snd_buf, sizeof(snd_buf), 0, (struct sockaddr*)&addr_storage, addr_size);
+  ret = lwip_sendto(s, snd_buf, sizeof(snd_buf), 0,
+                    (struct sockaddr *)&addr_storage, addr_size);
   fail_unless(ret == sizeof(snd_buf));
-  
+
   tcpip_thread_poll_one();
 
   ret = lwip_recvmsg(s, &msg, 0);
   fail_unless(ret == sizeof(rcv_buf));
   fail_unless(!memcmp(rcv_buf, snd_buf, sizeof(rcv_buf)));
-  
+
   /* Verify message header */
   cmsg = CMSG_FIRSTHDR(&msg);
   fail_unless(cmsg != NULL);
@@ -603,7 +594,7 @@ static void test_sockets_msgapi_cmsg(int domain)
   fail_unless(cmsg->cmsg_type == IP_PKTINFO);
 
   /* Verify message data */
-  pktinfo = (struct in_pktinfo*)CMSG_DATA(cmsg);
+  pktinfo = (struct in_pktinfo *)CMSG_DATA(cmsg);
   /* We only have loopback interface enabled */
   fail_unless(pktinfo->ipi_ifindex == 1);
   fail_unless(pktinfo->ipi_addr.s_addr == PP_HTONL(INADDR_LOOPBACK));
@@ -614,7 +605,8 @@ static void test_sockets_msgapi_cmsg(int domain)
 
   /* Send datagram again, testing truncation */
   memset(rcv_buf, 0, sizeof(rcv_buf));
-  ret = lwip_sendto(s, snd_buf, sizeof(snd_buf), 0, (struct sockaddr*)&addr_storage, addr_size);
+  ret = lwip_sendto(s, snd_buf, sizeof(snd_buf), 0,
+                    (struct sockaddr *)&addr_storage, addr_size);
   fail_unless(ret == sizeof(snd_buf));
 
   tcpip_thread_poll_one();
@@ -634,8 +626,7 @@ static void test_sockets_msgapi_cmsg(int domain)
 }
 #endif /* LWIP_IPV4 */
 
-START_TEST(test_sockets_msgapis)
-{
+START_TEST(test_sockets_msgapis) {
   LWIP_UNUSED_ARG(_i);
 #if LWIP_IPV4
   test_sockets_msgapi_udp(AF_INET);
@@ -649,8 +640,7 @@ START_TEST(test_sockets_msgapis)
 }
 END_TEST
 
-START_TEST(test_sockets_select)
-{
+START_TEST(test_sockets_select) {
 #if LWIP_SOCKET_SELECT
   int s;
   int ret;
@@ -685,8 +675,7 @@ START_TEST(test_sockets_select)
 }
 END_TEST
 
-START_TEST(test_sockets_recv_after_rst)
-{
+START_TEST(test_sockets_recv_after_rst) {
   int sl, sact;
   int spass = -1;
   int ret;
@@ -731,9 +720,10 @@ START_TEST(test_sockets_recv_after_rst)
     fail_unless((ret == 0) || (ret == -1));
     if (ret != 0) {
       if (err == EISCONN) {
-        /* Although this is not valid, use EISCONN as an indicator for successful connection.
-           This marks us as "connect phase is done". On error, we would either have a different
-           errno code or "send" fails later... -> good enough for this test. */
+        /* Although this is not valid, use EISCONN as an indicator for
+           successful connection. This marks us as "connect phase is done". On
+           error, we would either have a different errno code or "send" fails
+           later... -> good enough for this test. */
         ret = 0;
       } else {
         fail_unless(err == EINPROGRESS);
@@ -741,7 +731,8 @@ START_TEST(test_sockets_recv_after_rst)
           goto cleanup;
         }
         /* we're in progress: little side check: test for EALREADY */
-        ret = lwip_connect(sact, (struct sockaddr *)&sa_listen, sizeof(sa_listen));
+        ret = lwip_connect(sact, (struct sockaddr *)&sa_listen,
+                           sizeof(sa_listen));
         err = errno;
         fail_unless(ret == -1);
         fail_unless(err == EALREADY);
@@ -778,8 +769,8 @@ START_TEST(test_sockets_recv_after_rst)
       struct tcp_pcb *pcb = sact_conn->pcb.tcp;
       fail_unless(pcb != NULL);
       if (pcb != NULL) {
-        tcp_rst(pcb, pcb->snd_nxt, pcb->rcv_nxt, &pcb->local_ip, &pcb->remote_ip,
-                     pcb->local_port, pcb->remote_port);
+        tcp_rst(pcb, pcb->snd_nxt, pcb->rcv_nxt, &pcb->local_ip,
+                &pcb->remote_ip, pcb->local_port, pcb->remote_port);
       }
     }
   }
@@ -829,24 +820,21 @@ cleanup:
 END_TEST
 
 /** Create the suite including all tests for this module */
-Suite *
-sockets_suite(void)
-{
+Suite *sockets_suite(void) {
   testfunc tests[] = {
-    TESTFUNC(test_sockets_basics),
-    TESTFUNC(test_sockets_allfunctions_basic),
-    TESTFUNC(test_sockets_msgapis),
-    TESTFUNC(test_sockets_select),
-    TESTFUNC(test_sockets_recv_after_rst),
+      TESTFUNC(test_sockets_basics),
+      TESTFUNC(test_sockets_allfunctions_basic),
+      TESTFUNC(test_sockets_msgapis),
+      TESTFUNC(test_sockets_select),
+      TESTFUNC(test_sockets_recv_after_rst),
   };
-  return create_suite("SOCKETS", tests, sizeof(tests)/sizeof(testfunc), sockets_setup, sockets_teardown);
+  return create_suite("SOCKETS", tests, sizeof(tests) / sizeof(testfunc),
+                      sockets_setup, sockets_teardown);
 }
 
-#else /* LWIP_SOCKET */
+#else  /* LWIP_SOCKET */
 
-Suite *
-sockets_suite(void)
-{
+Suite *sockets_suite(void) {
   return create_suite("SOCKETS", NULL, 0, NULL, NULL);
 }
 #endif /* LWIP_SOCKET */

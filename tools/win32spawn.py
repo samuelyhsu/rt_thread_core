@@ -22,6 +22,13 @@
 # 2015-01-20     Bernard      Add copyright information
 #
 
+import win32event
+import win32process
+import win32security
+import win32con
+import win32api
+import win32pipe
+import win32file
 import os
 import threading
 import sys
@@ -33,13 +40,7 @@ else:
     import queue as Queue
 
 # Windows import
-import win32file
-import win32pipe
-import win32api
-import win32con
-import win32security
-import win32process
-import win32event
+
 
 class Win32Spawn(object):
     def __init__(self, cmd, shell=False):
@@ -59,15 +60,18 @@ class Win32Spawn(object):
         sa.bInheritHandle = 1
 
         child_stdout_rd, child_stdout_wr = win32pipe.CreatePipe(sa, 0)
-        child_stdout_rd_dup = win32api.DuplicateHandle(currproc, child_stdout_rd, currproc, 0, 0, win32con.DUPLICATE_SAME_ACCESS)
+        child_stdout_rd_dup = win32api.DuplicateHandle(
+            currproc, child_stdout_rd, currproc, 0, 0, win32con.DUPLICATE_SAME_ACCESS)
         win32file.CloseHandle(child_stdout_rd)
 
         child_stderr_rd, child_stderr_wr = win32pipe.CreatePipe(sa, 0)
-        child_stderr_rd_dup = win32api.DuplicateHandle(currproc, child_stderr_rd, currproc, 0, 0, win32con.DUPLICATE_SAME_ACCESS)
+        child_stderr_rd_dup = win32api.DuplicateHandle(
+            currproc, child_stderr_rd, currproc, 0, 0, win32con.DUPLICATE_SAME_ACCESS)
         win32file.CloseHandle(child_stderr_rd)
 
         child_stdin_rd, child_stdin_wr = win32pipe.CreatePipe(sa, 0)
-        child_stdin_wr_dup = win32api.DuplicateHandle(currproc, child_stdin_wr, currproc, 0, 0, win32con.DUPLICATE_SAME_ACCESS)
+        child_stdin_wr_dup = win32api.DuplicateHandle(
+            currproc, child_stdin_wr, currproc, 0, 0, win32con.DUPLICATE_SAME_ACCESS)
         win32file.CloseHandle(child_stdin_wr)
 
         startup_info = win32process.STARTUPINFO()
@@ -81,7 +85,8 @@ class Win32Spawn(object):
 
         env = os.environ.copy()
         self.h_process, h_thread, dw_pid, dw_tid = win32process.CreateProcess(None, cmd, None, None, 1,
-                                                                              cr_flags, env, os.path.abspath(exec_dir),
+                                                                              cr_flags, env, os.path.abspath(
+                                                                                  exec_dir),
                                                                               startup_info)
 
         win32api.CloseHandle(h_thread)
@@ -124,13 +129,16 @@ class Win32Spawn(object):
 
     def __wait_for_child(self):
         # kick off threads to read from stdout and stderr of the child process
-        threading.Thread(target=self.__do_read, args=(self.__child_stdout, )).start()
-        threading.Thread(target=self.__do_read, args=(self.__child_stderr, )).start()
+        threading.Thread(target=self.__do_read, args=(
+            self.__child_stdout, )).start()
+        threading.Thread(target=self.__do_read, args=(
+            self.__child_stderr, )).start()
 
         while True:
             # block waiting for the process to finish or the interrupt to happen
             handles = (self.wake_up_event, self.h_process)
-            val = win32event.WaitForMultipleObjects(handles, 0, win32event.INFINITE)
+            val = win32event.WaitForMultipleObjects(
+                handles, 0, win32event.INFINITE)
 
             if val >= win32event.WAIT_OBJECT_0 and val < win32event.WAIT_OBJECT_0 + len(handles):
                 handle = handles[val - win32event.WAIT_OBJECT_0]

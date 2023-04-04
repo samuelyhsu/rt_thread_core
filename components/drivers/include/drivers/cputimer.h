@@ -13,26 +13,22 @@
 
 #include <rtthread.h>
 
-struct rt_cputimer
-{
-    struct rt_object parent; /**< inherit from rt_object */
-    rt_list_t row;
-    void (*timeout_func)(void *parameter);
-    void *parameter;
-    rt_uint64_t init_tick;
-    rt_uint64_t timeout_tick;
+struct rt_cputimer {
+  struct rt_object parent; /**< inherit from rt_object */
+  rt_list_t row;
+  void (*timeout_func)(void *parameter);
+  void *parameter;
+  rt_uint64_t init_tick;
+  rt_uint64_t timeout_tick;
 };
 typedef struct rt_cputimer *rt_cputimer_t;
 
 rt_err_t rt_cputimer_detach(rt_cputimer_t timer);
 
 #ifdef RT_USING_HEAP
-void rt_cputimer_init(rt_cputimer_t timer,
-                      const char *name,
-                      void (*timeout)(void *parameter),
-                      void *parameter,
-                      rt_uint64_t tick,
-                      rt_uint8_t flag);
+void rt_cputimer_init(rt_cputimer_t timer, const char *name,
+                      void (*timeout)(void *parameter), void *parameter,
+                      rt_uint64_t tick, rt_uint8_t flag);
 rt_err_t rt_cputimer_delete(rt_cputimer_t timer);
 #endif
 

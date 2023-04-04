@@ -1,7 +1,7 @@
 from building import *
 
-cwd     = GetCurrentDir()
-src     = Split('''
+cwd = GetCurrentDir()
+src = Split('''
 shell.c
 msh.c
 msh_parse.c
@@ -15,6 +15,6 @@ if GetDepend('DFS_USING_POSIX'):
 
 CPPPATH = [cwd]
 
-group = DefineGroup('Finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
+group = DefineGroup('Finsh', src, depend=['RT_USING_FINSH'], CPPPATH=CPPPATH)
 
 Return('group')
